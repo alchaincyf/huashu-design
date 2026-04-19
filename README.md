@@ -1,6 +1,11 @@
-# huashu-design
+# 花叔Design · Huashu-Design
 
-花叔设计工作台 —— 一个把「AI 当设计师」落到实处的 Skill。
+![花叔Design Brand Film](./demo/huashu-design-brand.gif)
+
+> 25 秒品牌片由本 skill 自己完成：Junior Designer 工作流 → 3 个方向假设 → 用户选 → variations → 五维评审 → 一键导出。
+> **[下载 MP4（60fps, 2.2MB）](./demo/huashu-design-brand.mp4)** · [25fps 版](./demo/huashu-design-brand-25fps.mp4)
+
+把「AI 当设计师」落到实处的 Skill。
 
 不是让 AI 生成一张图，而是让 AI 进入「资深 Junior Designer」的工作模式：先给假设 + 占位 + 理由，show 给 manager 看，得到方向反馈，再做 variation，再迭代细节。最后还能请一位「严苛评审」打分。
 
