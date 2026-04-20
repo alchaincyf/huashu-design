@@ -13,17 +13,19 @@
 
 <br>
 
-**在你的 agent 里打一句话——Claude Code、Cursor、Codex、OpenClaw、Hermes 都行。**
+**在你的 agent 里打一句话，拿回一份能交付的设计。**
 
 <br>
 
-30 秒后，你手里有一份 PPT、一个 App 原型、一段时间轴动画、一张信息图。能直接发进 issue、贴到飞书、复制到 Keynote。
+30 秒后，你手里有一份 PPT、一个 App 原型、一段时间轴动画、一张信息图——做出来的东西有 Pentagram 的信息建筑、Field.io 的运动诗学、Kenya Hara 的东方极简，不是又一次 AI slop。
 
-做出来的东西看不出是 AI 做的。20 种真实设计哲学被蒸馏进 skill 里（Pentagram 的信息建筑、Field.io 的运动诗学、Kenya Hara 的东方极简……），agent 抓品牌色、搭 design spec、生成 HTML、跑 Playwright 验证，然后自己评审打分。
+背后是 20 种真实设计语言被蒸馏进 skill：agent 抓品牌色、搭 design spec、生成 HTML、跑 Playwright 验证，最后自己评审打分。
 
 ```
 npx skills add alchaincyf/huashu-design
 ```
+
+跨 agent 通用——Claude Code、Cursor、Codex、OpenClaw、Hermes 都能装。
 
 [看效果](#demo-画廊) · [安装](#装上就能用) · [能做什么](#能做什么) · [核心机制](#核心机制) · [和 Claude Design 的关系](#和-claude-design-的关系)
 
@@ -60,7 +62,7 @@ npx skills add alchaincyf/huashu-design
 「帮我对这个设计做一个 5 维度评审」
 ```
 
-没有按钮、没有面板、没有 Figma 插件。跨 agent 通用 —— Claude Code / Cursor / Trae / Hermes / OpenClaw 任一都能装。
+没有按钮、没有面板、没有 Figma 插件。
 
 ---
 
@@ -75,8 +77,6 @@ npx skills add alchaincyf/huashu-design
 | 信息图 / 可视化 | 印刷级排版 · 可导 PDF/PNG/SVG | 10 min |
 | 设计方向顾问 | 5 流派 × 20 种设计哲学 · 推荐 3 方向 · 并行生成 Demo | 5 min |
 | 5 维度专家评审 | 雷达图 + Keep/Fix/Quick Wins · 可操作修复清单 | 3 min |
-
-**跨 agent 通用**：Claude Code、Cursor、Trae、Hermes、OpenClaw 任一都能装。
 
 ---
 
@@ -193,7 +193,7 @@ A/B 测试（v1 vs v2，各跑 6 agent）：**v2 的稳定性方差比 v1 低 5 
 | 交付物 | 画布内 + 可导 Figma | HTML / MP4 / GIF / 可编辑 PPTX / PDF |
 | 操作方式 | GUI（点、拖、改） | 对话（说话、等 agent 做完） |
 | 复杂动画 | 有限 | Stage + Sprite 时间轴 · 60fps 导出 |
-| 跨 agent | 专属 Claude.ai | Claude Code / Cursor / Trae / Hermes / OpenClaw 任一 |
+| 跨 agent | 专属 Claude.ai | 任意 skill 兼容 agent |
 
 Claude Design 是**更好的图形工具**，huashu-design 是**让图形工具这层消失**。两条路，不同受众。
 
