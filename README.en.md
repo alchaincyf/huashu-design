@@ -17,9 +17,11 @@
 
 <br>
 
-Thirty seconds later, you have a slide deck, an iOS prototype, a motion-design sequence, or an infographic. Drop it in an issue, paste it into Keynote, ship it to Notion.
+3 to 30 minutes — you ship a **product launch animation**, a clickable App prototype, an editable PPT deck, a print-grade infographic.
 
-It doesn't look like AI made it. Twenty real design philosophies are distilled into the skill (Pentagram's information architecture, Field.io's motion poetics, Kenya Hara's eastern minimalism…). The agent grabs brand assets, builds a design spec, generates HTML, runs Playwright verification, then critiques itself against a 5-dimension rubric.
+Not "decent for AI" quality — it looks like a real design team made it. Give the skill your brand assets (logo, colors, UI screenshots) and it reads your brand's voice; give it nothing and the built-in 20 design vocabularies still keep you out of AI slop territory.
+
+**Every animation in this README was made by huashu-design itself.** No Figma, no After Effects — just a sentence + skill run. Next product launch needs a promo video? You can make it too.
 
 ```
 npx skills add alchaincyf/huashu-design
@@ -40,10 +42,6 @@ npx skills add alchaincyf/huashu-design
 </p>
 
 <p align="center"><sub>▲ 10-second hero animation showing what huashu-design does (<a href="demos/hero-animation-v10-en.mp4">download MP4</a> if autoplay doesn't work)</sub></p>
-
-<p align="center">
-  <img src="demos/w3-fallback-advisor-en.gif" alt="Fallback design advisor · 3 differentiated directions from 20 design philosophies" width="100%">
-</p>
 
 ---
 

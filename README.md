@@ -17,9 +17,11 @@
 
 <br>
 
-30 秒后，你手里有一份 PPT、一个 App 原型、一段时间轴动画、一张信息图——做出来的东西有 Pentagram 的信息建筑、Field.io 的运动诗学、Kenya Hara 的东方极简，不是又一次 AI slop。
+3 到 30 分钟，你能 ship 一段**产品发布动画**、一个能点击的 App 原型、一套能编辑的 PPT、一份印刷级的信息图。
 
-背后是 20 种真实设计语言被蒸馏进 skill：agent 抓品牌色、搭 design spec、生成 HTML、跑 Playwright 验证，最后自己评审打分。
+不是「AI 做的还行」那种水平——是看起来像大厂设计团队做的。给 skill 你的品牌资产（logo、色板、UI 截图），它会读懂你的品牌气质；什么都不给，内置的 20 种设计语汇也能兜底到不出 AI slop。
+
+**你看到这篇 README 里的每一个动画，都是 huashu-design 自己做的。** 不是 Figma，不是 AE，就是一句话 prompt + skill 跑通。下次产品发布要做宣传片？现在你也能做。
 
 ```
 npx skills add alchaincyf/huashu-design
@@ -42,10 +44,6 @@ npx skills add alchaincyf/huashu-design
   👉 <a href="https://www.huasheng.ai/huashu-design-hero/">访问带音效的 HTML 互动版</a> ·
   <a href="demos/hero-animation-v10-en.mp4">下载 MP4（含 BGM+SFX · 10MB）</a>
 </sub></p>
-
-<p align="center">
-  <img src="demos/w3-fallback-advisor.gif" alt="Fallback 设计顾问 · 从 20 种设计哲学推荐 3 个差异化方向" width="100%">
-</p>
 
 ---
 
