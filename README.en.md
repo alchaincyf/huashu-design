@@ -57,6 +57,8 @@ Then just talk to Claude Code:
 "Make a keynote for AI psychology. Give me 3 style directions to pick from."
 "Build an iOS prototype for a Pomodoro app — 4 screens, actually clickable."
 "Turn this logic into a 60-second animation. Export MP4 and GIF."
+"Save this version, then make a variant for comparison."
+"Check if we have Stripe brand assets in the library."
 "Run a 5-dimension expert review on this design."
 ```
 
@@ -83,6 +85,8 @@ No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Cod
 | Motion design | MP4 (25fps / 60fps interpolation) + GIF (palette-optimized) + BGM | 8–12 min |
 | Design variations | 3+ side-by-side · Tweaks live params · cross-dimension exploration | 10 min |
 | Infographic / data viz | Print-quality typography · exports to PDF/PNG/SVG | 10 min |
+| **Version management** | **Auto snapshots · visual diffs · one-click restore · smart cleanup** | **2–5 min** |
+| **Asset library** | **Cross-project reuse · 60× speedup · team collaboration · freshness check** | **30sec vs 30min** |
 | Design direction advisor | 5 schools × 20 philosophies · 3 directions recommended · Demos generated in parallel | 5 min |
 | 5-dimension expert critique | Radar chart + Keep/Fix/Quick Wins · actionable punch list | 3 min |
 
@@ -149,6 +153,37 @@ Mandatory whenever the task involves a specific brand: ask → search → downlo
 ---
 
 ## Core Mechanics
+
+### Version Management System
+
+Auto-snapshot every major change, generate visual diff pages, one-click restore to any version.
+
+**Core capabilities**:
+- **Auto snapshots**: HTML + screenshots + metadata, smart cleanup strategy
+- **Visual diffs**: Side-by-side version comparison with clear change annotations
+- **One-click restore**: Quick rollback to any historical version
+- **Agent automation**: Triggered by "save this version" or "go back to previous"
+
+**Use cases**:
+- Save key milestones during design iteration
+- Compare visual effects between versions
+- Quick restore to satisfactory historical versions
+- Version sync in team collaboration
+
+### Asset Library System
+
+Brand assets captured once, reused forever. 30 minutes becomes 30 seconds — 60× speedup.
+
+**Core capabilities**:
+- **Cross-project reuse**: Global brand asset sharing, avoid duplicate fetching
+- **Structured management**: Brands/components/templates categorized storage, fast retrieval
+- **Freshness check**: 30-day threshold, auto-prompt for asset updates
+- **Team collaboration**: Asset pack export/import, unified brand standards
+
+**Storage efficiency**:
+- 3 Stripe projects: 150MB → 50MB (67% savings)
+- Brand asset reuse: 30 minutes → 30 seconds (60× speedup)
+- Privacy protection: Sensitive assets won't accidentally leak to version control
 
 ### Core Asset Protocol
 
@@ -250,6 +285,8 @@ huashu-design/
 │   ├── showcases/           # 24 prebuilt samples (8 scenes × 3 styles)
 │   └── bgm-*.mp3            # 6 scene-specific background tracks
 ├── references/              # Drill-down docs by task (Chinese)
+│   ├── version-control.md   # Version management detailed docs
+│   ├── asset-library.md     # Asset library detailed docs
 │   ├── animation-pitfalls.md
 │   ├── design-styles.md     # 20 design philosophies in detail
 │   ├── slide-decks.md
@@ -257,10 +294,17 @@ huashu-design/
 │   ├── critique-guide.md
 │   ├── video-export.md
 │   └── ...
-├── scripts/                 # Export toolchain
+├── scripts/                 # Export toolchain + Version Management + Asset Library
 │   ├── render-video.js      # HTML → MP4
 │   ├── convert-formats.sh   # MP4 → 60fps + GIF
 │   ├── add-music.sh         # MP4 + BGM
+│   ├── version-snapshot.js  # Create version snapshots
+│   ├── version-list.js      # List version history
+│   ├── version-diff.js      # Compare versions
+│   ├── version-restore.js   # Restore versions
+│   ├── save-to-library.js   # Save to asset library
+│   ├── list-library.js      # List library contents
+│   ├── check-library.js     # Check library assets
 │   ├── export_deck_pdf.mjs
 │   ├── export_deck_pptx.mjs
 │   ├── html2pptx.js
