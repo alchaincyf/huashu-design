@@ -30,3 +30,34 @@ API keys are sent to the server for the current generation request but are not p
 ## Notes
 
 The UI reads skill context from the parent repo and sends it to the selected model with your brief. Generated HTML appears in the preview iframe and editable code tab.
+
+## Client review links
+
+Saving client review links requires Convex.
+
+Local test:
+
+```bash
+cd /Users/judeokun/Documents/GitHub/huashu-design
+npx convex dev
+```
+
+Cloud deploy:
+
+```bash
+cd /Users/judeokun/Documents/GitHub/huashu-design
+npx convex login
+npx convex deploy
+```
+
+After Convex is deployed, copy the Convex HTTP Actions URL ending in `.convex.site` and set this Vercel environment variable:
+
+```text
+CONVEX_HTTP_URL=https://<your-deployment>.convex.site
+```
+
+Then redeploy Vercel. The app will save generated HTML mockups and return public links like:
+
+```text
+https://huashu-design.vercel.app/mockup/<share-id>
+```

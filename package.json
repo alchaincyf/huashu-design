@@ -1,6 +1,13 @@
 {
   "private": true,
+  "scripts": {
+    "convex:dev": "convex dev",
+    "convex:deploy": "convex deploy"
+  },
   "engines": {
     "node": "22.x"
+  },
+  "devDependencies": {
+    "convex": "^1.36.1"
   }
 }

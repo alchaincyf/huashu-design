@@ -70,6 +70,9 @@ function getStoredSettings() {
 }
 
 function App() {
+  const shareMatch = window.location.pathname.match(/^\/mockup\/([^/]+)$/);
+  if (shareMatch) return <ClientMockup shareId={shareMatch[1]} />;
+
   const stored = useMemo(getStoredSettings, []);
   const [provider, setProvider] = useState(stored.provider || "ollama");
   const [baseUrl, setBaseUrl] = useState(stored.baseUrl || providerPresets.ollama.baseUrl);
@@ -78,8 +81,11 @@ function App() {
   const [mode, setMode] = useState(stored.mode || "prototype");
   const [prompt, setPrompt] = useState(
     stored.prompt ||
-      "Create a clickable iOS-style onboarding prototype for a focus timer app. Include 3 screens, stateful navigation, and one polished visual direction."
+      "Build a modern local-business website mockup for a restaurant lead. Use real-looking sections for hero, menu highlights, gallery, reviews, opening hours, and booking/contact CTAs. Make it polished enough to send as a preview link."
   );
+  const [clientName, setClientName] = useState(stored.clientName || "");
+  const [contact, setContact] = useState(stored.contact || "");
+  const [shareLink, setShareLink] = useState("");
   const [html, setHtml] = useState(starterHtml);
   const [tab, setTab] = useState("preview");
   const [busy, setBusy] = useState(false);
@@ -105,9 +111,9 @@ function App() {
   useEffect(() => {
     localStorage.setItem(
       "huashu-webui-settings",
-      JSON.stringify({ provider, baseUrl, model, mode, prompt })
+      JSON.stringify({ provider, baseUrl, model, mode, prompt, clientName, contact })
     );
-  }, [provider, baseUrl, model, apiKey, mode, prompt]);
+  }, [provider, baseUrl, model, apiKey, mode, prompt, clientName, contact]);
 
   function chooseProvider(nextProvider) {
     setProvider(nextProvider);
@@ -129,6 +135,34 @@ function App() {
       if (!response.ok) throw new Error(data.error || "Generation failed");
       setHtml(data.html);
       setTab("preview");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveClientLink() {
+    setBusy(true);
+    setError("");
+    setShareLink("");
+    try {
+      const response = await fetch("/api/mockups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: clientName ? `${clientName} website mockup` : "Client website mockup",
+          clientName,
+          contact,
+          prompt,
+          html,
+          status: "review",
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not save mockup");
+      setShareLink(data.shareUrl);
+      await navigator.clipboard?.writeText(data.shareUrl).catch(() => {});
     } catch (err) {
       setError(err.message);
     } finally {
@@ -192,6 +226,20 @@ function App() {
         </section>
 
         <section className="panel">
+          <label>Client</label>
+          <input
+            value={clientName}
+            placeholder="Business name"
+            onChange={(event) => setClientName(event.target.value)}
+          />
+          <input
+            value={contact}
+            placeholder="Website / Instagram / phone"
+            onChange={(event) => setContact(event.target.value)}
+          />
+        </section>
+
+        <section className="panel">
           <label>Artifact</label>
           <div className="mode-grid">
             {["prototype", "slides", "motion", "infographic", "review"].map((item) => (
@@ -212,6 +260,14 @@ function App() {
         <button className="primary" onClick={generate} disabled={busy} type="button">
           {busy ? "Generating..." : "Generate HTML"}
         </button>
+        <button className="secondary" onClick={saveClientLink} disabled={busy || !html} type="button">
+          Save client link
+        </button>
+        {shareLink ? (
+          <a className="share-link" href={shareLink} target="_blank" rel="noreferrer">
+            {shareLink}
+          </a>
+        ) : null}
       </aside>
 
       <main className="workspace">
@@ -248,6 +304,53 @@ function App() {
         </section>
       </main>
     </div>
+  );
+}
+
+function ClientMockup({ shareId }) {
+  const [mockup, setMockup] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch(`/api/mockups?id=${encodeURIComponent(shareId)}`)
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Mockup not found");
+        setMockup(data.mockup);
+      })
+      .catch((err) => setError(err.message));
+  }, [shareId]);
+
+  if (error) {
+    return (
+      <main className="public-state">
+        <h1>Mockup unavailable</h1>
+        <p>{error}</p>
+      </main>
+    );
+  }
+
+  if (!mockup) {
+    return (
+      <main className="public-state">
+        <h1>Loading mockup</h1>
+      </main>
+    );
+  }
+
+  return (
+    <main className="public-viewer">
+      <header>
+        <div>
+          <strong>{mockup.title}</strong>
+          {mockup.clientName ? <span>{mockup.clientName}</span> : null}
+        </div>
+        <a href={`mailto:?subject=${encodeURIComponent(mockup.title)}&body=${encodeURIComponent(window.location.href)}`}>
+          Send link
+        </a>
+      </header>
+      <iframe title={mockup.title} srcDoc={mockup.html} sandbox="allow-scripts" />
+    </main>
   );
 }
 

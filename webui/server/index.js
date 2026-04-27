@@ -1,4 +1,5 @@
 import express from "express";
+import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,6 +9,8 @@ const webuiRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(webuiRoot, "..");
 const isProd = process.env.NODE_ENV === "production";
 const port = Number(process.env.PORT || 5177);
+
+await loadLocalEnv();
 
 const app = express();
 app.use(express.json({ limit: "1mb" }));
@@ -21,6 +24,22 @@ function clip(text, max = 18000) {
 async function readText(relativePath, max) {
   const fullPath = path.join(repoRoot, relativePath);
   return clip(await fs.readFile(fullPath, "utf8"), max);
+}
+
+async function loadLocalEnv() {
+  if (isProd) return;
+  try {
+    const envPath = path.join(repoRoot, ".env.local");
+    const envText = await fs.readFile(envPath, "utf8");
+    for (const line of envText.split(/\r?\n/)) {
+      const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.+?)\s*$/);
+      if (match && !process.env[match[1]]) {
+        process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, "");
+      }
+    }
+  } catch {
+    // Local Convex is optional; the save endpoint reports setup guidance.
+  }
 }
 
 async function listHtml(dir) {
@@ -162,6 +181,42 @@ function stripFence(output) {
   return match ? match[1].trim() : trimmed;
 }
 
+function getConvexHttpUrl() {
+  const explicit = process.env.CONVEX_HTTP_URL || process.env.CONVEX_SITE_URL;
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const convexUrl = process.env.VITE_CONVEX_URL || process.env.CONVEX_URL;
+  if (!convexUrl) return "";
+  return convexUrl.replace(/\/$/, "").replace(".convex.cloud", ".convex.site");
+}
+
+function newShareId(title = "mockup") {
+  const slug = title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 36) || "mockup";
+  return `${slug}-${crypto.randomBytes(4).toString("hex")}`;
+}
+
+async function convexRequest(pathname, init) {
+  const baseUrl = getConvexHttpUrl();
+  if (!baseUrl) {
+    const error = new Error("Convex is not configured. Set CONVEX_HTTP_URL to your Convex .convex.site URL.");
+    error.status = 503;
+    throw error;
+  }
+
+  const response = await fetch(`${baseUrl}${pathname}`, init);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(data.error || `Convex request failed with ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+
 app.get("/api/context", async (_req, res, next) => {
   try {
     const [demos, showcases] = await Promise.all([
@@ -214,6 +269,45 @@ app.post("/api/generate", async (req, res, next) => {
         : await callOpenAICompatible({ baseUrl, apiKey: body.apiKey, model, system, prompt: fullPrompt });
 
     res.json({ html: stripFence(generated), model, provider });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get("/api/mockups", async (req, res, next) => {
+  try {
+    const id = String(req.query.id || "");
+    if (!id) return res.status(400).json({ error: "id is required." });
+    res.json(await convexRequest(`/mockups?id=${encodeURIComponent(id)}`, { method: "GET" }));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/mockups", async (req, res, next) => {
+  try {
+    const body = req.body || {};
+    const title = String(body.title || body.clientName || "Client mockup").trim();
+    const shareId = body.shareId || newShareId(title);
+    const data = await convexRequest("/mockups", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        shareId,
+        title,
+        clientName: body.clientName,
+        contact: body.contact,
+        prompt: body.prompt,
+        html: body.html,
+        status: body.status || "draft",
+      }),
+    });
+
+    res.json({
+      ...data,
+      shareId,
+      shareUrl: `${req.protocol}://${req.get("host")}/mockup/${shareId}`,
+    });
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,5 @@
 {
-  "installCommand": "cd webui && npm install",
+  "installCommand": "npm install && cd webui && npm install",
   "buildCommand": "cd webui && npm run build",
   "outputDirectory": "webui/dist",
   "functions": {
