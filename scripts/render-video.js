@@ -94,7 +94,20 @@ console.log(`  output: ${MP4_OUT}`);
 (async () => {
   fs.mkdirSync(TMP_DIR, { recursive: true });
 
-  const browser = await chromium.launch();
+  const isWin = process.platform === 'win32';
+  const browser = await chromium.launch({
+    args: [
+      // Prefer real GPU when available; falls back to SwiftShader if no GPU
+      '--enable-gpu',
+      '--ignore-gpu-blocklist',
+      isWin ? '--use-angle=d3d11' : '--use-angle=vulkan',
+      '--enable-features=Vulkan,VulkanFromANGLE,DefaultANGLEVulkan',
+      '--enable-unsafe-webgpu',
+      '--enable-unsafe-swiftshader',
+      // Recording-friendly: keep one process so frames stay deterministic
+      '--disable-features=CalculateNativeWinOcclusion',
+    ],
+  });
   const url = 'file://' + HTML_ABS;
 
   // ── Phase 1: WARMUP (no recording, caches fonts/assets) ─────────────
