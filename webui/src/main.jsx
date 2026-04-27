@@ -35,6 +35,21 @@ const providerPresets = {
   },
 };
 
+const steps = [
+  { id: "lead", label: "Lead" },
+  { id: "direction", label: "Direction" },
+  { id: "ai", label: "AI" },
+  { id: "ship", label: "Ship" },
+];
+
+const artifactOptions = [
+  { id: "prototype", label: "Website", hint: "Client-ready landing mockup" },
+  { id: "slides", label: "Pitch deck", hint: "16:9 presentation" },
+  { id: "motion", label: "Motion", hint: "Promo animation concept" },
+  { id: "infographic", label: "One-pager", hint: "Static sales visual" },
+  { id: "review", label: "Review", hint: "Critique an existing design" },
+];
+
 const starterHtml = `<!doctype html>
 <html lang="en">
 <head>
@@ -87,6 +102,7 @@ function App() {
   const [contact, setContact] = useState(stored.contact || "");
   const [shareLink, setShareLink] = useState("");
   const [html, setHtml] = useState(starterHtml);
+  const [step, setStep] = useState("lead");
   const [tab, setTab] = useState("preview");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -135,6 +151,7 @@ function App() {
       if (!response.ok) throw new Error(data.error || "Generation failed");
       setHtml(data.html);
       setTab("preview");
+      setStep("ship");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -171,6 +188,7 @@ function App() {
   }
 
   const preset = providerPresets[provider];
+  const activeStepIndex = steps.findIndex((item) => item.id === step);
 
   return (
     <div className="app-shell">
@@ -183,98 +201,140 @@ function App() {
           </div>
         </div>
 
-        <section className="panel">
-          <label>Provider</label>
-          <div className="segmented">
-            {Object.entries(providerPresets).map(([key, item]) => (
-              <button
-                key={key}
-                className={provider === key ? "active" : ""}
-                onClick={() => chooseProvider(key)}
-                type="button"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </section>
+        <nav className="stepper" aria-label="Workflow">
+          {steps.map((item, index) => (
+            <button
+              key={item.id}
+              className={step === item.id ? "active" : index < activeStepIndex ? "done" : ""}
+              onClick={() => setStep(item.id)}
+              type="button"
+            >
+              <span>{index + 1}</span>
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
-        <section className="panel grid">
-          <label htmlFor="base-url">Base URL</label>
-          <input id="base-url" value={baseUrl} onChange={(event) => setBaseUrl(event.target.value)} />
+        {step === "lead" ? (
+          <section className="panel grow">
+            <div className="section-title">
+              <label>Prospect</label>
+              <p>Capture only what makes the preview feel made for them.</p>
+            </div>
+            <input
+              value={clientName}
+              placeholder="Business name, e.g. Jones Barbecue"
+              onChange={(event) => setClientName(event.target.value)}
+            />
+            <input
+              value={contact}
+              placeholder="Current site, Instagram, or phone"
+              onChange={(event) => setContact(event.target.value)}
+            />
+            <button className="primary" onClick={() => setStep("direction")} type="button">
+              Continue
+            </button>
+          </section>
+        ) : null}
 
-          <label htmlFor="model">Model</label>
-          <input id="model" value={model} onChange={(event) => setModel(event.target.value)} />
-          {provider === "ollama" && ollamaModels.length ? (
-            <select value={model} onChange={(event) => setModel(event.target.value)}>
-              {ollamaModels.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
+        {step === "direction" ? (
+          <section className="panel grow">
+            <div className="section-title">
+              <label>Offer</label>
+              <p>Pick what Jude is sending the prospect.</p>
+            </div>
+            <div className="choice-list">
+              {artifactOptions.map((item) => (
+                <button key={item.id} className={mode === item.id ? "active" : ""} onClick={() => setMode(item.id)} type="button">
+                  <strong>{item.label}</strong>
+                  <span>{item.hint}</span>
+                </button>
               ))}
-            </select>
-          ) : null}
+            </div>
+            <label htmlFor="prompt">Creative brief</label>
+            <textarea id="prompt" value={prompt} onChange={(event) => setPrompt(event.target.value)} />
+            <button className="primary" onClick={() => setStep("ai")} type="button">
+              Continue
+            </button>
+          </section>
+        ) : null}
 
-          <label htmlFor="api-key">API key</label>
-          <input
-            id="api-key"
-            type="password"
-            value={apiKey}
-            placeholder={preset.keyPlaceholder}
-            onChange={(event) => setApiKey(event.target.value)}
-          />
-        </section>
+        {step === "ai" ? (
+          <section className="panel grow">
+            <div className="section-title">
+              <label>Model</label>
+              <p>Select the engine only when you need to change it.</p>
+            </div>
+            <div className="choice-list compact">
+              {Object.entries(providerPresets).map(([key, item]) => (
+                <button key={key} className={provider === key ? "active" : ""} onClick={() => chooseProvider(key)} type="button">
+                  <strong>{item.label}</strong>
+                  <span>{item.model}</span>
+                </button>
+              ))}
+            </div>
+            <details className="advanced">
+              <summary>Advanced provider settings</summary>
+              <label htmlFor="base-url">Base URL</label>
+              <input id="base-url" value={baseUrl} onChange={(event) => setBaseUrl(event.target.value)} />
+              <label htmlFor="model">Model</label>
+              <input id="model" value={model} onChange={(event) => setModel(event.target.value)} />
+              {provider === "ollama" && ollamaModels.length ? (
+                <select value={model} onChange={(event) => setModel(event.target.value)}>
+                  {ollamaModels.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              ) : null}
+            </details>
+            <label htmlFor="api-key">API key</label>
+            <input
+              id="api-key"
+              type="password"
+              value={apiKey}
+              placeholder={preset.keyPlaceholder}
+              onChange={(event) => setApiKey(event.target.value)}
+            />
+            <button className="primary" onClick={generate} disabled={busy} type="button">
+              {busy ? "Generating..." : "Generate mockup"}
+            </button>
+          </section>
+        ) : null}
 
-        <section className="panel">
-          <label>Client</label>
-          <input
-            value={clientName}
-            placeholder="Business name"
-            onChange={(event) => setClientName(event.target.value)}
-          />
-          <input
-            value={contact}
-            placeholder="Website / Instagram / phone"
-            onChange={(event) => setContact(event.target.value)}
-          />
-        </section>
-
-        <section className="panel">
-          <label>Artifact</label>
-          <div className="mode-grid">
-            {["prototype", "slides", "motion", "infographic", "review"].map((item) => (
-              <button key={item} className={mode === item ? "active" : ""} onClick={() => setMode(item)} type="button">
-                {item}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="panel grow">
-          <label htmlFor="prompt">Brief</label>
-          <textarea id="prompt" value={prompt} onChange={(event) => setPrompt(event.target.value)} />
-        </section>
+        {step === "ship" ? (
+          <section className="panel grow">
+            <div className="section-title">
+              <label>Client link</label>
+              <p>Review the preview, then save a durable link for the prospect.</p>
+            </div>
+            <div className="status-card">
+              <strong>{clientName || "Client mockup"}</strong>
+              <span>{shareLink ? "Link copied and ready to send" : "Not saved yet"}</span>
+            </div>
+            <button className="secondary" onClick={() => setStep("direction")} type="button">
+              Revise brief
+            </button>
+            <button className="primary" onClick={saveClientLink} disabled={busy || !html} type="button">
+              {busy ? "Saving..." : "Save client link"}
+            </button>
+            {shareLink ? (
+              <a className="share-link" href={shareLink} target="_blank" rel="noreferrer">
+                {shareLink}
+              </a>
+            ) : null}
+          </section>
+        ) : null}
 
         {error ? <div className="error">{error}</div> : null}
-
-        <button className="primary" onClick={generate} disabled={busy} type="button">
-          {busy ? "Generating..." : "Generate HTML"}
-        </button>
-        <button className="secondary" onClick={saveClientLink} disabled={busy || !html} type="button">
-          Save client link
-        </button>
-        {shareLink ? (
-          <a className="share-link" href={shareLink} target="_blank" rel="noreferrer">
-            {shareLink}
-          </a>
-        ) : null}
       </aside>
 
       <main className="workspace">
         <header className="toolbar">
           <div>
-            <strong>{mode}</strong>
-            <span>{model}</span>
+            <strong>{clientName || artifactOptions.find((item) => item.id === mode)?.label || mode}</strong>
+            <span>{providerPresets[provider]?.label} · {model}</span>
           </div>
           <div className="tabs">
             <button className={tab === "preview" ? "active" : ""} onClick={() => setTab("preview")} type="button">
@@ -342,14 +402,19 @@ function ClientMockup({ shareId }) {
     <main className="public-viewer">
       <header>
         <div>
-          <strong>{mockup.title}</strong>
-          {mockup.clientName ? <span>{mockup.clientName}</span> : null}
+          <span>Website preview</span>
+          <strong>{mockup.clientName || mockup.title}</strong>
         </div>
-        <a href={`mailto:?subject=${encodeURIComponent(mockup.title)}&body=${encodeURIComponent(window.location.href)}`}>
-          Send link
-        </a>
+        <nav>
+          <a href={`mailto:?subject=${encodeURIComponent(mockup.title)}&body=${encodeURIComponent(window.location.href)}`}>
+            Share
+          </a>
+          <a href="#preview">
+            Full preview
+          </a>
+        </nav>
       </header>
-      <iframe title={mockup.title} srcDoc={mockup.html} sandbox="allow-scripts" />
+      <iframe id="preview" title={mockup.title} srcDoc={mockup.html} sandbox="allow-scripts" />
     </main>
   );
 }
