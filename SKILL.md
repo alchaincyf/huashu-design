@@ -731,6 +731,7 @@ Screen 组件接 callback props（`onEnter`、`onClose`、`onTabChange`、`onOpe
 | 反AI slop、内容规范、scale | `references/content-guidelines.md` |
 | React+Babel项目setup | `references/react-setup.md` |
 | 做幻灯片 | `references/slide-decks.md` + `assets/deck_stage.js` |
+| **做营销落地页 / 商家网站 mockup**（first-class track，section 库 + 按业态选 sections + anti-slop 清单） | `references/landing-pages.md` |
 | 导出可编辑 PPTX（html2pptx 4 条硬约束） | `references/editable-pptx.md` + `scripts/html2pptx.js` |
 | 做动画/motion（**先读 pitfalls**）| `references/animation-pitfalls.md` + `references/animations.md` + `assets/animations.jsx` |
 | **动画的正向设计语法**（Anthropic 级叙事/运动/节奏/表达风格）| `references/animation-best-practices.md`（5 段叙事+Expo easing+运动语言 8 条+3 种场景配方）|

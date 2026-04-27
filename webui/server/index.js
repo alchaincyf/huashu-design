@@ -52,7 +52,7 @@ async function listHtml(dir) {
 }
 
 async function buildContext(mode) {
-  const [skill, workflow, styles, verification, animations, slides, demos] =
+  const [skill, workflow, styles, verification, animations, slides, landing, demos] =
     await Promise.all([
       readText("SKILL.md", 12000),
       readText("references/workflow.md", 7000),
@@ -60,6 +60,7 @@ async function buildContext(mode) {
       readText("references/verification.md", 5000),
       mode === "motion" ? readText("references/animations.md", 7000) : "",
       mode === "slides" ? readText("references/slide-decks.md", 7000) : "",
+      mode === "prototype" ? readText("references/landing-pages.md", 7000) : "",
       listHtml("demos"),
     ]);
 
@@ -69,7 +70,7 @@ async function buildContext(mode) {
     "Generate complete, self-contained HTML. Inline CSS and JavaScript are preferred.",
     "Use high-quality layout, restrained interface density, real typography decisions, and clear hierarchy.",
     "Avoid generic AI design defaults: purple gradients, emoji-as-icons, decorative blobs, and fake product silhouettes.",
-    "For clickable prototypes, make the interactions work in the HTML.",
+    "For prototypes the user calls a 'website' or 'landing page', follow the Landing Page Track: pick sections by business type, use real-feeling copy, and run the anti-slop checklist before delivery.",
     "For slide decks, use 16:9 stage sizing and keyboard navigation if relevant.",
     "For animations, expose a duration comment and keep the first frame renderable.",
     "Do not include markdown fences unless the user specifically asks for markdown.",
@@ -88,6 +89,7 @@ async function buildContext(mode) {
     "",
     mode === "motion" ? `Animation excerpt:\n${animations}` : "",
     mode === "slides" ? `Slide excerpt:\n${slides}` : "",
+    mode === "prototype" ? `Landing page track:\n${landing}` : "",
     "",
     "Verification excerpt:",
     verification,
@@ -105,6 +107,25 @@ function providerDefaults(provider) {
     return { baseUrl: "https://api.anthropic.com", model: "claude-sonnet-4-6" };
   }
   return { baseUrl: "https://api.openai.com/v1", model: "gpt-5.4" };
+}
+
+function resolveApiKey(provider, supplied) {
+  if (supplied) return supplied;
+  if (provider === "openai") return process.env.OPENAI_API_KEY || "";
+  if (provider === "anthropic") return process.env.ANTHROPIC_API_KEY || "";
+  if (provider === "ollama-cloud") return process.env.OLLAMA_API_KEY || "";
+  return "";
+}
+
+function providerRequiresKey(provider) {
+  return provider === "openai" || provider === "anthropic" || provider === "ollama-cloud";
+}
+
+function envVarNameFor(provider) {
+  if (provider === "openai") return "OPENAI_API_KEY";
+  if (provider === "anthropic") return "ANTHROPIC_API_KEY";
+  if (provider === "ollama-cloud") return "OLLAMA_API_KEY";
+  return "";
 }
 
 async function getLocalOllamaModels() {
@@ -237,16 +258,25 @@ app.get("/api/ollama-models", async (_req, res) => {
 });
 
 app.post("/api/generate", async (req, res, next) => {
+  const provider = (req.body && req.body.provider) || "ollama";
   try {
     const body = req.body || {};
-    const provider = body.provider || "ollama";
     const defaults = providerDefaults(provider);
     const baseUrl = body.baseUrl || defaults.baseUrl;
     let model = body.model || defaults.model;
     const prompt = String(body.prompt || "").trim();
     const mode = body.mode || "prototype";
+    const apiKey = resolveApiKey(provider, body.apiKey);
 
-    if (!prompt) throw new Error("Prompt is required.");
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required." });
+    }
+    if (providerRequiresKey(provider) && !apiKey) {
+      const envName = envVarNameFor(provider);
+      return res.status(400).json({
+        error: `${provider} requires an API key. Enter one in the API key field or set ${envName} in webui/.env.local (or the repo root .env.local).`,
+      });
+    }
     if (provider === "ollama") {
       const localModels = await getLocalOllamaModels();
       if (localModels.length && !localModels.includes(model)) {
@@ -265,11 +295,17 @@ app.post("/api/generate", async (req, res, next) => {
 
     const generated =
       provider === "anthropic"
-        ? await callAnthropic({ baseUrl, apiKey: body.apiKey, model, system, prompt: fullPrompt })
-        : await callOpenAICompatible({ baseUrl, apiKey: body.apiKey, model, system, prompt: fullPrompt });
+        ? await callAnthropic({ baseUrl, apiKey, model, system, prompt: fullPrompt })
+        : await callOpenAICompatible({ baseUrl, apiKey, model, system, prompt: fullPrompt });
 
     res.json({ html: stripFence(generated), model, provider });
   } catch (error) {
+    if (/^401\b/.test(error.message || "")) {
+      const envName = envVarNameFor(provider) || "the provider's API key";
+      return res.status(401).json({
+        error: `Provider rejected the API key (401). Double-check the key for ${provider}, or update ${envName} in .env.local.`,
+      });
+    }
     next(error);
   }
 });
