@@ -18,11 +18,14 @@ http://localhost:5177
 
 ## Providers
 
-- Ollama: `http://localhost:11434/v1`
+- Ollama Local: `http://localhost:11434/v1`
+- Ollama Cloud: `https://ollama.com/v1`
 - OpenAI-compatible APIs: any `/v1/chat/completions` endpoint
 - Anthropic: native `/v1/messages` endpoint
 
-Local Ollama normally does not need a real API key. Some SDKs require a non-empty value, but Ollama ignores it. Hosted Ollama or proxy gateways may require a real key.
+Local Ollama normally does not need a real API key. Some SDKs require a non-empty value, but Ollama ignores it. Ollama Cloud and hosted proxy gateways require a real key.
+
+API keys are sent to the server for the current generation request but are not persisted in browser local storage by this UI.
 
 ## Notes
 

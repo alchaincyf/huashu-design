@@ -79,6 +79,9 @@ function providerDefaults(provider) {
   if (provider === "ollama") {
     return { baseUrl: "http://localhost:11434/v1", model: "kimi-k2.6:cloud" };
   }
+  if (provider === "ollama-cloud") {
+    return { baseUrl: "https://ollama.com/v1", model: "kimi-k2.6" };
+  }
   if (provider === "anthropic") {
     return { baseUrl: "https://api.anthropic.com", model: "claude-sonnet-4-6" };
   }

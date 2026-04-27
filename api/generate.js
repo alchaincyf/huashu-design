@@ -121,9 +121,18 @@ module.exports = async function handler(req, res) {
         ? "https://api.anthropic.com"
         : provider === "ollama"
           ? "http://localhost:11434/v1"
+          : provider === "ollama-cloud"
+            ? "https://ollama.com/v1"
           : "https://api.openai.com/v1");
     const model =
-      body.model || (provider === "anthropic" ? "claude-sonnet-4-6" : provider === "ollama" ? "kimi-k2.6:cloud" : "gpt-5.4");
+      body.model ||
+      (provider === "anthropic"
+        ? "claude-sonnet-4-6"
+        : provider === "ollama"
+          ? "kimi-k2.6:cloud"
+          : provider === "ollama-cloud"
+            ? "kimi-k2.6"
+            : "gpt-5.4");
     const mode = body.mode || "prototype";
     const prompt = String(body.prompt || "").trim();
     if (!prompt) throw new Error("Prompt is required.");

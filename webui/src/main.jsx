@@ -4,10 +4,16 @@ import "./styles.css";
 
 const providerPresets = {
   ollama: {
-    label: "Ollama",
+    label: "Ollama Local",
     baseUrl: "http://localhost:11434/v1",
     model: "kimi-k2.6:cloud",
     keyPlaceholder: "optional",
+  },
+  "ollama-cloud": {
+    label: "Ollama Cloud",
+    baseUrl: "https://ollama.com/v1",
+    model: "kimi-k2.6",
+    keyPlaceholder: "ollama key",
   },
   openai: {
     label: "OpenAI",
@@ -68,7 +74,7 @@ function App() {
   const [provider, setProvider] = useState(stored.provider || "ollama");
   const [baseUrl, setBaseUrl] = useState(stored.baseUrl || providerPresets.ollama.baseUrl);
   const [model, setModel] = useState(stored.model || providerPresets.ollama.model);
-  const [apiKey, setApiKey] = useState(stored.apiKey || "");
+  const [apiKey, setApiKey] = useState("");
   const [mode, setMode] = useState(stored.mode || "prototype");
   const [prompt, setPrompt] = useState(
     stored.prompt ||
@@ -99,7 +105,7 @@ function App() {
   useEffect(() => {
     localStorage.setItem(
       "huashu-webui-settings",
-      JSON.stringify({ provider, baseUrl, model, apiKey, mode, prompt })
+      JSON.stringify({ provider, baseUrl, model, mode, prompt })
     );
   }, [provider, baseUrl, model, apiKey, mode, prompt]);
 
