@@ -339,7 +339,7 @@ textarea {
 }
 
 .tabs {
-  grid-template-columns: repeat(3, 92px);
+  grid-template-columns: repeat(4, 92px);
 }
 
 .canvas {
@@ -431,6 +431,139 @@ iframe {
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   align-content: start;
   gap: 10px;
+}
+
+.mockup-list {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 18px;
+  border: 1px solid #d5d1c6;
+  border-radius: 8px;
+  background: #fffdfa;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mockup-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mockup-list-head strong {
+  font-size: 15px;
+  display: block;
+}
+
+.mockup-list-head span {
+  font-size: 12px;
+  color: #6b6760;
+}
+
+.mockup-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.mockup-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e7e3d8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.mockup-list li.current {
+  border-color: #d94f30;
+  background: #fff7f2;
+}
+
+.mockup-meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.mockup-meta strong {
+  display: block;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mockup-meta span {
+  font-size: 11px;
+  color: #6b6760;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #efeadc;
+  color: #45423c;
+}
+
+.status-pill.status-review {
+  background: #2f735f;
+  color: #fffdfa;
+}
+
+.status-pill.status-draft {
+  background: #efeadc;
+  color: #45423c;
+}
+
+.mockup-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.mockup-actions button,
+.mockup-actions a {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid #d5d1c6;
+  background: #fffdfa;
+  color: #161616;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.mockup-actions button:hover,
+.mockup-actions a:hover {
+  background: #f7f3ea;
+}
+
+.mockup-actions .danger {
+  color: #c62828;
+  border-color: #f1c4be;
+}
+
+.mockup-actions .danger:hover {
+  background: #fbeae8;
+}
+
+.mockup-list .muted {
+  color: #6b6760;
+  font-size: 13px;
+  margin: 8px 0 0;
 }
 
 .demo-grid a {

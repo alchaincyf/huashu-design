@@ -6,7 +6,7 @@ const http = httpRouter();
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
@@ -58,12 +58,53 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     const { searchParams } = new URL(request.url);
     const shareId = searchParams.get("id");
+
+    if (shareId) {
+      const mockup = await ctx.runQuery(internal.mockups.get, { shareId });
+      if (!mockup) return json({ error: "Mockup not found." }, { status: 404 });
+      return json({ mockup });
+    }
+
+    const limitParam = searchParams.get("limit");
+    const limit = limitParam ? Number.parseInt(limitParam, 10) : undefined;
+    const mockups = await ctx.runQuery(internal.mockups.list, {
+      limit: Number.isFinite(limit) ? limit : undefined,
+    });
+    return json({ mockups });
+  }),
+});
+
+http.route({
+  path: "/mockups",
+  method: "PATCH",
+  handler: httpAction(async (ctx, request) => {
+    const body = await request.json();
+    if (!body?.shareId) {
+      return json({ error: "shareId is required." }, { status: 400 });
+    }
+    const updated = await ctx.runMutation(internal.mockups.update, {
+      shareId: String(body.shareId),
+      title: body.title !== undefined ? String(body.title) : undefined,
+      clientName: body.clientName !== undefined ? String(body.clientName) : undefined,
+      contact: body.contact !== undefined ? String(body.contact) : undefined,
+      status: body.status !== undefined ? String(body.status) : undefined,
+      html: body.html !== undefined ? String(body.html) : undefined,
+      now: Date.now(),
+    });
+    if (!updated) return json({ error: "Mockup not found." }, { status: 404 });
+    return json({ mockup: updated });
+  }),
+});
+
+http.route({
+  path: "/mockups",
+  method: "DELETE",
+  handler: httpAction(async (ctx, request) => {
+    const { searchParams } = new URL(request.url);
+    const shareId = searchParams.get("id");
     if (!shareId) return json({ error: "id is required." }, { status: 400 });
-
-    const mockup = await ctx.runQuery(internal.mockups.get, { shareId });
-    if (!mockup) return json({ error: "Mockup not found." }, { status: 404 });
-
-    return json({ mockup });
+    const result = await ctx.runMutation(internal.mockups.remove, { shareId });
+    return json(result);
   }),
 });
 

@@ -107,6 +107,10 @@ function App() {
   const [clientName, setClientName] = useState(stored.clientName || "");
   const [contact, setContact] = useState(stored.contact || "");
   const [shareLink, setShareLink] = useState("");
+  const [currentShareId, setCurrentShareId] = useState("");
+  const [savedStatus, setSavedStatus] = useState("");
+  const [mockupList, setMockupList] = useState([]);
+  const [mockupListError, setMockupListError] = useState("");
   const [html, setHtml] = useState(starterHtml);
   const [step, setStep] = useState("lead");
   const [tab, setTab] = useState("preview");
@@ -139,6 +143,10 @@ function App() {
       JSON.stringify({ provider, baseUrl, model, mode, prompt, clientName, contact })
     );
   }, [provider, baseUrl, model, apiKey, mode, prompt, clientName, contact]);
+
+  useEffect(() => {
+    if (tab === "saved") refreshMockups();
+  }, [tab]);
 
   function chooseProvider(nextProvider) {
     setProvider(nextProvider);
@@ -221,10 +229,22 @@ function App() {
 
       if (streamError) throw new Error(streamError);
 
-      setHtml(stripFenceClient(acc));
+      const finalHtml = stripFenceClient(acc);
+      setHtml(finalHtml);
       setStreamChars(acc.length);
       setStreamStatus("");
       setStep("ship");
+
+      try {
+        const saved = await autoSaveDraft(finalHtml);
+        if (saved?.shareId) {
+          setCurrentShareId(saved.shareId);
+          setSavedStatus("draft");
+          setShareLink("");
+        }
+      } catch (autoSaveError) {
+        setError(`Generated, but auto-save failed: ${autoSaveError.message}`);
+      }
     } catch (err) {
       setError(err.message);
       setStreamStatus("");
@@ -234,31 +254,125 @@ function App() {
     }
   }
 
+  function mockupTitle() {
+    return clientName ? `${clientName} website mockup` : "Client website mockup";
+  }
+
+  async function autoSaveDraft(htmlForSave) {
+    const response = await fetch("/api/mockups", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        shareId: currentShareId || undefined,
+        title: mockupTitle(),
+        clientName,
+        contact,
+        prompt,
+        html: htmlForSave,
+        status: "draft",
+      }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Could not save draft");
+    return data;
+  }
+
   async function saveClientLink() {
     setBusy(true);
     setError("");
     setShareLink("");
     try {
-      const response = await fetch("/api/mockups", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: clientName ? `${clientName} website mockup` : "Client website mockup",
-          clientName,
-          contact,
-          prompt,
-          html,
-          status: "review",
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not save mockup");
+      let data;
+      if (currentShareId) {
+        const response = await fetch("/api/mockups", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            shareId: currentShareId,
+            title: mockupTitle(),
+            clientName,
+            contact,
+            html,
+            status: "review",
+          }),
+        });
+        data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not update mockup");
+      } else {
+        const response = await fetch("/api/mockups", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: mockupTitle(),
+            clientName,
+            contact,
+            prompt,
+            html,
+            status: "review",
+          }),
+        });
+        data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Could not save mockup");
+        if (data.shareId) setCurrentShareId(data.shareId);
+      }
+      setSavedStatus("review");
       setShareLink(data.shareUrl);
       await navigator.clipboard?.writeText(data.shareUrl).catch(() => {});
     } catch (err) {
       setError(err.message);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function refreshMockups() {
+    setMockupListError("");
+    try {
+      const response = await fetch("/api/mockups");
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not load mockups");
+      setMockupList(data.mockups || []);
+    } catch (err) {
+      setMockupListError(err.message);
+    }
+  }
+
+  async function loadMockup(shareId) {
+    setError("");
+    try {
+      const response = await fetch(`/api/mockups?id=${encodeURIComponent(shareId)}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not load mockup");
+      const mockup = data.mockup;
+      setHtml(mockup.html);
+      setCurrentShareId(mockup.shareId);
+      setSavedStatus(mockup.status || "");
+      setClientName(mockup.clientName || "");
+      setContact(mockup.contact || "");
+      if (mockup.prompt) setPrompt(mockup.prompt);
+      setShareLink(`${window.location.origin}/mockup/${mockup.shareId}`);
+      setStep("ship");
+      setTab("preview");
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function deleteMockup(shareId) {
+    if (!window.confirm("Delete this mockup? This cannot be undone.")) return;
+    setMockupListError("");
+    try {
+      const response = await fetch(`/api/mockups?id=${encodeURIComponent(shareId)}`, { method: "DELETE" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Could not delete mockup");
+      setMockupList((items) => items.filter((item) => item.shareId !== shareId));
+      if (shareId === currentShareId) {
+        setCurrentShareId("");
+        setSavedStatus("");
+        setShareLink("");
+      }
+    } catch (err) {
+      setMockupListError(err.message);
     }
   }
 
@@ -382,17 +496,27 @@ function App() {
           <section className="panel grow">
             <div className="section-title">
               <label>Client link</label>
-              <p>Review the preview, then save a durable link for the prospect.</p>
+              <p>Review the preview, then publish a durable link for the prospect.</p>
             </div>
             <div className="status-card">
               <strong>{clientName || "Client mockup"}</strong>
-              <span>{shareLink ? "Link copied and ready to send" : "Not saved yet"}</span>
+              <span>
+                {savedStatus === "review"
+                  ? "Published — link ready to send"
+                  : savedStatus === "draft"
+                  ? "Auto-saved as draft (private)"
+                  : "Not saved yet"}
+              </span>
             </div>
             <button className="secondary" onClick={() => setStep("direction")} type="button">
               Revise brief
             </button>
             <button className="primary" onClick={saveClientLink} disabled={busy || !html} type="button">
-              {busy ? "Saving..." : "Save client link"}
+              {busy
+                ? "Saving..."
+                : savedStatus === "review"
+                ? "Re-publish update"
+                : "Publish client link"}
             </button>
             {shareLink ? (
               <a className="share-link" href={shareLink} target="_blank" rel="noreferrer">
@@ -418,6 +542,9 @@ function App() {
             <button className={tab === "code" ? "active" : ""} onClick={() => setTab("code")} type="button">
               Code
             </button>
+            <button className={tab === "saved" ? "active" : ""} onClick={() => setTab("saved")} type="button">
+              Saved
+            </button>
             <button className={tab === "demos" ? "active" : ""} onClick={() => setTab("demos")} type="button">
               Demos
             </button>
@@ -441,6 +568,56 @@ function App() {
             </div>
           ) : null}
           {tab === "code" ? <textarea className="code-editor" value={html} onChange={(event) => setHtml(event.target.value)} /> : null}
+          {tab === "saved" ? (
+            <div className="mockup-list">
+              <header className="mockup-list-head">
+                <div>
+                  <strong>Saved mockups</strong>
+                  <span>{mockupList.length} total</span>
+                </div>
+                <button className="secondary" onClick={refreshMockups} type="button">
+                  Refresh
+                </button>
+              </header>
+              {mockupListError ? <div className="error">{mockupListError}</div> : null}
+              {mockupList.length === 0 ? (
+                <p className="muted">
+                  Generate a mockup — drafts auto-save here. Publish from the Ship step to share.
+                </p>
+              ) : (
+                <ul>
+                  {mockupList.map((item) => (
+                    <li key={item.shareId} className={item.shareId === currentShareId ? "current" : ""}>
+                      <div className="mockup-meta">
+                        <strong>{item.title}</strong>
+                        <span>
+                          <span className={`status-pill status-${item.status}`}>{item.status}</span>
+                          {item.clientName ? ` · ${item.clientName}` : ""}
+                          {" · "}
+                          {new Date(item.updatedAt).toLocaleString()}
+                          {" · "}
+                          {Math.round((item.htmlSize || 0) / 100) / 10}KB
+                        </span>
+                      </div>
+                      <div className="mockup-actions">
+                        <button onClick={() => loadMockup(item.shareId)} type="button">
+                          Load
+                        </button>
+                        {item.shareUrl ? (
+                          <a href={item.shareUrl} target="_blank" rel="noreferrer">
+                            Open
+                          </a>
+                        ) : null}
+                        <button className="danger" onClick={() => deleteMockup(item.shareId)} type="button">
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : null}
           {tab === "demos" ? (
             <div className="demo-grid">
               {(context?.demos || []).map((demo) => (

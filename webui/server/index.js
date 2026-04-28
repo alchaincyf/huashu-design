@@ -376,9 +376,19 @@ app.post("/api/generate", async (req, res) => {
 
 app.get("/api/mockups", async (req, res, next) => {
   try {
-    const id = String(req.query.id || "");
-    if (!id) return res.status(400).json({ error: "id is required." });
-    res.json(await convexRequest(`/mockups?id=${encodeURIComponent(id)}`, { method: "GET" }));
+    const id = req.query.id ? String(req.query.id) : "";
+    if (id) {
+      const data = await convexRequest(`/mockups?id=${encodeURIComponent(id)}`, { method: "GET" });
+      return res.json(data);
+    }
+    const limit = req.query.limit ? `?limit=${encodeURIComponent(String(req.query.limit))}` : "";
+    const data = await convexRequest(`/mockups${limit}`, { method: "GET" });
+    const origin = `${req.protocol}://${req.get("host")}`;
+    const mockups = (data.mockups || []).map((mockup) => ({
+      ...mockup,
+      shareUrl: `${origin}/mockup/${mockup.shareId}`,
+    }));
+    res.json({ mockups });
   } catch (error) {
     next(error);
   }
@@ -408,6 +418,35 @@ app.post("/api/mockups", async (req, res, next) => {
       shareId,
       shareUrl: `${req.protocol}://${req.get("host")}/mockup/${shareId}`,
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch("/api/mockups", async (req, res, next) => {
+  try {
+    const body = req.body || {};
+    if (!body.shareId) return res.status(400).json({ error: "shareId is required." });
+    const data = await convexRequest("/mockups", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    res.json({
+      ...data,
+      shareUrl: `${req.protocol}://${req.get("host")}/mockup/${body.shareId}`,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete("/api/mockups", async (req, res, next) => {
+  try {
+    const id = req.query.id ? String(req.query.id) : "";
+    if (!id) return res.status(400).json({ error: "id is required." });
+    const data = await convexRequest(`/mockups?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    res.json(data);
   } catch (error) {
     next(error);
   }

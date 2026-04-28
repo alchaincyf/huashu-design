@@ -44,12 +44,23 @@ async function convexRequest(path, init) {
 
 module.exports = async function handler(req, res) {
   try {
+    const url = new URL(req.url, "http://localhost");
+
     if (req.method === "GET") {
-      const url = new URL(req.url, "http://localhost");
       const id = url.searchParams.get("id");
-      if (!id) return res.status(400).json({ error: "id is required." });
-      const data = await convexRequest(`/mockups?id=${encodeURIComponent(id)}`, { method: "GET" });
-      return res.status(200).json(data);
+      if (id) {
+        const data = await convexRequest(`/mockups?id=${encodeURIComponent(id)}`, { method: "GET" });
+        return res.status(200).json(data);
+      }
+      const limit = url.searchParams.get("limit");
+      const qs = limit ? `?limit=${encodeURIComponent(limit)}` : "";
+      const data = await convexRequest(`/mockups${qs}`, { method: "GET" });
+      const origin = getOrigin(req);
+      const mockups = (data.mockups || []).map((mockup) => ({
+        ...mockup,
+        shareUrl: `${origin}/mockup/${mockup.shareId}`,
+      }));
+      return res.status(200).json({ mockups });
     }
 
     if (req.method === "POST") {
@@ -75,6 +86,29 @@ module.exports = async function handler(req, res) {
         shareId,
         shareUrl: `${getOrigin(req)}/mockup/${shareId}`,
       });
+    }
+
+    if (req.method === "PATCH") {
+      const body = req.body || {};
+      if (!body.shareId) {
+        return res.status(400).json({ error: "shareId is required." });
+      }
+      const data = await convexRequest("/mockups", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      return res.status(200).json({
+        ...data,
+        shareUrl: `${getOrigin(req)}/mockup/${body.shareId}`,
+      });
+    }
+
+    if (req.method === "DELETE") {
+      const id = url.searchParams.get("id");
+      if (!id) return res.status(400).json({ error: "id is required." });
+      const data = await convexRequest(`/mockups?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      return res.status(200).json(data);
     }
 
     return res.status(405).json({ error: "Method not allowed" });
