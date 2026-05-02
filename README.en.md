@@ -24,7 +24,7 @@ Not "decent for AI" quality — it looks like a real design team made it. Give t
 **Every animation in this README was made by huashu-design itself.** No Figma, no After Effects — just a sentence + skill run. Next product launch needs a promo video? You can make it too.
 
 ```
-npx skills add letrquan/huashu-design
+npx skills add alchaincyf/huashu-design
 ```
 
 [See it work](#demo-gallery) · [Install](#install) · [What it does](#what-it-does) · [How it works](#core-mechanics) · [vs. Claude Design](#vs-claude-design)
@@ -48,7 +48,7 @@ npx skills add letrquan/huashu-design
 ## Install
 
 ```bash
-npx skills add letrquan/huashu-design
+npx skills add alchaincyf/huashu-design
 ```
 
 Then just talk to Claude Code:
@@ -272,11 +272,11 @@ huashu-design/
 
 ## Origin Story
 
-The day Anthropic launched Claude Design I played with it until 4 a.m. A few days later I realized I hadn't opened it once since — not because it's bad (it's the most polished product in the category) but because I'd rather have an agent work in my terminal than open any graphical UI.
+The day Anthropic launched Claude Design, Huasheng played with it until 4 a.m. A few days later he realized he hadn't opened it once since — not because it's bad (it's the most polished product in the category) but because he'd rather have an agent work in the terminal than open any graphical UI.
 
-So I had an agent deconstruct Claude Design itself (including the system prompts circulating in the community, the brand asset protocol, the component mechanics), distill it into a structured spec, then write it as a skill installed in my own Claude Code.
+So Huasheng had an agent deconstruct Claude Design itself (including the system prompts circulating in the community, the brand asset protocol, the component mechanics), distill it into a structured spec, then write it as a skill installed in Claude Code.
 
-Thanks to Anthropic for writing the Claude Design prompts so clearly. This kind of derivative work inspired by other products is the new form of open-source culture in the AI era.
+Thanks to Anthropic for writing the Claude Design prompts so clearly, and credit to Huasheng (Huashu) as the creator of huashu-design. This kind of derivative work inspired by other products is the new form of open-source culture in the AI era.
 
 ---
 

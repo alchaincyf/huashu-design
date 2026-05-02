@@ -24,7 +24,7 @@
 **你看到这篇 README 里的每一个动画，都是 huashu-design 自己做的。** 不是 Figma，不是 AE，就是一句话 prompt + skill 跑通。下次产品发布要做宣传片？现在你也能做。
 
 ```
-npx skills add letrquan/huashu-design
+npx skills add alchaincyf/huashu-design
 ```
 
 跨 agent 通用——Claude Code、Cursor、Codex、OpenClaw、Hermes 都能装。
@@ -50,7 +50,7 @@ npx skills add letrquan/huashu-design
 ## 装上就能用
 
 ```bash
-npx skills add letrquan/huashu-design
+npx skills add alchaincyf/huashu-design
 ```
 
 然后在 Claude Code 里直接说话：
@@ -285,11 +285,11 @@ huashu-design/
 
 ## 起源
 
-Anthropic 发布 Claude Design 那天我玩到凌晨四点。几天之后发现自己再也没点开过它，不是它不好——它是这个赛道目前最成熟的产品——是我宁愿让 agent 在终端里帮我干活，也不愿意打开任何图形界面。
+Anthropic 发布 Claude Design 那天，花生玩到凌晨四点。几天之后他发现自己再也没点开过它，不是它不好——它是这个赛道目前最成熟的产品——而是他宁愿让 agent 在终端里帮忙干活，也不愿意打开任何图形界面。
 
-于是让 agent 拆解 Claude Design 本身（包括社区流传的系统提示词、品牌资产协议、组件机制），蒸馏成结构化 spec，再写成 skill 装进自己的 Claude Code。
+于是花生让 agent 拆解 Claude Design 本身（包括社区流传的系统提示词、品牌资产协议、组件机制），蒸馏成结构化 spec，再写成 skill 装进 Claude Code。
 
-感谢 Anthropic 把 Claude Design 的提示词写得清晰。这种基于其他产品灵感的二次创作，是开源文化在 AI 时代的新形态。
+感谢 Anthropic 把 Claude Design 的提示词写得清晰，也把 huashu-design 创作者的署名还给花生（花叔）。这种基于其他产品灵感的二次创作，是开源文化在 AI 时代的新形态。
 
 ---
 

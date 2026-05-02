@@ -24,7 +24,7 @@ Không phải kiểu “AI làm vậy là ổn rồi” — mà là thứ trông
 **Mọi animation trong README này đều do chính huashu-design tạo ra.** Không cần Figma, không cần After Effects — chỉ cần một câu prompt + chạy skill. Lần tới nếu bạn cần video promo cho đợt ra mắt sản phẩm, giờ bạn cũng làm được.
 
 ```
-npx skills add letrquan/huashu-design
+npx skills add alchaincyf/huashu-design
 ```
 
 [Xem demo](#demo-gallery) · [Cài đặt](#cài-đặt) · [Làm được gì](#làm-được-gì) · [Cách hoạt động](#cơ-chế-cốt-lõi) · [So với Claude Design](#so-với-claude-design)
@@ -48,7 +48,7 @@ npx skills add letrquan/huashu-design
 ## Cài đặt
 
 ```bash
-npx skills add letrquan/huashu-design
+npx skills add alchaincyf/huashu-design
 ```
 
 Sau đó chỉ cần nói chuyện với Claude Code:
@@ -263,11 +263,11 @@ huashu-design/
 
 ## Nguồn gốc
 
-Ngày Anthropic ra mắt Claude Design, tôi nghịch nó đến 4 giờ sáng. Vài ngày sau tôi nhận ra mình không mở lại nó thêm lần nào nữa — không phải vì nó tệ (thực ra nó là sản phẩm hoàn thiện nhất trong ngách này), mà vì tôi thích để một agent làm việc trong terminal hơn là phải mở bất kỳ giao diện đồ họa nào.
+Ngày Anthropic ra mắt Claude Design, Huasheng nghịch nó đến 4 giờ sáng. Vài ngày sau anh nhận ra mình không mở lại nó thêm lần nào nữa — không phải vì nó tệ (thực ra nó là sản phẩm hoàn thiện nhất trong ngách này), mà vì anh thích để một agent làm việc trong terminal hơn là phải mở bất kỳ giao diện đồ họa nào.
 
-Vì vậy tôi bảo agent mổ xẻ chính Claude Design (bao gồm cả những system prompt đang lan truyền trong cộng đồng, brand asset protocol, cơ chế component), chưng cất thành một spec có cấu trúc, rồi viết lại thành một skill cài vào Claude Code của riêng mình.
+Vì vậy Huasheng bảo agent mổ xẻ chính Claude Design (bao gồm cả những system prompt đang lan truyền trong cộng đồng, brand asset protocol, cơ chế component), chưng cất thành một spec có cấu trúc, rồi viết lại thành một skill cài vào Claude Code.
 
-Cảm ơn Anthropic vì đã viết prompt cho Claude Design đủ rõ ràng. Kiểu tác phẩm phái sinh được truyền cảm hứng từ sản phẩm khác như vậy chính là một dạng văn hóa mã nguồn mở mới trong kỷ nguyên AI.
+Cảm ơn Anthropic vì đã viết prompt cho Claude Design đủ rõ ràng, và xin ghi công Huasheng (Huashu) là creator của huashu-design. Kiểu tác phẩm phái sinh được truyền cảm hứng từ sản phẩm khác như vậy chính là một dạng văn hóa mã nguồn mở mới trong kỷ nguyên AI.
 
 ---
 
