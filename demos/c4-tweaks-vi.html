@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>c4-tweaks · Slide. See it morph. (Tiếng Việt)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+
+    /* Mock landing page · warm variant (initial state) */
+    --warm-bg: #F6EFE6;
+    --warm-panel: #FFFFFF;
+    --warm-ink: #1A1918;
+    --warm-dim: #8B867E;
+    --warm-hair: rgba(0,0,0,0.08);
+    --warm-accent: #D97757;
+
+    /* Mock landing page · cool variant (after slider 1) */
+    --cool-bg: #0E1620;
+    --cool-panel: #17222E;
+    --cool-ink: #E8EEF5;
+    --cool-dim: #7A8A9B;
+    --cool-hair: rgba(255,255,255,0.08);
+    --cool-accent: #5A8CB8;
+
+    --serif-en: "Source Serif 4", Georgia, serif;
+    --serif-cn: "Noto Serif SC", "Source Serif 4", Georgia, serif;
+    --sans: "Inter", -apple-system, "PingFang SC", "HarmonyOS Sans SC", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform: translate(-50%, -50%);
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Film grain */
+  .grain {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Watermark */
+  .watermark {
+    position: absolute;
+    top: 44px; left: 56px;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.16);
+    z-index: 10;
+  }
+
+  .version-mark {
+    position: absolute;
+    bottom: 44px; right: 56px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.12);
+    z-index: 10;
+  }
+
+  /* ============ Main composition ============ */
+  .composition {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1080px 500px;
+    gap: 80px;
+    padding: 130px 120px 140px 140px;
+    align-items: center;
+    perspective: 2400px;
+  }
+
+  /* ---- Design preview (left) ---- */
+  .preview-frame {
+    position: relative;
+    width: 1080px;
+    height: 800px;
+    border-radius: 18px;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transform: rotateX(6deg) rotateY(-4deg);
+    box-shadow:
+      0 50px 120px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(255,255,255,0.06);
+    opacity: 0;
+    will-change: opacity, transform, background;
+    transition: background 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .preview-frame.warm {
+    background: var(--warm-bg);
+  }
+  .preview-frame.cool {
+    background: var(--cool-bg);
+  }
+
+  /* Browser chrome top bar */
+  .browser-chrome {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--warm-hair);
+    background: var(--warm-panel);
+    transition: all 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .browser-chrome {
+    background: var(--cool-panel);
+    border-bottom-color: var(--cool-hair);
+  }
+  .dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: rgba(0,0,0,0.14);
+  }
+  .cool .dot { background: rgba(255,255,255,0.14); }
+  .url-bar {
+    flex: 1;
+    margin-left: 14px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.04);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--warm-dim);
+    letter-spacing: 0.05em;
+    transition: all 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .url-bar {
+    background: rgba(255,255,255,0.04);
+    color: var(--cool-dim);
+  }
+
+  /* Hero content */
+  .preview-body {
+    padding: 54px 72px 60px 72px;
+    color: var(--warm-ink);
+    transition: color 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .preview-body { color: var(--cool-ink); }
+
+  .preview-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--warm-accent);
+    transition: color 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .preview-eyebrow { color: var(--cool-accent); }
+
+  .preview-title {
+    margin-top: 16px;
+    font-family: var(--serif-en);
+    font-weight: 400;
+    font-size: 86px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    transition: font-family 240ms cubic-bezier(.2,.8,.2,1),
+                font-weight 240ms cubic-bezier(.2,.8,.2,1),
+                letter-spacing 240ms cubic-bezier(.2,.8,.2,1);
+  }
+  .preview-title .em {
+    color: var(--warm-accent);
+    font-style: italic;
+    transition: color 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .preview-title .em { color: var(--cool-accent); }
+
+  .preview-frame.sans .preview-title {
+    font-family: var(--sans);
+    font-weight: 200;
+    letter-spacing: -0.045em;
+  }
+  .preview-frame.sans .preview-title .em {
+    font-style: normal;
+  }
+
+  .preview-sub {
+    margin-top: 24px;
+    font-family: var(--serif-en);
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 720px;
+    color: var(--warm-dim);
+    transition: color 280ms cubic-bezier(.2,.8,.2,1),
+                font-family 240ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .preview-sub { color: var(--cool-dim); }
+  .preview-frame.sans .preview-sub {
+    font-family: var(--sans);
+  }
+
+  /* Mật độ cards grid */
+  .card-grid {
+    margin-top: 54px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    transition: grid-template-columns 280ms cubic-bezier(.2,.8,.2,1),
+                gap 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .preview-frame.dense .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(72px, auto);
+    gap: 10px;
+  }
+
+  .card {
+    padding: 22px 22px 24px 22px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.035);
+    border: 1px solid var(--warm-hair);
+    transition: all 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .card {
+    background: rgba(255,255,255,0.03);
+    border-color: var(--cool-hair);
+  }
+  .preview-frame.dense .card {
+    padding: 12px 14px;
+  }
+
+  .card-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--warm-accent);
+    opacity: 0.16;
+    margin-bottom: 14px;
+    transition: all 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .card-icon { background: var(--cool-accent); }
+  .preview-frame.dense .card-icon {
+    width: 18px; height: 18px;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-family: var(--serif-en);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--warm-ink);
+    letter-spacing: -0.005em;
+    transition: color 280ms cubic-bezier(.2,.8,.2,1),
+                font-family 240ms cubic-bezier(.2,.8,.2,1),
+                font-size 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .card-title { color: var(--cool-ink); }
+  .preview-frame.sans .card-title {
+    font-family: var(--sans);
+    font-weight: 500;
+  }
+  .preview-frame.dense .card-title {
+    font-size: 13px;
+  }
+
+  .card-text {
+    margin-top: 6px;
+    font-family: var(--serif-en);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--warm-dim);
+    transition: all 280ms cubic-bezier(.2,.8,.2,1);
+  }
+  .cool .card-text { color: var(--cool-dim); }
+  .preview-frame.sans .card-text { font-family: var(--sans); }
+  .preview-frame.dense .card-text {
+    font-size: 11px;
+    line-height: 1.3;
+    opacity: 0.85;
+  }
+
+  /* Extra cards (hidden in sparse mode) */
+  .card.extra {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 240ms cubic-bezier(.2,.8,.2,1),
+                transform 240ms cubic-bezier(.2,.8,.2,1),
+                background 280ms cubic-bezier(.2,.8,.2,1),
+                border-color 280ms cubic-bezier(.2,.8,.2,1);
+    pointer-events: none;
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .preview-frame.dense .card.extra {
+    opacity: 1;
+    transform: scale(1);
+    max-height: 120px;
+    padding: 12px 14px;
+  }
+
+  /* ---- Slider panel (right) ---- */
+  .slider-panel {
+    position: relative;
+    width: 500px;
+    opacity: 0;
+    will-change: opacity, transform;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .anchor-line {
+    position: absolute;
+    top: -80px;
+    left: 8px;
+    font-family: var(--serif-en);
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: 0.02em;
+    color: var(--ink-80);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .anchor-line .em {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .slider-item {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .slider-label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .slider-name {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--ink-80);
+    text-transform: uppercase;
+  }
+  .slider-value {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+  }
+
+  /* Track */
+  .track {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background: var(--hairline);
+  }
+  .track-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 10%;
+    background: var(--accent);
+    will-change: width;
+  }
+
+  /* Tick marks */
+  .ticks {
+    position: absolute;
+    inset: -4px 0 -4px 0;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .tick {
+    width: 1px;
+    height: 10px;
+    background: rgba(255,255,255,0.14);
+  }
+
+  /* Knob */
+  .knob {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.6),
+                0 8px 24px rgba(0,0,0,0.5);
+    will-change: left, transform, box-shadow;
+  }
+  .knob.active {
+    box-shadow: 0 0 0 2px var(--accent),
+                0 0 30px rgba(217,119,87,0.45),
+                0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  /* Cursor */
+  .cursor {
+    position: absolute;
+    width: 20px; height: 20px;
+    pointer-events: none;
+    will-change: left, top, opacity;
+    opacity: 0;
+    z-index: 20;
+  }
+  .cursor svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); }
+
+  /* ---- Brand reveal ---- */
+  /* Stage dimmer: fades the composition out just before the panel slides in */
+  .stage-dimmer {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+    opacity: 0;
+    z-index: 40;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  .brand-panel {
+    position: absolute;
+    inset: 0;
+    background: #F5F4F0;
+    transform: translateY(100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    will-change: transform;
+  }
+  .brand-wordmark {
+    font-family: var(--serif-en);
+    font-size: 72px;
+    font-weight: 100;
+    font-variation-settings: "wght" 100;
+    letter-spacing: -0.02em;
+    color: #1A1918;
+    text-align: center;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: opacity, transform, font-variation-settings, font-weight;
+  }
+  .brand-wordmark .accent { color: #D97757; font-weight: inherit; }
+
+  .brand-line {
+    /* Flex-centered, 60px below wordmark (line-height 1 @ 72px → descender + 24 gap) */
+    margin-top: 60px;
+    height: 2px;
+    width: 0;
+    background: #D97757;
+    align-self: center;
+    will-change: width;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <div class="grain"></div>
+  <div class="watermark">HUASHU · DESIGN</div>
+  <div class="version-mark">V2 · 2026</div>
+
+  <div class="composition">
+
+    <!-- LEFT: design preview -->
+    <div class="preview-frame warm" id="preview">
+      <div class="browser-chrome">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <div class="url-bar">yourbrand.design</div>
+      </div>
+      <div class="preview-body">
+        <div class="preview-eyebrow">Agent Studio</div>
+        <div class="preview-title">Built for <span class="em">them</span>.<br/>Who never sleep.</div>
+        <div class="preview-sub">A design system that ships while you rest — ready before you open the file.</div>
+
+        <div class="card-grid" id="cardGrid">
+          <div class="card">
+            <div class="card-icon"></div>
+            <div class="card-title">Brand Assets</div>
+            <div class="card-text">Logos, palettes, type — one source of truth.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon"></div>
+            <div class="card-title">Prototype</div>
+            <div class="card-text">One sentence in, a clickable app out.</div>
+          </div>
+          <div class="card">
+            <div class="card-icon"></div>
+            <div class="card-title">Motion</div>
+            <div class="card-text">Timeline is code. Swap 25 for 60 fps.</div>
+          </div>
+          <div class="card extra">
+            <div class="card-icon"></div>
+            <div class="card-title">Slides</div>
+            <div class="card-text">HTML is PPTX.</div>
+          </div>
+          <div class="card extra">
+            <div class="card-icon"></div>
+            <div class="card-title">Infographic</div>
+            <div class="card-text">Data in, magazine out.</div>
+          </div>
+          <div class="card extra">
+            <div class="card-icon"></div>
+            <div class="card-title">Review</div>
+            <div class="card-text">Five axes. Honest punch list.</div>
+          </div>
+          <div class="card extra">
+            <div class="card-icon"></div>
+            <div class="card-title">Advisor</div>
+            <div class="card-text">Three roads. You pick.</div>
+          </div>
+          <div class="card extra">
+            <div class="card-icon"></div>
+            <div class="card-title">Junior</div>
+            <div class="card-text">Show first. Polish later.</div>
+          </div>
+          <div class="card extra">
+            <div class="card-icon"></div>
+            <div class="card-title">Protocol</div>
+            <div class="card-text">Five steps. No skip.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: slider panel -->
+    <div class="slider-panel" id="panel">
+
+      <div class="anchor-line" id="anchor">
+        Slide. <span class="em">See it morph.</span>
+      </div>
+
+      <!-- Slider 1 · palette -->
+      <div class="slider-item">
+        <div class="slider-label">
+          <span class="slider-name">Palette</span>
+          <span class="slider-value" id="val1">warm</span>
+        </div>
+        <div class="track">
+          <div class="ticks">
+            <span class="tick"></span><span class="tick"></span><span class="tick"></span>
+            <span class="tick"></span><span class="tick"></span>
+          </div>
+          <div class="track-fill" id="fill1"></div>
+          <div class="knob" id="knob1"></div>
+        </div>
+      </div>
+
+      <!-- Slider 2 · type -->
+      <div class="slider-item">
+        <div class="slider-label">
+          <span class="slider-name">Type</span>
+          <span class="slider-value" id="val2">serif</span>
+        </div>
+        <div class="track">
+          <div class="ticks">
+            <span class="tick"></span><span class="tick"></span><span class="tick"></span>
+            <span class="tick"></span><span class="tick"></span>
+          </div>
+          <div class="track-fill" id="fill2"></div>
+          <div class="knob" id="knob2"></div>
+        </div>
+      </div>
+
+      <!-- Slider 3 · density -->
+      <div class="slider-item">
+        <div class="slider-label">
+          <span class="slider-name">Mật độ</span>
+          <span class="slider-value" id="val3">sparse</span>
+        </div>
+        <div class="track">
+          <div class="ticks">
+            <span class="tick"></span><span class="tick"></span><span class="tick"></span>
+            <span class="tick"></span><span class="tick"></span>
+          </div>
+          <div class="track-fill" id="fill3"></div>
+          <div class="knob" id="knob3"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Cursor -->
+    <div class="cursor" id="cursor">
+      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 2 L2 16 L6 12 L9 18 L11 17 L8 11 L14 11 Z"
+              fill="white" stroke="#000" stroke-width="1.2" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stage dimmer (fades scene to black before panel sweeps in) -->
+  <div class="stage-dimmer" id="stageDimmer"></div>
+
+  <!-- Brand reveal layer -->
+  <div class="brand-panel" id="brandPanel">
+    <div class="brand-wordmark" id="brandMark">huashu<span class="accent">-</span>design</div>
+    <div class="brand-line" id="brandLine"></div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // ---------- Fit stage ----------
+  const stage = document.getElementById('stage');
+  function rescale() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  rescale();
+  window.addEventListener('resize', rescale);
+
+  // ---------- Animation ----------
+  const DURATION = 10.0; // seconds
+
+  const preview   = document.getElementById('preview');
+  const panel     = document.getElementById('panel');
+  const anchor    = document.getElementById('anchor');
+  const cursor    = document.getElementById('cursor');
+
+  const knob1 = document.getElementById('knob1');
+  const knob2 = document.getElementById('knob2');
+  const knob3 = document.getElementById('knob3');
+  const fill1 = document.getElementById('fill1');
+  const fill2 = document.getElementById('fill2');
+  const fill3 = document.getElementById('fill3');
+  const val1  = document.getElementById('val1');
+  const val2  = document.getElementById('val2');
+  const val3  = document.getElementById('val3');
+
+  const stageDimmer = document.getElementById('stageDimmer');
+  const brandPanel = document.getElementById('brandPanel');
+  const brandMark  = document.getElementById('brandMark');
+  const brandLine  = document.getElementById('brandLine');
+
+  // Easings
+  const expoOut = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const expoIn  = t => t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
+  const cubicInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function lerp(t, t0, t1, v0, v1, ease) {
+    if (t <= t0) return v0;
+    if (t >= t1) return v1;
+    const k = (t - t0) / (t1 - t0);
+    return v0 + (v1 - v0) * (ease ? ease(k) : k);
+  }
+  function clampLerp(t, t0, t1) {
+    if (t <= t0) return 0;
+    if (t >= t1) return 1;
+    return (t - t0) / (t1 - t0);
+  }
+
+  // Knob motion — drag feel: first 70% is a cubic ease (hand moving),
+  // final 15% is overshoot + snap to target (magnetic arrival).
+  function knobMotion(t, t0, t1, fromPct, toPct) {
+    if (t <= t0) return fromPct;
+    if (t >= t1) return toPct;
+    const k = (t - t0) / (t1 - t0);
+    const direction = toPct > fromPct ? 1 : -1;
+    const range = Math.abs(toPct - fromPct);
+
+    if (k < 0.72) {
+      // Main drag: cubic easeInOut feels like a hand moving
+      const e = cubicInOut(k / 0.72);
+      return fromPct + (toPct - fromPct) * e;
+    } else if (k < 0.85) {
+      // Overshoot past target by ~2%
+      const overK = (k - 0.72) / 0.13;
+      const overshoot = 2.2;
+      return toPct + direction * overshoot * Math.sin(overK * Math.PI);
+    } else {
+      // Settled at target
+      return toPct;
+    }
+  }
+
+  // Timeline (seconds, 10s total)
+  const T = {
+    stage_in:     [0.0, 1.0],       // frame + panel appear
+    anchor_in:    [0.8, 1.4],
+
+    // Slider 1 · palette: warm → cool (1.2s → 3.2s) — arrive at 3.0s
+    s1_cursor_to: [1.3, 1.9],
+    s1_drag:      [1.9, 2.9],
+    s1_settle:    [2.9, 3.1],
+
+    // Slider 2 · type: serif → sans
+    s2_cursor_to: [3.2, 3.7],
+    s2_drag:      [3.7, 4.7],
+    s2_settle:    [4.7, 4.9],
+
+    // Slider 3 · density: sparse → dense
+    s3_cursor_to: [5.0, 5.5],
+    s3_drag:      [5.5, 6.5],
+    s3_settle:    [6.5, 6.7],
+
+    hold:         [6.7, 8.0],
+
+    // Brand reveal (cream walloff · aligned with hero-v10 signature)
+    scene_out:    [8.0, 8.3],   // main composition fade to black (0.3s)
+    brand_panel:  [8.3, 8.7],   // cream panel sweeps up from bottom, expoOut (0.4s)
+    brand_mark:   [8.7, 9.3],   // wordmark: wght 100→500 + y 20→0 + opacity 0→1 (0.6s)
+    brand_line:   [9.3, 9.7],   // orange line expands 0→280 from center (0.4s)
+    brand_hold:   [9.7, 10.0],  // hold final frame
+  };
+
+  // Slider-to-state logic. Value-changes happen at settle start.
+  let state = { palette: 'warm', type: 'serif', density: 'sparse' };
+  let lastStateHash = '';
+  function updatePreview() {
+    preview.classList.remove('warm', 'cool', 'sans', 'dense');
+    if (state.palette === 'warm') preview.classList.add('warm');
+    else preview.classList.add('cool');
+    if (state.type === 'sans') preview.classList.add('sans');
+    if (state.density === 'dense') preview.classList.add('dense');
+  }
+  updatePreview();
+
+  function setKnobState(knob, active) {
+    if (active) knob.classList.add('active');
+    else knob.classList.remove('active');
+  }
+
+  function setValueLabel(el, text) {
+    if (el.textContent !== text) el.textContent = text;
+  }
+
+  // ---------- Cursor path (in composition coords) ----------
+  // Composition uses grid: left column 1220 + 60 gap, panel is at right.
+  // We'll position cursor using .composition-relative absolute positioning.
+  // Cursor is child of .composition, whose padding is 130/100/140/140.
+  // So coords relative to .composition padding-box.
+  // Simpler: cursor is absolute in .stage coords since parent composition
+  // covers full stage. Use inline style left/top in px.
+
+  // Anchor positions (rough — will fine-tune):
+  const CURSOR_PARK   = { x: 1900, y: 1080 }; // off-screen bottom-right
+  // Slider tracks: panel starts around x≈1420, width 520. Each track spans that width.
+  // We'll measure actual rect at first tick.
+  let sliderRects = null;
+  function measureRects() {
+    const stageRect = stage.getBoundingClientRect();
+    const scale = stageRect.width / 1920;
+    const getTrackBox = (id) => {
+      const el = document.getElementById(id).parentElement; // .track
+      const r = el.getBoundingClientRect();
+      return {
+        left: (r.left - stageRect.left) / scale,
+        top:  (r.top  - stageRect.top)  / scale,
+        width:  r.width / scale,
+        height: r.height / scale,
+      };
+    };
+    sliderRects = {
+      s1: getTrackBox('knob1'),
+      s2: getTrackBox('knob2'),
+      s3: getTrackBox('knob3'),
+    };
+  }
+
+  function positionCursor(x, y, opacity) {
+    cursor.style.left = x + 'px';
+    cursor.style.top  = y + 'px';
+    cursor.style.opacity = opacity;
+  }
+
+  function knobLeft(id, pct) {
+    const el = document.getElementById(id);
+    el.style.left = pct + '%';
+  }
+  function fillWidth(id, pct) {
+    const el = document.getElementById(id);
+    el.style.width = pct + '%';
+  }
+
+  // Tick / render
+  let startTs = null;
+  let frameCount = 0;
+
+  function tick(ts) {
+    if (!startTs) startTs = ts;
+    const t = (ts - startTs) / 1000;
+
+    // Measure rects once
+    if (!sliderRects && frameCount > 1) {
+      measureRects();
+    }
+
+    // --- Stage in ---
+    const stageK = clampLerp(t, T.stage_in[0], T.stage_in[1]);
+    const stageOp = cubicOut(stageK);
+    preview.style.opacity = stageOp;
+    preview.style.transform = `rotateX(${lerp(t, T.stage_in[0], T.stage_in[1], 10, 6, cubicOut)}deg) rotateY(-4deg) translateY(${lerp(t, T.stage_in[0], T.stage_in[1], 20, 0, expoOut)}px)`;
+    panel.style.opacity = stageOp;
+    panel.style.transform = `translateX(${lerp(t, T.stage_in[0], T.stage_in[1], 30, 0, expoOut)}px)`;
+
+    // Anchor
+    const aK = clampLerp(t, T.anchor_in[0], T.anchor_in[1]);
+    anchor.style.opacity = cubicOut(aK);
+    anchor.style.transform = `translateY(${lerp(t, T.anchor_in[0], T.anchor_in[1], 10, 0, expoOut)}px)`;
+
+    // Snap point: when knob reaches target (72% of drag duration)
+    const s1SnapT = T.s1_drag[0] + (T.s1_drag[1] - T.s1_drag[0]) * 0.72;
+    const s2SnapT = T.s2_drag[0] + (T.s2_drag[1] - T.s2_drag[0]) * 0.72;
+    const s3SnapT = T.s3_drag[0] + (T.s3_drag[1] - T.s3_drag[0]) * 0.72;
+
+    // --- Slider 1: palette ---
+    // Knob 10% → 90%
+    const k1pct = knobMotion(t, T.s1_drag[0], T.s1_drag[1], 10, 90);
+    knobLeft('knob1', k1pct); fillWidth('fill1', k1pct);
+    setKnobState(knob1, t >= T.s1_cursor_to[0] && t < T.s1_settle[1] + 0.2);
+    if (t >= s1SnapT && state.palette !== 'cool') {
+      state.palette = 'cool'; updatePreview(); setValueLabel(val1, 'cool');
+    }
+
+    // --- Slider 2: type ---
+    const k2pct = knobMotion(t, T.s2_drag[0], T.s2_drag[1], 10, 90);
+    knobLeft('knob2', k2pct); fillWidth('fill2', k2pct);
+    setKnobState(knob2, t >= T.s2_cursor_to[0] && t < T.s2_settle[1] + 0.2);
+    if (t >= s2SnapT && state.type !== 'sans') {
+      state.type = 'sans'; updatePreview(); setValueLabel(val2, 'sans');
+    }
+
+    // --- Slider 3: density ---
+    const k3pct = knobMotion(t, T.s3_drag[0], T.s3_drag[1], 10, 90);
+    knobLeft('knob3', k3pct); fillWidth('fill3', k3pct);
+    setKnobState(knob3, t >= T.s3_cursor_to[0] && t < T.s3_settle[1] + 0.2);
+    if (t >= s3SnapT && state.density !== 'dense') {
+      state.density = 'dense'; updatePreview(); setValueLabel(val3, 'dense');
+    }
+
+    // --- Cursor choreography ---
+    if (sliderRects) {
+      const r1 = sliderRects.s1, r2 = sliderRects.s2, r3 = sliderRects.s3;
+      // Positions of knob at 10% and 90%
+      const k1Start = { x: r1.left + r1.width * 0.10, y: r1.top + r1.height/2 };
+      const k1End   = { x: r1.left + r1.width * 0.90, y: r1.top + r1.height/2 };
+      const k2Start = { x: r2.left + r2.width * 0.10, y: r2.top + r2.height/2 };
+      const k2End   = { x: r2.left + r2.width * 0.90, y: r2.top + r2.height/2 };
+      const k3Start = { x: r3.left + r3.width * 0.10, y: r3.top + r3.height/2 };
+      const k3End   = { x: r3.left + r3.width * 0.90, y: r3.top + r3.height/2 };
+
+      let cx = CURSOR_PARK.x, cy = CURSOR_PARK.y, co = 0;
+
+      if (t < T.s1_cursor_to[0]) {
+        // still off-screen (or just appeared)
+        cx = CURSOR_PARK.x; cy = CURSOR_PARK.y; co = 0;
+      } else if (t < T.s1_cursor_to[1]) {
+        // cursor flies to s1 knob start
+        const k = clampLerp(t, T.s1_cursor_to[0], T.s1_cursor_to[1]);
+        const e = cubicOut(k);
+        cx = lerp(t, T.s1_cursor_to[0], T.s1_cursor_to[1], CURSOR_PARK.x, k1Start.x, cubicOut);
+        cy = lerp(t, T.s1_cursor_to[0], T.s1_cursor_to[1], CURSOR_PARK.y, k1Start.y, cubicOut);
+        co = e;
+      } else if (t < T.s1_drag[1]) {
+        // dragging s1
+        cx = r1.left + (r1.width * k1pct / 100);
+        cy = r1.top + r1.height/2;
+        co = 1;
+      } else if (t < T.s2_cursor_to[0]) {
+        cx = k1End.x; cy = k1End.y; co = 1;
+      } else if (t < T.s2_cursor_to[1]) {
+        cx = lerp(t, T.s2_cursor_to[0], T.s2_cursor_to[1], k1End.x, k2Start.x, cubicInOut);
+        cy = lerp(t, T.s2_cursor_to[0], T.s2_cursor_to[1], k1End.y, k2Start.y, cubicInOut);
+        co = 1;
+      } else if (t < T.s2_drag[1]) {
+        cx = r2.left + (r2.width * k2pct / 100);
+        cy = r2.top + r2.height/2;
+        co = 1;
+      } else if (t < T.s3_cursor_to[0]) {
+        cx = k2End.x; cy = k2End.y; co = 1;
+      } else if (t < T.s3_cursor_to[1]) {
+        cx = lerp(t, T.s3_cursor_to[0], T.s3_cursor_to[1], k2End.x, k3Start.x, cubicInOut);
+        cy = lerp(t, T.s3_cursor_to[0], T.s3_cursor_to[1], k2End.y, k3Start.y, cubicInOut);
+        co = 1;
+      } else if (t < T.s3_drag[1]) {
+        cx = r3.left + (r3.width * k3pct / 100);
+        cy = r3.top + r3.height/2;
+        co = 1;
+      } else if (t < T.hold[1]) {
+        // fade out cursor
+        cx = k3End.x; cy = k3End.y;
+        co = lerp(t, T.s3_drag[1], T.hold[1], 1, 0, cubicOut);
+      }
+
+      positionCursor(cx, cy, co);
+    }
+
+    // --- Brand reveal (cream walloff · aligned with hero-v10 signature) ---
+    // 1) Scene dimmer: composition fades to black (0.3s)
+    const soK = clampLerp(t, T.scene_out[0], T.scene_out[1]);
+    stageDimmer.style.opacity = cubicOut(soK);
+
+    // 2) Cream panel sweeps up from bottom, expoOut (0.4s)
+    const bpK = clampLerp(t, T.brand_panel[0], T.brand_panel[1]);
+    const panelY = lerp(t, T.brand_panel[0], T.brand_panel[1], 100, 0, expoOut);
+    brandPanel.style.transform = `translateY(${panelY}%)`;
+
+    // 3) Wordmark: font-weight 100→500 + y 20→0 + opacity 0→1, expoOut (0.6s)
+    const bmK = clampLerp(t, T.brand_mark[0], T.brand_mark[1]);
+    const bmE = expoOut(bmK);
+    const wght = 100 + (500 - 100) * bmE;
+    brandMark.style.opacity = bmE;
+    brandMark.style.transform = `translateY(${20 * (1 - bmE)}px)`;
+    brandMark.style.fontWeight = Math.round(wght);
+    brandMark.style.fontVariationSettings = `"wght" ${wght.toFixed(0)}`;
+
+    // 4) Orange line: width 0→280 from center, cubicOut (0.4s)
+    const blK = clampLerp(t, T.brand_line[0], T.brand_line[1]);
+    brandLine.style.width = (280 * cubicOut(blK)) + 'px';
+
+    frameCount++;
+
+    // Loop or stop
+    if (t < DURATION) {
+      requestAnimationFrame(tick);
+    } else {
+      if (window.__recording === true) {
+        // recording mode: hold last frame
+        return;
+      }
+      // Restart after 1s pause (for manual viewing)
+      setTimeout(() => {
+        startTs = null;
+        state = { palette: 'warm', type: 'serif', density: 'sparse' };
+        updatePreview();
+        setValueLabel(val1, 'warm'); setValueLabel(val2, 'serif'); setValueLabel(val3, 'sparse');
+        requestAnimationFrame(tick);
+      }, 900);
+    }
+  }
+
+  // Start animation after fonts ready
+  const startAnim = () => {
+    requestAnimationFrame((ts) => {
+      startTs = ts;
+      window.__ready = true; // signal for render-video.js
+      requestAnimationFrame(tick);
+    });
+  };
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(startAnim);
+  } else {
+    setTimeout(startAnim, 500);
+  }
+})();
+</script>
+
+</body>
+</html>

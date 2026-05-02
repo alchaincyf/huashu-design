@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>c2-slides-pptx · English · v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --dim: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+    --cd-bg: #F5F4F0;
+    --cd-panel: #FFFFFF;
+    --cd-ink: #1A1918;
+    --cd-dim: #8B867E;
+    --cd-hair: rgba(0,0,0,0.08);
+
+    --serif-cn: "Source Serif 4", Georgia, serif;
+    --serif-en: "Source Serif 4", Georgia, serif;
+    --sans: "Inter", -apple-system, system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Film grain (2% opacity) */
+  .stage::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.025;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 200;
+  }
+
+  .watermark-tl {
+    position: absolute;
+    top: 40px; left: 56px;
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.16);
+    z-index: 180;
+    pointer-events: none;
+  }
+
+  /* ====== Beat 1: browser-fullscreen deck ====== */
+  .beat1 {
+    position: absolute; inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+  }
+
+  .deck-window {
+    width: 1400px;
+    height: 788px;
+    border-radius: 14px;
+    background: #101010;
+    border: 1px solid var(--hairline);
+    box-shadow: 0 40px 120px -30px rgba(217,119,87,0.18),
+                0 0 0 1px rgba(255,255,255,0.03);
+    position: relative;
+    will-change: transform, opacity;
+  }
+  .deck-window .deck-body-wrap {
+    position: absolute;
+    top: 44px; left: 0; right: 0; bottom: 0;
+    border-radius: 0 0 14px 14px;
+    overflow: hidden;
+    background: #0A0A0A;
+  }
+  .deck-chrome {
+    height: 44px;
+    background: #161616;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    gap: 14px;
+  }
+  .deck-chrome .traffic {
+    display: flex; gap: 8px;
+  }
+  .deck-chrome .traffic .d {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--hairline);
+  }
+  .deck-chrome .url {
+    flex: 1;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .deck-chrome .page-count {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  .deck-slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0A0A0A;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 96px 120px;
+    will-change: transform, opacity;
+  }
+  .deck-slide .eyebrow {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .deck-slide h1 {
+    font-family: var(--serif-cn);
+    font-size: 92px;
+    font-weight: 500;
+    line-height: 1.08;
+    color: var(--ink);
+    margin: 0 0 28px 0;
+    letter-spacing: -0.01em;
+  }
+  .deck-slide .sub {
+    font-family: var(--sans);
+    font-size: 22px;
+    color: var(--ink-60);
+    line-height: 1.5;
+    max-width: 780px;
+  }
+  .deck-slide .hairline {
+    margin-top: 48px;
+    width: 80px;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  /* Key press indicator — sits below the window */
+  .key-hint {
+    position: absolute;
+    top: calc(50% + 440px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    opacity: 0;
+    will-change: opacity;
+    z-index: 30;
+  }
+  .key-hint .kbd {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 36px; height: 36px;
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.04);
+    color: var(--ink-80);
+    font-size: 14px;
+    will-change: background, color, transform;
+  }
+
+  /* ====== Beat 2: split screen — HTML left, PowerPoint right ====== */
+  .beat2 {
+    position: absolute; inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 56px;
+    opacity: 0;
+    padding: 0 96px;
+    will-change: opacity;
+  }
+
+  .split-window {
+    width: 820px;
+    height: 580px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    will-change: transform, opacity;
+  }
+
+  /* Left: HTML deck shrunk */
+  .split-left {
+    background: #0A0A0A;
+    border: 1px solid var(--hairline);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.6);
+  }
+  .split-left .mini-chrome {
+    height: 30px;
+    background: #161616;
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .split-left .mini-chrome .d {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--hairline);
+  }
+  .split-left .mini-chrome .label {
+    margin-left: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .split-left .mini-slide {
+    padding: 56px 64px;
+    height: calc(100% - 30px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .split-left .mini-eye {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .split-left .mini-title {
+    font-family: var(--serif-cn);
+    font-size: 54px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .split-left .mini-sub {
+    margin-top: 20px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink-60);
+    line-height: 1.5;
+  }
+  .split-left .mini-hair {
+    margin-top: 28px;
+    width: 52px; height: 2px;
+    background: var(--accent);
+  }
+
+  /* Right: PowerPoint chrome */
+  .split-right {
+    background: #F3F2EE;
+    border: 1px solid rgba(0,0,0,0.2);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.6);
+  }
+  .ppt-titlebar {
+    height: 32px;
+    background: #C44A36;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .ppt-titlebar .pp-logo {
+    width: 18px; height: 18px;
+    background: #fff;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    color: #C44A36;
+    font-weight: 700;
+    font-size: 11px;
+    font-family: var(--sans);
+  }
+  .ppt-titlebar .title-text { opacity: 0.92; }
+  .ppt-titlebar .win-dots {
+    margin-left: auto;
+    display: flex; gap: 10px;
+    opacity: 0.7;
+  }
+  .ppt-titlebar .win-dots span {
+    width: 10px; height: 10px; border: 1px solid rgba(255,255,255,0.7);
+    border-radius: 1px;
+  }
+
+  .ppt-toolbar {
+    height: 40px;
+    background: #EAE8E3;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 14px;
+    font-family: var(--sans);
+    font-size: 12px;
+    color: #4A4843;
+  }
+  .ppt-toolbar .tool {
+    display: flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .ppt-toolbar .tool.active {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    color: var(--cd-ink);
+  }
+  .ppt-toolbar .tool .ico {
+    width: 14px; height: 14px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    opacity: 0.7;
+  }
+  .ppt-toolbar .font-name {
+    padding: 4px 10px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 3px;
+    min-width: 140px;
+    font-size: 12px;
+    color: var(--cd-ink);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .ppt-toolbar .divider {
+    width: 1px; height: 20px;
+    background: rgba(0,0,0,0.08);
+  }
+
+  /* PPT canvas (the actual slide) */
+  .ppt-canvas {
+    height: calc(100% - 32px - 40px);
+    background: #D8D4CB;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ppt-slide {
+    background: #0A0A0A;
+    border-radius: 3px;
+    width: 100%;
+    height: 100%;
+    padding: 56px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+  .ppt-slide .ppt-eye {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .ppt-slide .ppt-title-frame {
+    position: relative;
+    display: inline-block;
+    padding: 6px 10px;
+    margin: -6px -10px;
+    border-radius: 2px;
+    transition: box-shadow 0.12s ease;
+    align-self: flex-start;
+    max-width: fit-content;
+    min-width: 160px;
+  }
+  .ppt-slide .ppt-title-frame.selected {
+    box-shadow:
+      0 0 0 1px rgba(217,119,87,0.0),
+      inset 0 0 0 0 rgba(217,119,87,0.0);
+  }
+  .ppt-slide .ppt-title-frame.editing {
+    box-shadow:
+      0 0 0 1.5px var(--accent),
+      0 0 0 3px rgba(217,119,87,0.2);
+  }
+  .ppt-slide .ppt-title {
+    font-family: var(--serif-cn);
+    font-size: 54px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    display: inline;
+    position: relative;
+  }
+  .ppt-slide .edit-caret {
+    display: inline-block;
+    width: 2px;
+    height: 52px;
+    background: var(--accent);
+    vertical-align: -8px;
+    margin: 0 2px;
+    opacity: 0;
+  }
+  .ppt-slide .ppt-sub {
+    margin-top: 20px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink-60);
+    line-height: 1.5;
+  }
+  .ppt-slide .ppt-hair {
+    margin-top: 28px;
+    width: 52px; height: 2px;
+    background: var(--accent);
+  }
+  /* Selection handles (corners) */
+  .ppt-slide .ppt-title-frame .handle {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border: 1.5px solid #fff;
+    border-radius: 1px;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ppt-slide .ppt-title-frame .handle.tl { top: -4px; left: -4px; }
+  .ppt-slide .ppt-title-frame .handle.tr { top: -4px; right: -4px; }
+  .ppt-slide .ppt-title-frame .handle.bl { bottom: -4px; left: -4px; }
+  .ppt-slide .ppt-title-frame .handle.br { bottom: -4px; right: -4px; }
+  .ppt-slide .ppt-title-frame.selected .handle { opacity: 1; }
+  .ppt-slide .ppt-title-frame.editing .handle { opacity: 0; }
+
+  /* Mouse cursor */
+  .cursor {
+    position: absolute;
+    top: 0; left: 0;
+    width: 22px; height: 30px;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  }
+  .cursor svg { width: 100%; height: 100%; }
+
+  /* Double-click ripple */
+  .dblclick-ripple {
+    position: absolute;
+    top: 0; left: 0;
+    width: 20px; height: 20px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 45;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+
+  /* Connection line between two windows */
+  .connector {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    will-change: opacity;
+    z-index: 10;
+  }
+  .connector svg { width: 100%; height: 100%; }
+  .connector-label {
+    position: absolute;
+    top: calc(50% + 72px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  /* Stage labels above windows */
+  .split-label {
+    position: absolute;
+    top: -48px;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--ink-60);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity;
+    white-space: nowrap;
+  }
+  .split-label .em { color: var(--accent); }
+
+  /* ====== Brand Reveal (米色面板 · hero-v10 系列 signature) ====== */
+  .brand-panel {
+    position: absolute;
+    inset: 0;
+    background: var(--cd-bg);
+    transform: translateY(100%);
+    will-change: transform;
+    z-index: 80;
+  }
+  .brand-reveal {
+    position: absolute;
+    inset: 0;
+    z-index: 81;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  .brand-reveal .brand-wordmark {
+    font-family: var(--serif-en);
+    font-size: 72px;
+    font-weight: 100;
+    font-variation-settings: "wght" 100;
+    letter-spacing: -0.01em;
+    color: var(--cd-ink);
+    line-height: 1;
+    opacity: 0;
+    will-change: opacity, transform, font-variation-settings;
+  }
+  .brand-reveal .brand-wordmark .accent {
+    color: var(--accent);
+    font-weight: inherit;
+  }
+  .brand-reveal .brand-line {
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    margin-top: 60px;
+    will-change: width;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <div class="watermark-tl">HUASHU · DESIGN</div>
+
+  <!-- ====== Beat 1 ====== -->
+  <div class="beat1" id="beat1">
+    <div class="deck-window" id="deckWindow">
+      <div class="deck-chrome">
+        <div class="traffic"><span class="d"></span><span class="d"></span><span class="d"></span></div>
+        <div class="url">localhost:8080 / deck · presenting</div>
+        <div class="page-count" id="pageCount">3 / 12</div>
+      </div>
+
+      <div class="deck-body-wrap">
+        <div class="deck-slide" id="slideA">
+          <div class="eyebrow">AI PSYCHOLOGY · 03</div>
+          <h1>Tư duy<br/>có thể uốn nắn</h1>
+          <div class="sub">Agent không chỉ là công cụ. Chúng có khuynh hướng riêng.</div>
+          <div class="hairline"></div>
+        </div>
+
+        <div class="deck-slide" id="slideB" style="opacity:0; transform: translateX(60px);">
+          <div class="eyebrow">AI PSYCHOLOGY · 04</div>
+          <h1>Injection<br/>&amp; Điều hướng</h1>
+          <div class="sub">Cả một thế giới ẩn trong các tham số.</div>
+          <div class="hairline"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="key-hint" id="keyHint">
+      <span>NHẤN</span>
+      <span class="kbd" id="kbdKey">→</span>
+    </div>
+  </div>
+
+  <!-- ====== Beat 2: Split Screen ====== -->
+  <div class="beat2" id="beat2">
+    <!-- LEFT: HTML deck -->
+    <div class="split-col" style="position: relative;">
+      <div class="split-label" id="labelLeft">HTML · <span class="em">CHỈ ĐỌC</span></div>
+      <div class="split-window split-left" id="splitLeft">
+      <div class="mini-chrome">
+        <span class="d"></span><span class="d"></span><span class="d"></span>
+        <span class="label">localhost:8080/deck</span>
+      </div>
+      <div class="mini-slide">
+        <div class="mini-eye">AI PSYCHOLOGY · 03</div>
+        <div class="mini-title">Tư duy<br/>có thể uốn nắn</div>
+        <div class="mini-sub">Agent không chỉ là công cụ. Chúng có khuynh hướng riêng.</div>
+        <div class="mini-hair"></div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Connector -->
+    <div class="connector" id="connector">
+      <svg viewBox="0 0 56 120" fill="none">
+        <line x1="4" y1="60" x2="52" y2="60" stroke="#D97757" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <polygon points="44,54 54,60 44,66" fill="#D97757"/>
+      </svg>
+    </div>
+    <div class="connector-label" id="connectorLabel">html2pptx.js</div>
+
+    <!-- RIGHT: PowerPoint -->
+    <div class="split-col" style="position: relative;">
+      <div class="split-label" id="labelRight">PowerPoint · <span class="em">VĂN BẢN CHỈNH ĐƯỢC</span></div>
+      <div class="split-window split-right" id="splitRight">
+      <div class="ppt-titlebar">
+        <div class="pp-logo">P</div>
+        <div class="title-text">ai-psychology-talk.pptx - PowerPoint</div>
+        <div class="win-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="ppt-toolbar">
+        <div class="tool">
+          <span class="ico"></span>
+          <span class="font-name"><span id="fontName">Source Serif 4</span><span style="opacity:0.5">▾</span></span>
+        </div>
+        <div class="divider"></div>
+        <div class="tool"><span style="font-weight:700">B</span></div>
+        <div class="tool" style="font-style:italic">I</div>
+        <div class="tool" style="text-decoration:underline">U</div>
+        <div class="divider"></div>
+        <div class="tool active"><span class="ico" style="background:#D97757;border-color:#D97757"></span></div>
+      </div>
+
+      <div class="ppt-canvas">
+        <div class="ppt-slide">
+          <div class="ppt-eye">AI PSYCHOLOGY · 03</div>
+          <div class="ppt-title-frame" id="titleFrame">
+            <span class="handle tl"></span>
+            <span class="handle tr"></span>
+            <span class="handle bl"></span>
+            <span class="handle br"></span>
+            <span class="ppt-title" id="titleText">Tư duy có thể uốn nắn</span><span class="edit-caret" id="caret"></span>
+          </div>
+          <div class="ppt-sub">Agent không chỉ là công cụ. Chúng có khuynh hướng riêng.</div>
+          <div class="ppt-hair"></div>
+        </div>
+
+        <!-- Cursor arrow -->
+        <div class="cursor" id="cursor">
+          <svg viewBox="0 0 22 30" fill="none">
+            <path d="M2 2 L2 22 L8 17 L12 26 L16 24 L12 15 L20 14 Z"
+                  fill="#1A1918" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <!-- Double-click ripple -->
+        <div class="dblclick-ripple" id="ripple"></div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== Brand Reveal (米色面板 · hero-v10 signature) ====== -->
+  <div class="brand-panel" id="brandPanel"></div>
+  <div class="brand-reveal" id="brandReveal">
+    <div class="brand-wordmark" id="wordmark">huashu<span class="accent">-</span>design</div>
+    <div class="brand-line" id="brandLine"></div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // ---------- Fit stage ----------
+  const stage = document.getElementById('stage');
+  function rescale() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  rescale();
+  window.addEventListener('resize', rescale);
+
+  // ---------- Easings ----------
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const expoOut = t => (t <= 0) ? 0 : (t >= 1) ? 1 : 1 - Math.pow(2, -10 * t);
+  const expoIn = t => (t <= 0) ? 0 : (t >= 1) ? 1 : Math.pow(2, 10 * (t - 1));
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  const easeInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+  function lerp(time, start, end, fromV, toV, ease) {
+    if (time <= start) return fromV;
+    if (time >= end) return toV;
+    let p = (time - start) / (end - start);
+    if (ease) p = ease(p);
+    return fromV + (toV - fromV) * p;
+  }
+  function clampLerp(time, start, end) {
+    if (time <= start) return 0;
+    if (time >= end) return 1;
+    return (time - start) / (end - start);
+  }
+
+  // ---------- Timeline (10s total) ----------
+  const T = {
+    DURATION: 10.0,
+
+    // Beat 1: 0 - 2s
+    deckIn:       [0.15, 0.9],       // browser fade+rise
+    keyHintIn:    [0.6, 1.1],
+    keyPress:     [1.25, 1.4],       // arrow key highlight
+    slideFlip:    [1.3, 1.9],        // slide A→B
+    beat1Out:     [2.0, 2.4],
+
+    // Beat 2: split screen: 2.2 - 8.0s
+    beat2In:      [2.3, 2.9],
+    labelsIn:     [3.0, 3.5],
+
+    cursorIn:     [3.1, 3.4],        // cursor arrives on right side
+    cursorMove1:  [3.4, 4.1],        // cursor moves to title
+    dblclick:     [4.1, 4.3],        // double click
+    frameSelect:  [4.15, 4.35],      // frame shows handles
+    frameEdit:    [4.4, 4.55],       // frame enters edit mode
+    caretShowStart: 4.5,
+    textDelete:   [4.6, 5.4],        // delete original text char by char
+    textRetype:   [5.5, 7.2],        // type new text char by char
+    commitEdit:   [7.3, 7.5],        // exit edit mode
+
+    connectorIn:  [3.3, 3.9],
+    beat2Out:     [8.0, 8.3],        // main scene fades to 0 (0.3s)
+
+    // Brand Reveal (米色面板 · hero-v10 signature): 8.3 - 10s
+    // panelRise 与 beat2Out 微重叠 0.05s，避免黑屏间隙
+    panelRise:    [8.25, 8.7],       // 米色面板 translateY 100%→0 (expoOut)
+    wordmarkIn:   [8.7, 9.3],        // wordmark opacity 0→1 + translateY 20→0 + weight 100→500 (0.6s, expoOut)
+    brandLineIn:  [9.3, 9.7],        // brand-line expand 0→280px (0.4s, cubicOut)
+    brandHold:    [9.7, 10.0],       // hold (0.3s)
+  };
+
+  // ---------- Elements ----------
+  const beat1 = document.getElementById('beat1');
+  const beat2 = document.getElementById('beat2');
+  const brandReveal = document.getElementById('brandReveal');
+  const deckWindow = document.getElementById('deckWindow');
+  const pageCount = document.getElementById('pageCount');
+  const slideA = document.getElementById('slideA');
+  const slideB = document.getElementById('slideB');
+  const keyHint = document.getElementById('keyHint');
+  const kbdKey = document.getElementById('kbdKey');
+  const splitLeft = document.getElementById('splitLeft');
+  const splitRight = document.getElementById('splitRight');
+  const labelLeft = document.getElementById('labelLeft');
+  const labelRight = document.getElementById('labelRight');
+  const connector = document.getElementById('connector');
+  const connectorLabel = document.getElementById('connectorLabel');
+  const cursor = document.getElementById('cursor');
+  const ripple = document.getElementById('ripple');
+  const titleFrame = document.getElementById('titleFrame');
+  const titleText = document.getElementById('titleText');
+  const caret = document.getElementById('caret');
+  const panel = document.getElementById('brandPanel');
+  const wordmark = document.getElementById('wordmark');
+  const brandLine = document.getElementById('brandLine');
+
+  // Text to animate
+  const ORIG_TEXT = 'Tư duy có thể uốn nắn';
+  const NEW_TEXT  = 'Tư duy · linh hoạt';
+
+  // ---------- Render ----------
+  function render(t) {
+
+    /* ======= Beat 1 ======= */
+    let beat1Op;
+    if (t < T.beat1Out[0]) {
+      beat1Op = lerp(t, T.deckIn[0], T.deckIn[1], 0, 1, expoOut);
+    } else {
+      beat1Op = 1 - clampLerp(t, T.beat1Out[0], T.beat1Out[1]);
+    }
+    beat1.style.opacity = beat1Op;
+    beat1.style.visibility = beat1Op > 0.01 ? 'visible' : 'hidden';
+
+    // Deck window rise
+    const deckRise = lerp(t, T.deckIn[0], T.deckIn[1], 24, 0, expoOut);
+    deckWindow.style.transform = `translate3d(0, ${deckRise}px, 0)`;
+
+    // Key hint appear
+    const khOp = clampLerp(t, T.keyHintIn[0], T.keyHintIn[1]);
+    keyHint.style.opacity = khOp;
+
+    // Key press flash
+    const kpActive = t >= T.keyPress[0] && t < T.keyPress[1] + 0.2;
+    if (kpActive) {
+      const kp = clampLerp(t, T.keyPress[0], T.keyPress[1]);
+      kbdKey.style.background = `rgba(217,119,87,${0.9 * (1 - kp * 0.4)})`;
+      kbdKey.style.color = '#fff';
+      kbdKey.style.transform = `scale(${1 - 0.08 * kp})`;
+    } else {
+      kbdKey.style.background = '';
+      kbdKey.style.color = '';
+      kbdKey.style.transform = '';
+    }
+
+    // Slide flip A→B
+    if (t >= T.slideFlip[0] && t < T.slideFlip[1] + 0.2) {
+      const sp = clampLerp(t, T.slideFlip[0], T.slideFlip[1]);
+      const eased = expoOut(sp);
+      slideA.style.opacity = 1 - eased;
+      slideA.style.transform = `translateX(${-60 * eased}px)`;
+      slideB.style.opacity = eased;
+      slideB.style.transform = `translateX(${60 * (1 - eased)}px)`;
+      // Update page count at midway
+      if (sp > 0.5) pageCount.textContent = '4 / 12';
+      else pageCount.textContent = '3 / 12';
+    } else if (t >= T.slideFlip[1]) {
+      slideA.style.opacity = 0;
+      slideB.style.opacity = 1;
+      slideB.style.transform = 'translateX(0)';
+      pageCount.textContent = '4 / 12';
+    } else {
+      slideA.style.opacity = 1;
+      slideA.style.transform = 'translateX(0)';
+      slideB.style.opacity = 0;
+      pageCount.textContent = '3 / 12';
+    }
+
+    /* ======= Beat 2 ======= */
+    let beat2Op = 0;
+    if (t >= T.beat2In[0] && t < T.beat2Out[1]) {
+      if (t < T.beat2In[1]) beat2Op = clampLerp(t, T.beat2In[0], T.beat2In[1]);
+      else if (t < T.beat2Out[0]) beat2Op = 1;
+      else beat2Op = 1 - clampLerp(t, T.beat2Out[0], T.beat2Out[1]);
+    }
+    beat2.style.opacity = beat2Op;
+    beat2.style.visibility = beat2Op > 0.01 ? 'visible' : 'hidden';
+
+    // Windows rise in
+    const splitInP = clampLerp(t, T.beat2In[0], T.beat2In[1]);
+    const splitRise = lerp(t, T.beat2In[0], T.beat2In[1], 28, 0, expoOut);
+    splitLeft.style.transform = `translate3d(${-8 * (1 - expoOut(splitInP))}px, ${splitRise}px, 0)`;
+    splitRight.style.transform = `translate3d(${8 * (1 - expoOut(splitInP))}px, ${splitRise}px, 0)`;
+
+    // Labels
+    const labelOp = clampLerp(t, T.labelsIn[0], T.labelsIn[1]);
+    labelLeft.style.opacity = labelOp * 0.7;
+    labelRight.style.opacity = labelOp * 0.85;
+
+    // Connector
+    const connOp = clampLerp(t, T.connectorIn[0], T.connectorIn[1]);
+    connector.style.opacity = connOp;
+    connectorLabel.style.opacity = connOp * 0.9;
+
+    /* === Cursor movement === */
+    // Cursor positions (relative to .ppt-canvas, which is inside split-right)
+    // Canvas starts at (0,0), size ~820 × 508 (580 - 32 - 40)
+    // Title sits around x=84 y=110 (inside .ppt-slide padding 56/64)
+    // We'll place cursor with absolute positioning inside .ppt-canvas.
+
+    // Entry point: off to the right bottom of canvas
+    const P_ENTER = { x: 720, y: 420 };
+    const P_TITLE = { x: 250, y: 170 }; // on the title
+
+    let cursorOp = 0;
+    let cx = P_ENTER.x, cy = P_ENTER.y;
+
+    if (t >= T.cursorIn[0] && t < T.beat2Out[0]) {
+      cursorOp = 1;
+      // Phase 1: appear (pop in with slight scale)
+      const inP = clampLerp(t, T.cursorIn[0], T.cursorIn[1]);
+      cursorOp = expoOut(inP);
+
+      // Phase 2: move to title
+      if (t >= T.cursorMove1[0]) {
+        const mp = clampLerp(t, T.cursorMove1[0], T.cursorMove1[1]);
+        const e = easeInOut(mp);
+        cx = P_ENTER.x + (P_TITLE.x - P_ENTER.x) * e;
+        cy = P_ENTER.y + (P_TITLE.y - P_ENTER.y) * e;
+      } else {
+        cx = P_ENTER.x;
+        cy = P_ENTER.y;
+      }
+
+      // After double-click, slight jitter toward caret position during typing
+      if (t >= T.textRetype[0] && t < T.textRetype[1]) {
+        cx = P_TITLE.x + 6;
+        cy = P_TITLE.y - 2;
+      }
+    } else if (t >= T.beat2Out[0]) {
+      cursorOp = 1 - clampLerp(t, T.beat2Out[0], T.beat2Out[1]);
+    }
+    cursor.style.opacity = cursorOp;
+    cursor.style.transform = `translate(${cx}px, ${cy}px)`;
+
+    /* === Double-click ripple === */
+    // Ripple pulses twice at T.dblclick start
+    let rippleVisible = false;
+    if (t >= T.dblclick[0] && t < T.dblclick[0] + 0.7) {
+      const dt = t - T.dblclick[0];
+      // Two rapid pulses
+      const pulse1 = clamp(dt / 0.25, 0, 1);
+      const pulse2 = clamp((dt - 0.15) / 0.25, 0, 1);
+      const scale1 = 0.4 + pulse1 * 1.4;
+      const scale2 = 0.4 + pulse2 * 1.4;
+      const op1 = 1 - pulse1;
+      const op2 = dt > 0.15 ? (1 - pulse2) : 0;
+      // Render as single element: use larger of the two
+      const scale = Math.max(scale1, scale2);
+      const op = Math.max(op1, op2);
+      ripple.style.opacity = op;
+      ripple.style.transform = `translate(-50%, -50%) translate(${P_TITLE.x + 6}px, ${P_TITLE.y + 26}px) scale(${scale})`;
+      rippleVisible = true;
+    }
+    if (!rippleVisible) ripple.style.opacity = 0;
+
+    /* === Frame states: selected → editing === */
+    titleFrame.classList.remove('selected', 'editing');
+    if (t >= T.frameSelect[0] && t < T.frameEdit[0]) {
+      titleFrame.classList.add('selected');
+    } else if (t >= T.frameEdit[0] && t < T.commitEdit[1]) {
+      titleFrame.classList.add('editing');
+    }
+
+    /* === Text animation: delete → retype === */
+    let displayedText = ORIG_TEXT;
+    let caretOp = 0;
+
+    if (t < T.textDelete[0]) {
+      displayedText = ORIG_TEXT;
+      caretOp = t >= T.caretShowStart ? 1 : 0;
+    } else if (t < T.textDelete[1]) {
+      // Delete: remove chars from end
+      const dp = clampLerp(t, T.textDelete[0], T.textDelete[1]);
+      const charsToRemove = Math.floor(dp * ORIG_TEXT.length);
+      displayedText = ORIG_TEXT.slice(0, ORIG_TEXT.length - charsToRemove);
+      caretOp = 1;
+    } else if (t < T.textRetype[0]) {
+      displayedText = '';
+      caretOp = 1;
+    } else if (t < T.textRetype[1]) {
+      // Retype new text
+      const rp = clampLerp(t, T.textRetype[0], T.textRetype[1]);
+      const charsToShow = Math.floor(rp * NEW_TEXT.length);
+      displayedText = NEW_TEXT.slice(0, charsToShow);
+      caretOp = 1;
+    } else if (t < T.commitEdit[1]) {
+      displayedText = NEW_TEXT;
+      // Caret blinks while still in edit mode
+      caretOp = (Math.floor(t * 2) % 2 === 0) ? 1 : 0.3;
+    } else {
+      displayedText = NEW_TEXT;
+      caretOp = 0;
+    }
+
+    // Blinking during idle-in-edit phases (when not actively typing/deleting)
+    if (t >= T.caretShowStart && t < T.textDelete[0]) {
+      caretOp = (Math.floor((t - T.caretShowStart) * 3) % 2 === 0) ? 1 : 0.35;
+    }
+
+    titleText.textContent = displayedText;
+    caret.style.opacity = caretOp;
+
+    /* ======= Brand Reveal (米色面板 · hero-v10 signature) ======= */
+    // Panel rises from bottom (米色面板 #F5F4F0)
+    const panelP = clampLerp(t, T.panelRise[0], T.panelRise[1]);
+    panel.style.transform = `translateY(${(1 - expoOut(panelP)) * 100}%)`;
+
+    // brand-reveal container visible once panel starts rising
+    brandReveal.style.opacity = panelP > 0.01 ? 1 : 0;
+
+    // Wordmark: opacity 0→1 + translateY 20→0 + weight 100→500 (expoOut)
+    const wmP = clampLerp(t, T.wordmarkIn[0], T.wordmarkIn[1]);
+    const wmEased = expoOut(wmP);
+    wordmark.style.opacity = wmEased;
+    const wmRise = (1 - wmEased) * 20;
+    wordmark.style.transform = `translate3d(0, ${wmRise}px, 0)`;
+    const w = 100 + (500 - 100) * wmEased;
+    wordmark.style.fontVariationSettings = `"wght" ${w.toFixed(0)}`;
+    wordmark.style.fontWeight = Math.round(w);
+
+    // Brand line expand 0→280px (cubicOut)
+    const lineP = clampLerp(t, T.brandLineIn[0], T.brandLineIn[1]);
+    const cubicOut = x => 1 - Math.pow(1 - x, 3);
+    brandLine.style.width = (280 * cubicOut(lineP)) + 'px';
+  }
+
+  // ---------- Driver ----------
+  let manualT = null;
+  let startMs = null;
+  let hasFinished = false;
+  function tick(now) {
+    if (manualT != null) render(manualT);
+    else {
+      if (startMs == null) startMs = now;
+      const elapsed = (now - startMs) / 1000;
+      const recording = window.__recording === true;
+      let t;
+      if (recording) {
+        t = Math.min(elapsed, T.DURATION - 0.001);
+        if (elapsed >= T.DURATION) hasFinished = true;
+      } else {
+        t = elapsed % T.DURATION;
+      }
+      render(t);
+    }
+    requestAnimationFrame(tick);
+  }
+  // Force first-frame render synchronously, THEN set ready
+  render(0);
+  requestAnimationFrame(tick);
+
+  window.__setTime = function(t) { manualT = t; render(t); };
+  window.__resume = function() { manualT = null; startMs = null; };
+  window.__duration = T.DURATION;
+  window.__render = render;
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>

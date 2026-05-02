@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>c6 · Năm trục · Một danh sách hành động</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@200;300;400;500;600&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --dim: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+    --cd-bg: #F5F4F0;
+    --cd-panel: #FFFFFF;
+    --cd-ink: #1A1918;
+
+    --serif-zh: "Noto Serif SC", "Songti SC", serif;
+    --serif-en: "Source Serif 4", "Tiempos Headline", Georgia, serif;
+    --sans: "Inter", -apple-system, "PingFang SC", "HarmonyOS Sans SC", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Film grain */
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Chrome */
+  .mark {
+    position: absolute;
+    top: 48px; left: 64px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,1);
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .mark-right {
+    position: absolute;
+    top: 48px; right: 64px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,1);
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  /* Title */
+  .title-line {
+    position: absolute;
+    top: 108px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  /* Main composition: camera wrapper for push-in at Beat 3 */
+  .camera {
+    position: absolute;
+    inset: 0;
+    transform-origin: 1000px 940px; /* center of Sửa first-row */
+    will-change: transform;
+  }
+
+  /* ============ LEFT: under-review artwork ============ */
+  .subject {
+    position: absolute;
+    left: 150px;
+    top: 310px;
+    width: 640px;
+    height: 460px;
+    background: #0B0B0B;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0;
+    will-change: opacity, transform, filter;
+    transform: translateY(12px);
+  }
+  .subject::after {
+    /* subtle inner vignette */
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.6);
+    pointer-events: none;
+  }
+  .subject-label {
+    position: absolute;
+    left: 20px;
+    top: 18px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    z-index: 3;
+  }
+  .subject-dot {
+    position: absolute;
+    right: 20px;
+    top: 18px;
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    z-index: 3;
+    box-shadow: 0 0 10px rgba(217,119,87,0.6);
+  }
+  /* Subject wireframe: abstract design mockup */
+  .subject-canvas {
+    position: absolute;
+    inset: 50px 36px 36px;
+  }
+  .wf-h1 {
+    width: 62%;
+    height: 18px;
+    background: rgba(255,255,255,0.28);
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .wf-h2 {
+    width: 38%;
+    height: 10px;
+    background: rgba(255,255,255,0.14);
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+  .wf-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .wf-row .bar {
+    height: 8px;
+    background: rgba(255,255,255,0.10);
+    border-radius: 2px;
+  }
+  .wf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .wf-card {
+    height: 82px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+    position: relative;
+  }
+  .wf-card::before {
+    content: '';
+    position: absolute;
+    left: 12px; top: 14px;
+    width: 40%;
+    height: 6px;
+    background: rgba(255,255,255,0.22);
+    border-radius: 2px;
+  }
+  .wf-card::after {
+    content: '';
+    position: absolute;
+    left: 12px; bottom: 16px;
+    width: 64%;
+    height: 4px;
+    background: rgba(255,255,255,0.10);
+    border-radius: 2px;
+  }
+  .wf-card.accent { border-color: rgba(217,119,87,0.55); background: rgba(217,119,87,0.06); }
+  .wf-card.accent::before { background: var(--accent); }
+  .wf-foot {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 4px;
+  }
+  .wf-chip {
+    height: 22px;
+    padding: 0 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 11px;
+    flex: 0 0 auto;
+    width: 68px;
+  }
+  .wf-chip.wide { width: 120px; }
+
+  /* ============ Light sweep ============ */
+  .sweep {
+    position: absolute;
+    left: 130px;
+    top: 250px;
+    width: 680px;
+    height: 140px;
+    background: linear-gradient(180deg,
+      rgba(217,119,87,0) 0%,
+      rgba(217,119,87,0.12) 20%,
+      rgba(255,220,200,0.62) 50%,
+      rgba(217,119,87,0.18) 80%,
+      rgba(217,119,87,0) 100%);
+    filter: blur(14px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 4;
+    mix-blend-mode: screen;
+    will-change: opacity, transform;
+  }
+  .sweep-line {
+    position: absolute;
+    left: 150px;
+    top: 310px;
+    width: 640px;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(255,220,200,0.2) 10%,
+      rgba(255,220,200,0.9) 50%,
+      rgba(255,220,200,0.2) 90%,
+      transparent 100%);
+    filter: blur(0.6px);
+    box-shadow: 0 0 14px rgba(217,119,87,0.8), 0 0 30px rgba(217,119,87,0.3);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 6;
+    will-change: opacity, transform;
+  }
+
+  /* ============ RIGHT: radar chart ============ */
+  .radar-wrap {
+    position: absolute;
+    right: 280px;
+    top: 200px;
+    width: 520px;
+    height: 520px;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .radar-wrap svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .radar-grid path {
+    fill: none;
+    stroke: rgba(255,255,255,0.10);
+    stroke-width: 1;
+  }
+  .radar-spoke {
+    stroke: rgba(255,255,255,0.08);
+    stroke-width: 1;
+  }
+  .radar-poly {
+    fill: rgba(217,119,87,0.16);
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linejoin: round;
+  }
+  .radar-point {
+    fill: var(--accent);
+    stroke: #1A1918;
+    stroke-width: 2;
+  }
+  .radar-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    fill: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+  }
+  .radar-label-zh {
+    font-family: var(--serif-en);
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    fill: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .radar-score {
+    font-family: var(--mono);
+    font-size: 13px;
+    fill: var(--accent);
+    letter-spacing: 0.08em;
+  }
+
+  .radar-title {
+    position: absolute;
+    right: 280px;
+    top: 160px;
+    width: 520px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .radar-score-total {
+    position: absolute;
+    left: 150px;
+    top: 170px;
+    width: 640px;
+    text-align: left;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .radar-score-total .score-row {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+  }
+  .radar-score-total .score-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .radar-score-total .score-num {
+    font-family: var(--serif-en);
+    font-size: 72px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .radar-score-total .score-num .accent { color: var(--accent); }
+  .radar-score-total .score-total {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  /* ============ Single Sửa row (Concept Card lean) ============ */
+  .fix-lane {
+    position: absolute;
+    left: 150px;
+    bottom: 120px;
+    width: 1620px;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .fix-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .fix-mark {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.28em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+  .fix-zh {
+    font-family: var(--serif-en);
+    font-size: 28px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .fix-count {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+  }
+
+  .fix-row {
+    position: relative;
+    font-family: var(--sans);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.45;
+    padding: 12px 0;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .fix-row .idx {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    flex: 0 0 40px;
+    padding-top: 2px;
+  }
+  .fix-row .mono {
+    font-family: var(--mono);
+    font-size: 26px;
+    letter-spacing: 0;
+    color: var(--accent);
+    font-weight: 400;
+  }
+  .fix-row .arrow {
+    color: var(--muted);
+    margin: 0 4px;
+  }
+
+  .fix-severity {
+    display: inline-block;
+    padding: 3px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    border: 1px solid rgba(217,119,87,0.5);
+    border-radius: 3px;
+    margin-right: 10px;
+    vertical-align: 3px;
+  }
+  .fix-pulse {
+    position: absolute;
+    inset: 4px -12px 4px -12px;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+    box-shadow: 0 0 24px rgba(217,119,87,0.35);
+  }
+
+  /* ============ Brand Reveal (hero-v10 signature) ============ */
+  .stage-dimmer {
+    position: absolute;
+    inset: 0;
+    background: #000000;
+    opacity: 0;
+    z-index: 40;
+    pointer-events: none;
+    will-change: opacity;
+  }
+  .brand-panel {
+    position: absolute;
+    inset: 0;
+    background: #F5F4F0;
+    transform: translateY(100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    will-change: transform;
+  }
+  .brand-wordmark {
+    font-family: var(--serif-en);
+    font-size: 72px;
+    font-weight: 100;
+    font-variation-settings: "wght" 100;
+    letter-spacing: -0.02em;
+    color: #1A1918;
+    text-align: center;
+    line-height: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: opacity, transform, font-variation-settings, font-weight;
+  }
+  .brand-wordmark .accent { color: #D97757; font-weight: inherit; }
+  .brand-line {
+    margin-top: 60px;
+    height: 2px;
+    width: 0;
+    background: #D97757;
+    align-self: center;
+    will-change: width;
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="mark">HUASHU · DESIGN</div>
+    <div class="mark-right">V2 · 2026</div>
+
+    <div class="title-line" id="titleLine">c6 · Expert Review · Five Axes</div>
+
+    <div class="camera" id="camera">
+      <!-- Subject: design under review -->
+      <div class="subject" id="subject">
+        <div class="subject-label">SUBJECT · DRAFT_V3</div>
+        <div class="subject-dot"></div>
+        <div class="subject-canvas">
+          <div class="wf-h1"></div>
+          <div class="wf-h2"></div>
+          <div class="wf-row"><div class="bar" style="width:24%"></div><div class="bar" style="width:14%"></div><div class="bar" style="width:20%"></div></div>
+          <div class="wf-row"><div class="bar" style="width:30%"></div><div class="bar" style="width:10%"></div></div>
+          <div class="wf-grid">
+            <div class="wf-card"></div>
+            <div class="wf-card accent"></div>
+            <div class="wf-card"></div>
+          </div>
+          <div class="wf-foot">
+            <div class="wf-chip wide"></div>
+            <div class="wf-chip"></div>
+            <div class="wf-chip"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scanning light -->
+      <div class="sweep" id="sweep"></div>
+      <div class="sweep-line" id="sweepLine"></div>
+
+      <!-- Radar chart (right) -->
+      <div class="radar-title" id="radarTitle">Five-Axis Diagnosis · Radar</div>
+      <div class="radar-wrap" id="radarWrap">
+        <svg viewBox="-270 -270 540 540" xmlns="http://www.w3.org/2000/svg">
+          <!-- Grid rings (5 levels) -->
+          <g class="radar-grid" id="radarGrid"></g>
+          <!-- Spokes to 5 axes -->
+          <g id="radarSpokes"></g>
+          <!-- Filled polygon -->
+          <polygon id="radarPoly" class="radar-poly" points="" />
+          <!-- Points -->
+          <g id="radarPoints"></g>
+          <!-- Axis labels -->
+          <g id="radarLabels"></g>
+        </svg>
+      </div>
+
+      <div class="radar-score-total" id="radarTotal">
+        <div class="score-row">
+          <div class="score-num"><span id="scoreNum">0</span><span class="accent">/50</span></div>
+          <div>
+            <div class="score-label">OVERALL · PASSED</div>
+            <div class="score-total">WEIGHTED · 7.4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Sửa row: Concept Card lean -->
+      <div class="fix-lane" id="fixLane">
+        <div class="fix-head">
+          <span class="fix-mark">FIX</span>
+          <span class="fix-zh">Sửa</span>
+          <span class="fix-count">01 / 01</span>
+        </div>
+        <div class="fix-row">
+          <span class="idx">01</span>
+          <span><span class="fix-severity">⚡</span>Tracking <span class="mono">0.02</span><span class="arrow"> → </span><span class="mono">0.04em</span></span>
+          <div class="fix-pulse" id="fixPulse"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand Reveal (hero-v10 signature) -->
+    <div class="stage-dimmer" id="stageDimmer"></div>
+    <div class="brand-panel" id="brandPanel">
+      <div class="brand-wordmark" id="brandMark">huashu<span class="accent">-</span>design</div>
+      <div class="brand-line" id="brandLine"></div>
+    </div>
+  </div>
+
+<script>
+  // Auto-scale
+  function fitStage() {
+    const stage = document.getElementById('stage');
+    const sx = window.innerWidth / 1920;
+    const sy = window.innerHeight / 1080;
+    const s = Math.min(sx, sy);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  fitStage();
+  window.addEventListener('resize', fitStage);
+
+  // Easings
+  const expoOut = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const expoIn  = t => t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
+  const cubicInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+
+  function lerp(t, a, b, easing) {
+    if (t <= 0) return a;
+    if (t >= 1) return b;
+    const e = easing ? easing(t) : t;
+    return a + (b - a) * e;
+  }
+  function seg(time, start, end) {
+    if (time <= start) return 0;
+    if (time >= end) return 1;
+    return (time - start) / (end - start);
+  }
+
+  // ============ Build radar SVG ============
+  const RADIUS = 210;
+  const AXES = [
+    { zh: 'Philosophy', en: 'PHILOSOPHY', score: 8 },
+    { zh: 'Hierarchy',  en: 'HIERARCHY',  score: 6 },
+    { zh: 'Execution',  en: 'EXECUTION',  score: 8 },
+    { zh: 'Function',   en: 'FUNCTION',   score: 7 },
+    { zh: 'Innovation', en: 'INNOVATION', score: 8 },
+  ];
+  const N = AXES.length;
+
+  function axisPoint(i, r) {
+    // Start at top (-90deg), clockwise
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / N;
+    return [Math.cos(angle) * r, Math.sin(angle) * r];
+  }
+
+  // Grid rings (polygons at 5 levels)
+  const gridG = document.getElementById('radarGrid');
+  for (let level = 1; level <= 5; level++) {
+    const r = (RADIUS * level) / 5;
+    const pts = [];
+    for (let i = 0; i < N; i++) {
+      const [x, y] = axisPoint(i, r);
+      pts.push(`${x.toSửaed(2)},${y.toSửaed(2)}`);
+    }
+    const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    poly.setAttribute('points', pts.join(' '));
+    poly.setAttribute('fill', 'none');
+    poly.setAttribute('stroke', level === 5 ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.07)');
+    poly.setAttribute('stroke-width', '1');
+    gridG.appendChild(poly);
+  }
+
+  // Spokes
+  const spokesG = document.getElementById('radarSpokes');
+  for (let i = 0; i < N; i++) {
+    const [x, y] = axisPoint(i, RADIUS);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', 0);
+    line.setAttribute('y1', 0);
+    line.setAttribute('x2', x.toSửaed(2));
+    line.setAttribute('y2', y.toSửaed(2));
+    line.setAttribute('class', 'radar-spoke');
+    spokesG.appendChild(line);
+  }
+
+  // Labels (position outside). ZH sits at a base radial distance; EN stacks
+  // below it with a fixed vertical offset to avoid overlap on the side axes.
+  const labelsG = document.getElementById('radarLabels');
+  AXES.forEach((axis, i) => {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / N;
+    const dirX = Math.cos(angle);
+    const dirY = Math.sin(angle);
+
+    // text-anchor based on horizontal direction
+    let anchor = 'middle';
+    if (dirX > 0.3) anchor = 'start';
+    else if (dirX < -0.3) anchor = 'end';
+
+    const baseRadial = RADIUS + 36;
+    const [bx, by] = axisPoint(i, baseRadial);
+
+    // Title Case serif italic label (only one per axis in EN)
+    const zhText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    zhText.setAttribute('x', bx.toSửaed(2));
+    zhText.setAttribute('y', by.toSửaed(2));
+    zhText.setAttribute('text-anchor', anchor);
+    zhText.setAttribute('dominant-baseline', 'middle');
+    zhText.setAttribute('class', 'radar-label-zh');
+    zhText.textContent = axis.zh;
+    labelsG.appendChild(zhText);
+  });
+
+  // Points (initial: center)
+  const pointsG = document.getElementById('radarPoints');
+  const pointEls = AXES.map((axis, i) => {
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', 0);
+    circle.setAttribute('cy', 0);
+    circle.setAttribute('r', 5);
+    circle.setAttribute('class', 'radar-point');
+    circle.setAttribute('opacity', '0');
+    pointsG.appendChild(circle);
+    return circle;
+  });
+  const radarPoly = document.getElementById('radarPoly');
+
+  // ============ Timeline (10s) ============
+  //  Beat 1 (0-2s): title + subject enters
+  //  Beat 2 (2-8s):
+  //    2.0-3.8: light sweep top → bottom (1.8s)
+  //    3.2-4.8: radar grid fades in + polygon + points grow from center
+  //    4.8-5.2: score count up
+  //    5.0-6.0: Giữ col ripple in
+  //    5.5-6.5: Sửa col ripple in
+  //    6.0-7.0: Việc thắng nhanh col ripple in
+  //    7.0-8.0: hold
+  //  Beat 3 (8-10s): push-in camera to fix[0] + pulse (8-9), brand reveal (8.0-10.0)
+
+  const titleLine = document.getElementById('titleLine');
+  const subject = document.getElementById('subject');
+  const sweep = document.getElementById('sweep');
+  const sweepLine = document.getElementById('sweepLine');
+  const radarTitle = document.getElementById('radarTitle');
+  const radarWrap = document.getElementById('radarWrap');
+  const radarTotal = document.getElementById('radarTotal');
+  const scoreNum = document.getElementById('scoreNum');
+  const fixLane = document.getElementById('fixLane');
+  const fixPulse = document.getElementById('fixPulse');
+  const camera = document.getElementById('camera');
+  const stageDimmer = document.getElementById('stageDimmer');
+  const brandPanel = document.getElementById('brandPanel');
+  const brandMark = document.getElementById('brandMark');
+  const brandLine = document.getElementById('brandLine');
+
+  const DURATION = 10.0;
+  let startTime = null;
+  let loop = true;
+  if (window.__recording === true) loop = false;
+
+  function tick(now) {
+    if (startTime === null) startTime = now;
+    let t = (now - startTime) / 1000;
+
+    if (t >= DURATION) {
+      if (loop) { startTime = now; t = 0; }
+      else { t = DURATION; }
+    }
+
+    // Title fade in/out
+    const titleIn = seg(t, 0.2, 1.2);
+    const titleOut = seg(t, 7.6, 8.0);
+    titleLine.style.opacity = Math.min(cubicOut(titleIn), 1 - titleOut);
+    titleLine.style.transform = `translateX(-50%) translateY(${lerp(titleIn, -6, 0, cubicOut)}px)`;
+
+    // Subject appears Beat 1
+    const subjectIn = seg(t, 0.4, 1.8);
+    subject.style.opacity = expoOut(subjectIn);
+    subject.style.transform = `translateY(${lerp(subjectIn, 14, 0, expoOut)}px)`;
+
+    // Subject dims after sweep completes (during Beat 2 to keep focus right)
+    const subjectDim = seg(t, 4.4, 5.6);
+    const dimFactor = lerp(subjectDim, 1.0, 0.38, cubicInOut);
+    subject.style.filter = `saturate(${lerp(subjectDim, 1.0, 0.5, cubicInOut)}) brightness(${dimFactor})`;
+
+    // Light sweep: 2.0-3.8 top to bottom
+    const sweepProgress = seg(t, 2.0, 3.8);
+    const sweepOp = (t < 2.0 || t > 4.2) ? 0 :
+      (t < 2.2 ? seg(t, 2.0, 2.2) :
+       t < 3.7 ? 1 :
+       1 - seg(t, 3.7, 4.2));
+    sweep.style.opacity = sweepOp * 0.95;
+    sweepLine.style.opacity = sweepOp * 1.0;
+    // Move from y=250 to y=700 (subject top 310 to bottom 770)
+    const sweepY = lerp(sweepProgress, -70, 410, cubicInOut);
+    sweep.style.transform = `translateY(${sweepY}px)`;
+    sweepLine.style.transform = `translateY(${sweepY + 70}px)`;
+
+    // Radar title + wrap appear 3.2
+    const radarIn = seg(t, 3.2, 4.0);
+    radarTitle.style.opacity = cubicOut(radarIn);
+    radarWrap.style.opacity = cubicOut(radarIn);
+    radarWrap.style.transform = `scale(${lerp(radarIn, 0.92, 1.0, expoOut)})`;
+
+    // Radar grid strokes already visible once wrap fades; animate grid via stroke-dasharray trick would be overkill.
+    // Instead, grow polygon + points from center (3.6-4.8)
+    const polyGrow = seg(t, 3.6, 4.8);
+    const polyT = expoOut(polyGrow);
+    const polyPts = [];
+    AXES.forEach((axis, i) => {
+      const targetR = (axis.score / 10) * RADIUS;
+      const r = targetR * polyT;
+      const [x, y] = axisPoint(i, r);
+      polyPts.push(`${x.toSửaed(2)},${y.toSửaed(2)}`);
+      const pt = pointEls[i];
+      pt.setAttribute('cx', x.toSửaed(2));
+      pt.setAttribute('cy', y.toSửaed(2));
+      pt.setAttribute('opacity', polyT.toSửaed(2));
+    });
+    radarPoly.setAttribute('points', polyPts.join(' '));
+
+    // EN labels fade in slightly later
+    const enLabelIn = seg(t, 4.2, 4.8);
+    document.querySelectorAll('[data-type="en-label"]').forEach(el => {
+      el.setAttribute('opacity', cubicOut(enLabelIn).toSửaed(2));
+    });
+
+    // Score count up 4.6-5.4, target total = 37
+    const scoreT = seg(t, 4.6, 5.4);
+    const total = AXES.reduce((s, a) => s + a.score, 0); // 37
+    const shown = Math.round(lerp(scoreT, 0, total, cubicOut));
+    scoreNum.textContent = shown;
+    radarTotal.style.opacity = cubicOut(seg(t, 4.4, 5.0));
+
+    // Sửa lane ripple in (5.3-6.1)
+    const fixRip = seg(t, 5.3, 6.1);
+    fixLane.style.opacity = expoOut(fixRip);
+    fixLane.style.transform = `translateY(${lerp(fixRip, 24, 0, expoOut)}px)`;
+
+    // Beat 3: Push-in camera to Sửa row + pulse (7.4-8.0)
+    const pushT = seg(t, 7.4, 8.0);
+    const scale = lerp(pushT, 1.0, 1.18, cubicInOut);
+    camera.style.transform = `scale(${scale})`;
+
+    // Sửa pulse border: blink 2 times between 7.6-8.0
+    const pulseOp = t < 7.6 ? 0 :
+      t < 8.0 ? (0.4 + 0.6 * Math.abs(Math.sin((t - 7.6) * Math.PI * 2.4))) :
+      0;
+    fixPulse.style.opacity = pulseOp;
+
+    // ============ Brand Reveal (hero-v10 signature, aligned) ============
+    // [T-2.0 → T-1.7s] i.e. 8.0-8.3: scene fade to black (0.3s)
+    const soK = seg(t, 8.0, 8.3);
+    stageDimmer.style.opacity = cubicOut(soK);
+    const sceneFade = seg(t, 8.0, 8.3);
+    camera.style.opacity = 1 - cubicOut(sceneFade);
+
+    // [T-1.7 → T-1.3s] i.e. 8.3-8.7: cream panel slides from bottom (0.4s, expoOut)
+    const panelT = seg(t, 8.3, 8.7);
+    const panelY = lerp(panelT, 100, 0, expoOut);
+    brandPanel.style.transform = `translateY(${panelY}%)`;
+
+    // [T-1.3 → T-0.7s] i.e. 8.7-9.3: wordmark wght 100→500 + y 20→0 + opacity 0→1 (0.6s)
+    const markT = seg(t, 8.7, 9.3);
+    const markE = expoOut(markT);
+    const wght = 100 + (500 - 100) * markE;
+    brandMark.style.opacity = markE;
+    brandMark.style.transform = `translateY(${20 * (1 - markE)}px)`;
+    brandMark.style.fontWeight = Math.round(wght);
+    brandMark.style.fontVariationSettings = `"wght" ${wght.toSửaed(0)}`;
+
+    // [T-0.7 → T-0.3s] i.e. 9.3-9.7: orange line width 0→280 (0.4s, cubicOut)
+    const lineT = seg(t, 9.3, 9.7);
+    brandLine.style.width = `${lerp(lineT, 0, 280, cubicOut)}px`;
+
+    // [T-0.3 → T] hold
+
+    if (!window.__ready) window.__ready = true;
+
+    if (loop || t < DURATION) requestAnimationFrame(tick);
+  }
+
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+    .then(() => requestAnimationFrame(tick));
+</script>
+</body>
+</html>

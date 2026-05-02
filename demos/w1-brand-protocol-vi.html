@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>w1 · Quy trình thương hiệu · Năm bước, không được bỏ qua</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@200;300;400;500;600&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --dim: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+    --cd-bg: #F5F4F0;
+    --cd-panel: #FFFFFF;
+    --cd-ink: #1A1918;
+
+    --serif-zh: "Noto Serif SC", "Songti SC", serif;
+    --serif-en: "Source Serif 4", "Tiempos Headline", Georgia, serif;
+    --sans: "Inter", -apple-system, "PingFang SC", "HarmonyOS Sans SC", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Film grain texture (very subtle) */
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Chrome · watermark */
+  .mark {
+    position: absolute;
+    top: 48px; left: 64px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,1);
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .mark-right {
+    position: absolute;
+    top: 48px; right: 64px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,1);
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  /* ====== Title (centered, small, top) ====== */
+  .title-line {
+    position: absolute;
+    top: 128px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  /* ====== Chain · 5 cards connected by a line ====== */
+  .chain {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1680px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+  }
+
+  /* The connecting line behind the cards */
+  .chain-line {
+    position: absolute;
+    top: 50%;
+    left: 140px;
+    right: 140px;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(217,119,87,0.0) 2%,
+      rgba(217,119,87,0.8) 12%,
+      rgba(217,119,87,0.8) 88%,
+      rgba(217,119,87,0.0) 98%,
+      transparent 100%);
+    transform-origin: left center;
+    transform: scaleX(0);
+    will-change: transform;
+  }
+
+  .card {
+    position: relative;
+    width: 248px;
+    height: 320px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32px 20px 26px;
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: opacity, transform;
+    backdrop-filter: blur(10px);
+  }
+
+  .card.active {
+    border-color: rgba(217,119,87,0.6);
+    box-shadow:
+      0 0 0 1px rgba(217,119,87,0.35),
+      0 30px 60px -30px rgba(217,119,87,0.35),
+      0 10px 24px -10px rgba(0,0,0,0.6);
+  }
+
+  .card-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+  }
+  .card.active .card-num {
+    color: var(--accent);
+  }
+
+  .card-glyph {
+    width: 88px;
+    height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .card-label {
+    text-align: center;
+  }
+  .card-label .zh {
+    font-family: var(--serif-en);
+    font-size: 36px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  /* Glyph · Step 1 · Hỏi (question mark inside a circle, drawn minimal) */
+  .g-ask {
+    width: 80px; height: 80px;
+    border: 1px solid var(--ink-60);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif-en);
+    font-weight: 300;
+    font-size: 44px;
+    color: var(--ink-80);
+    position: relative;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .card.active .g-ask { border-color: var(--accent); color: var(--accent); }
+
+  /* Glyph · Step 2 · Tìm (magnifier with crosshair) */
+  .g-search {
+    width: 80px; height: 80px;
+    position: relative;
+  }
+  .g-search .ring {
+    position: absolute;
+    top: 10px; left: 10px;
+    width: 52px; height: 52px;
+    border: 1px solid var(--ink-60);
+    border-radius: 50%;
+    transition: border-color 0.3s;
+  }
+  .g-search .handle {
+    position: absolute;
+    bottom: 8px; right: 6px;
+    width: 22px; height: 1px;
+    background: var(--ink-60);
+    transform: rotate(45deg);
+    transform-origin: right center;
+    transition: background 0.3s;
+  }
+  .g-search .dot {
+    position: absolute;
+    top: 26px; left: 26px;
+    width: 4px; height: 4px;
+    background: var(--muted);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s, background 0.3s;
+  }
+  .card.active .g-search .ring { border-color: var(--accent); }
+  .card.active .g-search .handle { background: var(--accent); }
+  .card.active .g-search .dot { opacity: 1; background: var(--accent); }
+
+  /* Glyph · Step 3 · Tải (download arrow into a tray) */
+  .g-grab {
+    width: 80px; height: 80px;
+    position: relative;
+  }
+  .g-grab .arrow {
+    position: absolute;
+    top: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 1px; height: 36px;
+    background: var(--ink-60);
+    transition: background 0.3s;
+  }
+  .g-grab .arrow::before {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 14px; height: 14px;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    color: var(--ink-60);
+    transition: color 0.3s;
+  }
+  .g-grab .tray {
+    position: absolute;
+    bottom: 10px; left: 12px; right: 12px;
+    height: 20px;
+    border: 1px solid var(--ink-60);
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    transition: border-color 0.3s;
+  }
+  .card.active .g-grab .arrow { background: var(--accent); }
+  .card.active .g-grab .arrow::before { color: var(--accent); }
+  .card.active .g-grab .tray { border-color: var(--accent); }
+
+  /* Glyph · Step 4 · Trích (terminal-like code with highlighted match) */
+  .g-grep {
+    width: 100px; height: 80px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 8px;
+    position: relative;
+  }
+  .g-grep .line { white-space: nowrap; }
+  .g-grep .hit {
+    color: var(--accent);
+    background: rgba(217,119,87,0.12);
+    padding: 1px 3px;
+    border-radius: 2px;
+  }
+
+  /* Glyph · Step 5 · Cố định (a file with lines) */
+  .g-lock {
+    width: 72px; height: 86px;
+    position: relative;
+  }
+  .g-lock .file {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--ink-60);
+    border-radius: 4px;
+    transition: border-color 0.3s;
+  }
+  .g-lock .fold {
+    position: absolute;
+    top: -1px; right: -1px;
+    width: 18px; height: 18px;
+    background: var(--bg);
+    border-left: 1px solid var(--ink-60);
+    border-bottom: 1px solid var(--ink-60);
+    transition: border-color 0.3s;
+  }
+  .g-lock .row {
+    position: absolute;
+    left: 10px;
+    height: 1px;
+    background: var(--muted);
+    transition: background 0.3s;
+  }
+  .g-lock .row.r1 { top: 22px; width: 40px; }
+  .g-lock .row.r2 { top: 34px; width: 48px; }
+  .g-lock .row.r3 { top: 46px; width: 32px; }
+  .g-lock .row.r4 { top: 58px; width: 44px; }
+  .g-lock .row.r5 { top: 70px; width: 28px; background: var(--accent); }
+  .card.active .g-lock .file { border-color: var(--accent); }
+  .card.active .g-lock .fold { border-color: var(--accent); }
+
+  /* ====== Final · brand-spec.md file ====== */
+  .final-file {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 520px;
+    background: var(--cd-bg);
+    color: var(--cd-ink);
+    border-radius: 10px;
+    padding: 38px 44px 42px;
+    opacity: 0;
+    box-shadow:
+      0 40px 90px -30px rgba(217,119,87,0.4),
+      0 20px 50px -20px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(217,119,87,0.3);
+    will-change: opacity, transform;
+  }
+  .final-file .file-name {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: var(--accent-deep);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .final-file .file-name::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .final-file .h1 {
+    font-family: var(--serif-en);
+    font-size: 28px;
+    font-weight: 400;
+    margin: 0 0 18px;
+    letter-spacing: -0.015em;
+  }
+  .final-file .kv {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.9;
+    color: rgba(26,25,24,0.65);
+  }
+  .final-file .kv .k { color: var(--accent-deep); }
+  .final-file .kv .swatch {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  .final-file .caret {
+    display: inline-block;
+    width: 7px; height: 14px;
+    background: var(--accent);
+    vertical-align: -2px;
+    margin-left: 2px;
+    animation: blink 1.1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Brand reveal (final 2 sec, keeps with Motion Spec) */
+  .brand-sheet {
+    position: absolute;
+    inset: 0;
+    background: var(--cd-bg);
+    transform: translateY(100%);
+    will-change: transform;
+    z-index: 80;
+  }
+  .brand-reveal {
+    position: absolute;
+    inset: 0;
+    z-index: 81;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .brand-reveal .wordmark {
+    font-family: var(--sans);
+    font-weight: 100;
+    font-size: 128px;
+    letter-spacing: -0.045em;
+    color: var(--cd-ink);
+    line-height: 1;
+  }
+  .brand-reveal .wordmark .accent { color: var(--accent); }
+  .brand-reveal .underline {
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    margin-top: 36px;
+    will-change: width;
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="mark">HUASHU · DESIGN</div>
+    <div class="mark-right">V2 · 2026</div>
+
+    <div class="title-line" id="titleLine">w1 · brand protocol</div>
+
+    <div class="chain">
+      <div class="chain-line" id="chainLine"></div>
+
+      <div class="card" data-step="1">
+        <div class="card-num">STEP 01</div>
+        <div class="card-glyph"><div class="g-ask">?</div></div>
+        <div class="card-label">
+          <div class="zh">Hỏi</div>
+        </div>
+      </div>
+
+      <div class="card" data-step="2">
+        <div class="card-num">STEP 02</div>
+        <div class="card-glyph">
+          <div class="g-search">
+            <div class="ring"></div>
+            <div class="handle"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+        <div class="card-label">
+          <div class="zh">Tìm</div>
+        </div>
+      </div>
+
+      <div class="card" data-step="3">
+        <div class="card-num">STEP 03</div>
+        <div class="card-glyph">
+          <div class="g-grab">
+            <div class="arrow"></div>
+            <div class="tray"></div>
+          </div>
+        </div>
+        <div class="card-label">
+          <div class="zh">Tải</div>
+        </div>
+      </div>
+
+      <div class="card" data-step="4">
+        <div class="card-num">STEP 04</div>
+        <div class="card-glyph">
+          <div class="g-grep">
+            <div class="line">#F5F4F0</div>
+            <div class="line"><span class="hit">#D97757</span></div>
+            <div class="line">#1A1918</div>
+            <div class="line">#FFFFFF</div>
+          </div>
+        </div>
+        <div class="card-label">
+          <div class="zh">Trích</div>
+        </div>
+      </div>
+
+      <div class="card" data-step="5">
+        <div class="card-num">STEP 05</div>
+        <div class="card-glyph">
+          <div class="g-lock">
+            <div class="file"></div>
+            <div class="fold"></div>
+            <div class="row r1"></div>
+            <div class="row r2"></div>
+            <div class="row r3"></div>
+            <div class="row r4"></div>
+            <div class="row r5"></div>
+          </div>
+        </div>
+        <div class="card-label">
+          <div class="zh">Cố định</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="final-file" id="finalFile">
+      <div class="file-name">brand-spec.md</div>
+      <div class="h1">Tài sản đã được chốt<span class="caret"></span></div>
+      <div class="kv">
+        <div><span class="k">logo</span> · assets/logo.svg</div>
+        <div><span class="k">hero</span> · product-hero.png</div>
+        <div><span class="k">accent</span> · <span class="swatch" style="background:#D97757"></span>#D97757</div>
+        <div><span class="k">bg</span> · <span class="swatch" style="background:#000;border:1px solid rgba(0,0,0,0.15)"></span>#000000</div>
+      </div>
+    </div>
+
+    <div class="brand-sheet" id="brandSheet"></div>
+    <div class="brand-reveal" id="brandReveal">
+      <div class="wordmark">huashu<span class="accent"> · </span>design</div>
+      <div class="underline" id="brandUnderline"></div>
+    </div>
+  </div>
+
+<script>
+  // ── Auto-scale stage to viewport ─────────────────
+  function fitStage() {
+    const stage = document.getElementById('stage');
+    const sx = window.innerWidth / 1920;
+    const sy = window.innerHeight / 1080;
+    const s = Math.min(sx, sy);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  fitStage();
+  window.addEventListener('resize', fitStage);
+
+  // ── Easing functions ─────────────────
+  const expoOut = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const expoIn  = t => t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
+  const cubicInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+
+  function lerp(t, a, b, easing) {
+    if (t <= 0) return a;
+    if (t >= 1) return b;
+    const e = easing ? easing(t) : t;
+    return a + (b - a) * e;
+  }
+  function seg(time, start, end) {
+    if (time <= start) return 0;
+    if (time >= end) return 1;
+    return (time - start) / (end - start);
+  }
+
+  // ── Timeline (total 12s) ─────────────────
+  // Beat 1 (0-2s) · Beat 2 (2-10s) · Beat 3 (10-12s)
+  //
+  // Card schedule:
+  //   Card 1 enter 0.8-1.6s, active 1.6-3.0
+  //   Card 2 enter 2.4-3.2s, active 3.2-4.6
+  //   Card 3 enter 4.0-4.8s, active 4.8-6.2
+  //   Card 4 enter 5.6-6.4s, active 6.4-7.8
+  //   Card 5 enter 7.2-8.0s, active 8.0-9.4
+  //   All cards stay visible (frozen after active ends)
+  //
+  // Line draws 0.6-8.0s (while cards come in)
+  // Title fades in 0.2-1.2, fades out 9.6-10.0
+  // Final file: 8.8-9.8 scale in, hold to 10.0
+  // Brand reveal: 10.0-12.0
+
+  const cards = Array.from(document.querySelectorAll('.card'));
+  const cardTimings = [
+    { enter: [0.8, 1.6], active: [1.6, 3.0] },
+    { enter: [2.4, 3.2], active: [3.2, 4.6] },
+    { enter: [4.0, 4.8], active: [4.8, 6.2] },
+    { enter: [5.6, 6.4], active: [6.4, 7.8] },
+    { enter: [7.2, 8.0], active: [8.0, 9.4] },
+  ];
+
+  const titleLine = document.getElementById('titleLine');
+  const chainLine = document.getElementById('chainLine');
+  const finalFile = document.getElementById('finalFile');
+  const brandSheet = document.getElementById('brandSheet');
+  const brandReveal = document.getElementById('brandReveal');
+  const brandUnderline = document.getElementById('brandUnderline');
+
+  const DURATION = 12.0;
+  let startTime = null;
+  let loop = true;
+
+  // Honor recording flag
+  if (window.__recording === true) loop = false;
+
+  function tick(now) {
+    if (startTime === null) startTime = now;
+    let t = (now - startTime) / 1000;
+
+    if (t >= DURATION) {
+      if (loop) { startTime = now; t = 0; }
+      else { t = DURATION; }
+    }
+
+    // Title
+    const titleIn = seg(t, 0.2, 1.2);
+    const titleOut = seg(t, 9.6, 10.0);
+    const titleOpacity = Math.min(cubicOut(titleIn), 1 - titleOut);
+    titleLine.style.opacity = Math.max(0, titleOpacity);
+    titleLine.style.transform = `translateX(-50%) translateY(${lerp(titleIn, -8, 0, cubicOut)}px)`;
+
+    // Chain line — grows left→right as cards arrive
+    const lineT = seg(t, 0.6, 8.0);
+    chainLine.style.transform = `scaleX(${cubicInOut(lineT)})`;
+
+    // Cards
+    cards.forEach((card, i) => {
+      const { enter, active } = cardTimings[i];
+      const enterT = seg(t, enter[0], enter[1]);
+
+      const baseOp = expoOut(enterT);
+      const ty = lerp(enterT, 20, 0, expoOut);
+
+      // Active state during the card's "spotlight" window
+      const isActive = t >= active[0] && t <= active[1];
+      card.classList.toggle('active', isActive);
+
+      // Cards dim to 25% when final file starts zooming in (8.8-9.6),
+      // then fade fully when brand reveal takes over (10.0-10.4)
+      const dimT = seg(t, 8.8, 9.6);
+      const exitT = seg(t, 10.0, 10.4);
+      const dimFactor = lerp(dimT, 1.0, 0.22, cubicInOut);
+      const finalOp = baseOp * dimFactor * (1 - exitT);
+
+      if (dimT > 0) card.classList.remove('active');
+
+      card.style.opacity = finalOp;
+      card.style.transform = `translateY(${ty - 10 * exitT}px)`;
+    });
+
+    // Chain line also dims when final file zooms, fades with cards at 10.0-10.4
+    const chainDim = seg(t, 8.8, 9.6);
+    const chainExit = seg(t, 10.0, 10.4);
+    chainLine.style.opacity = lerp(chainDim, 1, 0.22, cubicInOut) * (1 - chainExit);
+
+    // Final file: 8.8-9.8 scale+fade in, then 9.8-10.2 scale+settle, hold to ~10.0
+    const finalInT = seg(t, 8.8, 9.8);
+    const finalScale = lerp(finalInT, 0.88, 1.0, expoOut);
+    const finalOp = cubicOut(finalInT);
+    // fade final file out into brand reveal
+    const finalOut = seg(t, 10.0, 10.6);
+    finalFile.style.opacity = finalOp * (1 - finalOut);
+    finalFile.style.transform = `translate(-50%, -50%) scale(${finalScale * (1 - finalOut * 0.04)})`;
+
+    // Brand reveal — sheet slides up from bottom 10.0-10.6, wordmark fades in 10.6-11.4, underline 11.4-11.9
+    const sheetT = seg(t, 10.0, 10.6);
+    brandSheet.style.transform = `translateY(${lerp(sheetT, 100, 0, expoOut)}%)`;
+
+    const wordT = seg(t, 10.6, 11.4);
+    brandReveal.style.opacity = cubicOut(wordT);
+    // NOTE: no scale transform on .brand-reveal — it would compound with the
+    // underline width animation and make the line appear mis-placed. Instead,
+    // scale the wordmark alone via font-variation-settings-safe approach: none here.
+
+    const underT = seg(t, 11.4, 11.9);
+    brandUnderline.style.width = `${lerp(underT, 0, 280, expoOut)}px`;
+
+    // Mark as ready for recorder on first frame
+    if (!window.__ready) window.__ready = true;
+
+    if (loop || t < DURATION) requestAnimationFrame(tick);
+  }
+  // Wait for fonts before first paint so Serif glyphs are correct
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+    .then(() => requestAnimationFrame(tick));
+</script>
+</body>
+</html>

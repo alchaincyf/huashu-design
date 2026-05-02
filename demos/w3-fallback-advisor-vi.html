@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>w3 · Cố vấn định hướng (Tiếng Việt)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --dim: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+    --cd-bg: #F5F4F0;
+    --cd-ink: #1A1918;
+
+    --serif-en: "Source Serif 4", Georgia, serif;
+    --sans: "Inter", -apple-system, system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Watermarks */
+  .watermark-tl {
+    position: absolute;
+    top: 40px; left: 56px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.16);
+    z-index: 200;
+    pointer-events: none;
+    text-transform: uppercase;
+  }
+  .watermark-br {
+    position: absolute;
+    bottom: 32px; right: 40px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: rgba(255,255,255,0.14);
+    z-index: 200;
+    pointer-events: none;
+    text-transform: uppercase;
+  }
+
+  /* Top title — English uses Serif Display */
+  .top-title {
+    position: absolute;
+    top: 82px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--serif-en);
+    font-weight: 300;
+    font-size: 46px;
+    font-style: italic;
+    letter-spacing: -0.01em;
+    color: var(--ink-80);
+    text-align: center;
+    opacity: 0;
+    will-change: opacity, transform;
+    z-index: 120;
+    line-height: 1.12;
+  }
+  .top-title .accent { color: var(--accent); font-style: italic; }
+
+  .sub-caption {
+    position: absolute;
+    top: 148px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.34em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity;
+    z-index: 120;
+  }
+
+  /* Philosophy wall */
+  .wall-viewport {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1480px;
+    height: 760px;
+    perspective: 2400px;
+    perspective-origin: 50% 50%;
+    will-change: transform, opacity, filter;
+  }
+  .wall-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 18px;
+    transform: rotateX(10deg) rotateY(-6deg);
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+  }
+  .cell {
+    position: relative;
+    background: #0f0f0f;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    opacity: 0;
+    will-change: opacity, transform, filter;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 14px 16px;
+  }
+  .cell .glyph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .cell .name {
+    position: relative;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    z-index: 2;
+    align-self: flex-end;
+  }
+  .cell .num {
+    position: relative;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    z-index: 2;
+  }
+  .cell.selected {
+    border-color: var(--accent);
+    background: #1a0f0a;
+  }
+  .cell.selected .name { color: var(--accent); }
+
+  /* Scan light */
+  .scan-light {
+    position: absolute;
+    left: -5%;
+    right: -5%;
+    top: -15%;
+    height: 200px;
+    background: linear-gradient(
+      180deg,
+      rgba(217, 119, 87, 0) 0%,
+      rgba(217, 119, 87, 0.18) 40%,
+      rgba(255, 220, 200, 0.45) 50%,
+      rgba(217, 119, 87, 0.18) 60%,
+      rgba(217, 119, 87, 0) 100%
+    );
+    filter: blur(8px);
+    z-index: 80;
+    opacity: 0;
+    will-change: opacity, transform;
+    pointer-events: none;
+  }
+
+  /* Foreground 3 cards */
+  .fg-row {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 56px;
+    opacity: 0;
+    will-change: opacity;
+    z-index: 100;
+  }
+  .fg-card {
+    width: 440px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateZ(-800px) scale(0.4);
+    will-change: opacity, transform;
+  }
+  .fg-card .card-body {
+    background: #0f0f0f;
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 32px 30px;
+    box-shadow:
+      0 30px 80px -20px rgba(217,119,87,0.25),
+      0 10px 30px -10px rgba(0,0,0,0.6);
+  }
+  .fg-card .label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .fg-card .title-main {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 40px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .fg-card .title-sub {
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-60);
+    margin-bottom: 22px;
+  }
+  .fg-card .feature {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+    line-height: 1.6;
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline);
+    text-transform: uppercase;
+  }
+  .fg-card .thumb-wrap {
+    margin-top: 14px;
+    height: 0;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #0a0a0a;
+    border: 1px solid var(--hairline);
+    opacity: 0;
+    will-change: opacity, height;
+  }
+  .fg-card .thumb-wrap img {
+    width: 100%;
+    display: block;
+  }
+
+  /* Brand reveal */
+  .brand-panel {
+    position: absolute;
+    inset: 0;
+    background: var(--cd-bg);
+    opacity: 0;
+    transform: translateY(100%);
+    will-change: opacity, transform;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .brand-mark {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 112px;
+    letter-spacing: -0.02em;
+    color: var(--cd-ink);
+    opacity: 0;
+    transform: scale(0.92);
+    will-change: opacity, transform;
+    line-height: 1;
+  }
+  .brand-mark .dot { color: var(--accent); font-style: normal; padding: 0 6px; }
+  .brand-mark .accent { color: var(--accent); font-style: italic; }
+  .brand-underline {
+    margin-top: 34px;
+    height: 2px;
+    width: 0;
+    background: var(--accent);
+    will-change: width;
+  }
+  .brand-tag {
+    margin-top: 22px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    color: rgba(26,25,24,0.54);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <div class="watermark-tl">HUASHU · DESIGN</div>
+  <div class="watermark-br">V2 · 2026 · w3</div>
+
+  <!-- English version: parallel rewrite, fewer words, more breathing room -->
+  <div class="top-title" id="topTitle">
+    Chưa chắc? <span class="accent">Đây là 3 hướng đi.</span>
+  </div>
+  <div class="sub-caption" id="subCaption">20 triết lý · 3 hướng</div>
+
+  <div class="scan-light" id="scanLight"></div>
+
+  <div class="wall-viewport" id="wallViewport">
+    <div class="wall-grid" id="wallGrid">
+      <!-- 20 cells injected by JS -->
+    </div>
+  </div>
+
+  <div class="fg-row" id="fgRow">
+    <div class="fg-card" id="card1">
+      <div class="card-body">
+        <div class="label">Hướng 01 · Không gian phương Đông</div>
+        <div class="title-main">Kenya Hara</div>
+        <div class="title-sub">Ma / Khoảng trống</div>
+        <div class="feature">Đất nung · Khoảng trắng lớn · Bề mặt giấy</div>
+      </div>
+      <div class="thumb-wrap" id="thumb1">
+        <img src="demo-takram.png" alt="demo takram" />
+      </div>
+    </div>
+    <div class="fg-card" id="card2">
+      <div class="card-body">
+        <div class="label">Hướng 02 · Kiến trúc thông tin</div>
+        <div class="title-main">Pentagram</div>
+        <div class="title-sub">Grid / Kỷ luật</div>
+        <div class="feature">Grid chặt · Tương phản cao · Tinh thần biên tập</div>
+      </div>
+      <div class="thumb-wrap" id="thumb2">
+        <img src="demo-pentagram.png" alt="demo pentagram" />
+      </div>
+    </div>
+    <div class="fg-card" id="card3">
+      <div class="card-body">
+        <div class="label">Hướng 03 · Biên độ thử nghiệm</div>
+        <div class="title-main">David Carson</div>
+        <div class="title-sub">Thô / Punk</div>
+        <div class="feature">Chữ vỡ cấu trúc · Hình học thô · Cú sốc thị giác</div>
+      </div>
+      <div class="thumb-wrap" id="thumb3">
+        <img src="demo-build.png" alt="demo build" />
+      </div>
+    </div>
+  </div>
+
+  <div class="brand-panel" id="brandPanel">
+    <div class="brand-mark" id="brandMark">huashu<span class="dot">·</span><span class="accent">design</span></div>
+    <div class="brand-underline" id="brandUnderline"></div>
+    <div class="brand-tag" id="brandTag">HTML là chất liệu của nhà thiết kế</div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  function scaleStage(){
+    const stage = document.getElementById('stage');
+    const sx = window.innerWidth / 1920;
+    const sy = window.innerHeight / 1080;
+    const s = Math.min(sx, sy);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  window.addEventListener('resize', scaleStage);
+  scaleStage();
+
+  // 20 philosophies — identical structure to zh.html (designer names are brand identifiers, kept as-is)
+  const PHILOSOPHIES = [
+    { name: 'Pentagram',    glyph: 'grid' },
+    { name: 'M. Vignelli',  glyph: 'bars' },
+    { name: 'Apple HIG',    glyph: 'radius' },
+    { name: 'Spin',         glyph: 'slash' },
+    { name: 'Build',        glyph: 'type' },
+    { name: 'Field.io',     glyph: 'wave' },
+    { name: 'Active Theory',glyph: 'orbit' },
+    { name: 'Hi-Res!',      glyph: 'dots' },
+    { name: 'Locomotive',   glyph: 'arrow' },
+    { name: 'Takram',       glyph: 'circle' },
+    { name: 'Kenya Hara',   glyph: 'ma' },
+    { name: 'D. Rams',      glyph: 'square' },
+    { name: 'J. Ive',       glyph: 'arc' },
+    { name: 'J. Morrison',  glyph: 'minimal' },
+    { name: 'S. Ogata',     glyph: 'line' },
+    { name: 'D. Carson',    glyph: 'collage' },
+    { name: 'S. Sagmeister',glyph: 'stamp' },
+    { name: 'P. Scher',     glyph: 'poster' },
+    { name: 'M. Glaser',    glyph: 'heart' },
+    { name: 'K. Sato',      glyph: 'logo' },
+  ];
+  const SELECTED = [10, 0, 15];
+
+  function makeGlyph(kind){
+    const svgs = {
+      grid: `<svg viewBox="0 0 100 60" width="78%" height="62%"><g stroke="rgba(255,255,255,0.22)" stroke-width="1" fill="none">
+        <rect x="6" y="8" width="28" height="18"/><rect x="38" y="8" width="28" height="18"/><rect x="70" y="8" width="24" height="44"/>
+        <rect x="6" y="30" width="60" height="22"/></g></svg>`,
+      bars: `<svg viewBox="0 0 100 60" width="78%" height="62%"><g fill="rgba(255,255,255,0.22)">
+        <rect x="10" y="40" width="8" height="16"/><rect x="22" y="28" width="8" height="28"/><rect x="34" y="16" width="8" height="40"/>
+        <rect x="46" y="24" width="8" height="32"/><rect x="58" y="10" width="8" height="46"/><rect x="70" y="34" width="8" height="22"/>
+        <rect x="82" y="22" width="8" height="34"/></g></svg>`,
+      radius: `<svg viewBox="0 0 100 60" width="72%" height="58%"><g stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none">
+        <rect x="14" y="10" width="72" height="40" rx="20" ry="20"/></g></svg>`,
+      slash: `<svg viewBox="0 0 100 60" width="78%" height="62%"><g stroke="rgba(255,255,255,0.22)" stroke-width="1.4" fill="none" stroke-linecap="square">
+        <path d="M 14 50 L 52 10"/><path d="M 36 50 L 74 10"/><path d="M 58 50 L 86 22"/></g></svg>`,
+      type: `<svg viewBox="0 0 100 60" width="78%" height="62%"><text x="50" y="42" text-anchor="middle" font-family="Source Serif 4, serif" font-size="40" font-style="italic" fill="rgba(255,255,255,0.22)">Aa</text></svg>`,
+      wave: `<svg viewBox="0 0 100 60" width="82%" height="62%"><path d="M 6 30 Q 20 8, 34 30 T 62 30 T 90 30" stroke="rgba(255,255,255,0.22)" stroke-width="1.3" fill="none"/></svg>`,
+      orbit: `<svg viewBox="0 0 100 60" width="74%" height="62%"><g stroke="rgba(255,255,255,0.22)" stroke-width="1.1" fill="none"><ellipse cx="50" cy="30" rx="36" ry="14"/><ellipse cx="50" cy="30" rx="14" ry="22"/><circle cx="50" cy="30" r="2" fill="rgba(255,255,255,0.32)"/></g></svg>`,
+      dots: `<svg viewBox="0 0 100 60" width="78%" height="62%"><g fill="rgba(255,255,255,0.22)"><circle cx="14" cy="18" r="2"/><circle cx="30" cy="18" r="2"/><circle cx="46" cy="18" r="2"/><circle cx="62" cy="18" r="2"/><circle cx="78" cy="18" r="2"/><circle cx="14" cy="30" r="2"/><circle cx="30" cy="30" r="2"/><circle cx="46" cy="30" r="3"/><circle cx="62" cy="30" r="2"/><circle cx="78" cy="30" r="2"/><circle cx="14" cy="42" r="2"/><circle cx="30" cy="42" r="2"/><circle cx="46" cy="42" r="2"/><circle cx="62" cy="42" r="2"/><circle cx="78" cy="42" r="2"/></g></svg>`,
+      arrow: `<svg viewBox="0 0 100 60" width="78%" height="52%"><g stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none" stroke-linecap="square"><path d="M 14 30 L 80 30"/><path d="M 68 18 L 82 30 L 68 42"/></g></svg>`,
+      circle: `<svg viewBox="0 0 100 60" width="62%" height="62%"><circle cx="50" cy="30" r="22" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none"/></svg>`,
+      ma: `<svg viewBox="0 0 100 60" width="72%" height="62%"><g fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="0.9"><rect x="18" y="14" width="64" height="32"/></g><circle cx="50" cy="30" r="1.4" fill="rgba(255,255,255,0.32)"/></svg>`,
+      square: `<svg viewBox="0 0 100 60" width="62%" height="62%"><rect x="30" y="10" width="40" height="40" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none"/></svg>`,
+      arc: `<svg viewBox="0 0 100 60" width="78%" height="62%"><path d="M 14 46 Q 50 6, 86 46" stroke="rgba(255,255,255,0.22)" stroke-width="1.3" fill="none"/></svg>`,
+      minimal: `<svg viewBox="0 0 100 60" width="78%" height="32%"><line x1="18" y1="30" x2="82" y2="30" stroke="rgba(255,255,255,0.22)" stroke-width="1.2"/></svg>`,
+      line: `<svg viewBox="0 0 100 60" width="78%" height="62%"><g stroke="rgba(255,255,255,0.22)" stroke-width="0.9" fill="none"><line x1="14" y1="16" x2="86" y2="16"/><line x1="14" y1="30" x2="86" y2="30"/><line x1="14" y1="44" x2="60" y2="44"/></g></svg>`,
+      collage: `<svg viewBox="0 0 100 60" width="82%" height="62%"><g fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1"><rect x="8" y="8" width="24" height="18" transform="rotate(-8 20 17)"/><rect x="36" y="18" width="28" height="20" transform="rotate(5 50 28)"/><rect x="60" y="6" width="32" height="24" transform="rotate(-4 76 18)"/></g><text x="50" y="56" text-anchor="middle" font-family="Source Serif 4, serif" font-size="14" font-style="italic" fill="rgba(255,255,255,0.3)">RAY</text></svg>`,
+      stamp: `<svg viewBox="0 0 100 60" width="70%" height="62%"><g stroke="rgba(255,255,255,0.22)" stroke-width="1.2" fill="none"><circle cx="50" cy="30" r="22"/><text x="50" y="35" text-anchor="middle" font-family="Source Serif 4" font-size="16" font-weight="500" fill="rgba(255,255,255,0.3)">S</text></g></svg>`,
+      poster: `<svg viewBox="0 0 100 60" width="82%" height="62%"><g fill="rgba(255,255,255,0.22)"><rect x="8" y="8" width="22" height="44"/><rect x="34" y="8" width="22" height="44"/><rect x="60" y="8" width="22" height="44"/></g></svg>`,
+      heart: `<svg viewBox="0 0 100 60" width="58%" height="58%"><path d="M 50 48 C 30 32, 18 20, 30 14 C 40 10, 50 22, 50 22 C 50 22, 60 10, 70 14 C 82 20, 70 32, 50 48 Z" fill="rgba(217,119,87,0.28)"/></svg>`,
+      logo: `<svg viewBox="0 0 100 60" width="60%" height="60%"><circle cx="50" cy="30" r="20" stroke="rgba(255,255,255,0.22)" stroke-width="1.3" fill="none"/><circle cx="50" cy="30" r="6" fill="rgba(255,255,255,0.22)"/></svg>`,
+    };
+    return svgs[kind] || svgs.minimal;
+  }
+
+  const wallGrid = document.getElementById('wallGrid');
+  PHILOSOPHIES.forEach((p, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.idx = idx;
+    const row = Math.floor(idx / 5);
+    const col = idx % 5;
+    const dr = row - 1.5;
+    const dc = col - 2;
+    const dist = Math.sqrt(dr * dr + dc * dc);
+    cell.dataset.dist = dist.toFixed(3);
+    cell.innerHTML = `
+      <div class="glyph">${makeGlyph(p.glyph)}</div>
+      <div class="num">${String(idx + 1).padStart(2, '0')}</div>
+      <div class="name">${p.name}</div>
+    `;
+    wallGrid.appendChild(cell);
+  });
+
+  const cells = Array.from(wallGrid.querySelectorAll('.cell'));
+  const maxDist = Math.max(...cells.map(c => parseFloat(c.dataset.dist)));
+
+  const T_TOTAL = 12.0;
+  const expoOut = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const cubicInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const clamp01 = v => clamp(v, 0, 1);
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  const topTitle = document.getElementById('topTitle');
+  const subCap = document.getElementById('subCaption');
+  const wallViewport = document.getElementById('wallViewport');
+  const scanLight = document.getElementById('scanLight');
+  const fgRow = document.getElementById('fgRow');
+  const card1 = document.getElementById('card1');
+  const card2 = document.getElementById('card2');
+  const card3 = document.getElementById('card3');
+  const thumb1 = document.getElementById('thumb1');
+  const thumb2 = document.getElementById('thumb2');
+  const thumb3 = document.getElementById('thumb3');
+  const brandPanel = document.getElementById('brandPanel');
+  const brandMark = document.getElementById('brandMark');
+  const brandUnderline = document.getElementById('brandUnderline');
+  const brandTag = document.getElementById('brandTag');
+
+  function tick(t){
+    t = Math.max(0, Math.min(T_TOTAL, t));
+
+    // Ripple in 20 cells
+    const rippleStart = 0.15;
+    cells.forEach(cell => {
+      const d = parseFloat(cell.dataset.dist);
+      const delay = (d / maxDist) * 0.85;
+      const cellT = clamp01((t - rippleStart - delay * 0.55) / 0.7);
+      const eased = expoOut(cellT);
+      const idx = parseInt(cell.dataset.idx, 10);
+      const isSel = SELECTED.includes(idx);
+      cell.style.opacity = (eased * (isSel ? 1.0 : 0.85)).toFixed(3);
+      const ty = lerp(30, 0, eased);
+      const scale = lerp(0.88, 1, eased);
+      cell.style.transform = `translateY(${ty}px) scale(${scale})`;
+    });
+
+    // Scan light
+    const scanStart = 2.6;
+    const scanEnd = 4.0;
+    const scanT = clamp01((t - scanStart) / (scanEnd - scanStart));
+    if (scanT > 0 && scanT < 1) {
+      scanLight.style.opacity = Math.min(1, Math.sin(scanT * Math.PI) * 1.3).toFixed(3);
+      const py = lerp(-180, 820, cubicInOut(scanT));
+      scanLight.style.transform = `translateY(${py}px)`;
+    } else {
+      scanLight.style.opacity = 0;
+    }
+
+    // Light up selected, dim others
+    const lightStart = 4.0;
+    const lightEnd = 4.8;
+    const lightT = clamp01((t - lightStart) / (lightEnd - lightStart));
+    const lightE = expoOut(lightT);
+    cells.forEach(cell => {
+      const idx = parseInt(cell.dataset.idx, 10);
+      const isSel = SELECTED.includes(idx);
+      if (isSel) {
+        cell.classList.toggle('selected', lightT > 0.05);
+      } else {
+        if (t >= lightStart) {
+          const dimmedOpacity = lerp(0.85, 0.08, lightE);
+          cell.style.opacity = dimmedOpacity.toFixed(3);
+        }
+      }
+    });
+
+    // Foreground cards break out
+    const breakStart = 4.8;
+    if (t >= breakStart - 0.1) fgRow.style.opacity = 1;
+    else fgRow.style.opacity = 0;
+
+    [card1, card2, card3].forEach((card, i) => {
+      const stagger = i * 0.18;
+      const cT = clamp01((t - breakStart - stagger) / 0.85);
+      const cE = expoOut(cT);
+      card.style.opacity = cE.toFixed(3);
+      const tz = lerp(-800, 0, cE);
+      const sc = lerp(0.45, 1, cE);
+      const ty = lerp(40, 0, cE);
+      card.style.transform = `translateZ(${tz}px) scale(${sc}) translateY(${ty}px)`;
+    });
+
+    // Dim wall background
+    if (t >= breakStart) {
+      const dimT = clamp01((t - breakStart) / 0.9);
+      const dimE = expoOut(dimT);
+      wallViewport.style.opacity = lerp(1, 0.25, dimE).toFixed(3);
+      wallViewport.style.filter = `blur(${lerp(0, 6, dimE).toFixed(1)}px)`;
+    } else {
+      wallViewport.style.opacity = 1;
+      wallViewport.style.filter = 'blur(0px)';
+    }
+
+    // Demo thumbnails grow
+    const thumbStart = 6.6;
+    [thumb1, thumb2, thumb3].forEach((thumb, i) => {
+      const stagger = i * 0.32;
+      const ttT = clamp01((t - thumbStart - stagger) / 1.0);
+      const ttE = cubicOut(ttT);
+      thumb.style.opacity = ttE.toFixed(3);
+      const h = lerp(0, 250, ttE);
+      thumb.style.height = `${h}px`;
+    });
+
+    // Top title fade
+    const titleStart = 7.2;
+    const titleT = clamp01((t - titleStart) / 0.9);
+    const titleE = cubicOut(titleT);
+    topTitle.style.opacity = titleE.toFixed(3);
+    topTitle.style.transform = `translateX(-50%) translateY(${lerp(-14, 0, titleE)}px)`;
+    subCap.style.opacity = (titleE * 0.95).toFixed(3);
+
+    // Brand reveal
+    const brandStart = 9.8;
+    const panelT = clamp01((t - brandStart) / 0.7);
+    const panelE = expoOut(panelT);
+    brandPanel.style.opacity = panelE.toFixed(3);
+    brandPanel.style.transform = `translateY(${lerp(100, 0, panelE)}%)`;
+
+    const markStart = 10.3;
+    const markT = clamp01((t - markStart) / 0.6);
+    const markE = expoOut(markT);
+    brandMark.style.opacity = markE.toFixed(3);
+    brandMark.style.transform = `scale(${lerp(0.92, 1, markE)})`;
+
+    const ulStart = 10.7;
+    const ulT = clamp01((t - ulStart) / 0.55);
+    brandUnderline.style.width = `${lerp(0, 280, expoOut(ulT))}px`;
+
+    const tagStart = 11.1;
+    const tagT = clamp01((t - tagStart) / 0.5);
+    brandTag.style.opacity = cubicOut(tagT).toFixed(3);
+  }
+
+  window.__ready = false;
+  window.__duration = T_TOTAL;
+  let startTime = null;
+  let paused = false;
+  const recording = window.__recording === true;
+
+  function loop(now){
+    if (paused) return;
+    if (startTime === null) startTime = now;
+    const t = (now - startTime) / 1000;
+    tick(t);
+    if (t < T_TOTAL) requestAnimationFrame(loop);
+    else if (!recording) { startTime = now; requestAnimationFrame(loop); }
+  }
+
+  tick(0);
+  window.__ready = true;
+  requestAnimationFrame(loop);
+
+  window.__pause = function(){ paused = true; };
+  window.__resume = function(){
+    if (!paused) return;
+    paused = false; startTime = null;
+    requestAnimationFrame(loop);
+  };
+  window.__setTime = function(t){ paused = true; tick(t); };
+})();
+</script>
+
+</body>
+</html>

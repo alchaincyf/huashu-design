@@ -1,4 +1,4 @@
-<sub><b>🌐 English</b> · <a href="README.md">中文</a></sub>
+<sub><b>🌐 English</b> · <a href="README.vi.md">Tiếng Việt</a> · <a href="README.md">中文</a></sub>
 
 <div align="center">
 
@@ -272,11 +272,11 @@ huashu-design/
 
 ## Origin Story
 
-The day Anthropic launched Claude Design I played with it until 4 a.m. A few days later I realized I hadn't opened it once since — not because it's bad (it's the most polished product in the category) but because I'd rather have an agent work in my terminal than open any graphical UI.
+The day Anthropic launched Claude Design, Huasheng played with it until 4 a.m. A few days later he realized he hadn't opened it once since — not because it's bad (it's the most polished product in the category) but because he'd rather have an agent work in the terminal than open any graphical UI.
 
-So I had an agent deconstruct Claude Design itself (including the system prompts circulating in the community, the brand asset protocol, the component mechanics), distill it into a structured spec, then write it as a skill installed in my own Claude Code.
+So Huasheng had an agent deconstruct Claude Design itself (including the system prompts circulating in the community, the brand asset protocol, the component mechanics), distill it into a structured spec, then write it as a skill installed in Claude Code.
 
-Thanks to Anthropic for writing the Claude Design prompts so clearly. This kind of derivative work inspired by other products is the new form of open-source culture in the AI era.
+Thanks to Anthropic for writing the Claude Design prompts so clearly, and credit to Huasheng (Huashu) as the creator of huashu-design. This kind of derivative work inspired by other products is the new form of open-source culture in the AI era.
 
 ---
 

@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>c5-infographic · Dữ liệu → typography (VI)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --dim: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+
+    /* Brand Reveal */
+    --cd-bg: #F5F4F0;
+    --cd-panel: #FFFFFF;
+    --cd-ink: #1A1918;
+    --cd-dim: #8B867E;
+
+    --serif-en: "Source Serif 4", "Tiempos Headline", Georgia, serif;
+    --serif-cn: "Noto Serif SC", "Songti SC", "Source Han Serif SC", serif;
+    --sans: "Inter", -apple-system, "PingFang SC", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+    /* Subtle film grain via SVG — 2% opacity */
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(217,119,87,0.025), transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(217,119,87,0.018), transparent 55%);
+  }
+
+  .watermark {
+    position: absolute;
+    top: 40px; left: 48px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--ink);
+    opacity: 0.16;
+    text-transform: uppercase;
+    z-index: 400;
+    transition: color 0.3s ease;
+  }
+  .watermark.on-light { color: var(--cd-ink); opacity: 0.35; }
+
+  .v2-mark {
+    position: absolute;
+    bottom: 40px; right: 48px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--ink);
+    opacity: 0.16;
+    z-index: 400;
+  }
+
+  /* ============ Split layout ============ */
+  .split-left {
+    position: absolute;
+    left: 120px; top: 50%;
+    transform: translateY(-50%);
+    width: 440px;
+    will-change: opacity, transform;
+  }
+
+  .json-block {
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink-60);
+    letter-spacing: 0.01em;
+    white-space: pre;
+  }
+  .json-block .k { color: var(--ink-80); }
+  .json-block .s { color: var(--accent); }
+  .json-block .n { color: var(--ink); font-weight: 500; }
+  .json-block .p { color: var(--muted); }
+
+  .json-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+
+  /* Pipe arrow from JSON → infographic */
+  .pipe {
+    position: absolute;
+    left: 580px; top: 50%;
+    transform: translateY(-50%);
+    width: 90px; height: 2px;
+    background: linear-gradient(to right, var(--hairline), var(--accent), var(--hairline));
+    opacity: 0;
+    will-change: opacity;
+  }
+  .pipe::after {
+    content: '';
+    position: absolute;
+    right: -4px; top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 8px; height: 8px;
+    border-right: 2px solid var(--accent);
+    border-top: 2px solid var(--accent);
+  }
+
+  /* ============ Infographic (right side) ============ */
+  .infographic {
+    position: absolute;
+    right: 100px; top: 72px;
+    width: 1120px; height: 936px;
+    background: #0A0A0A;
+    border: 1px solid var(--hairline);
+    padding: 56px 64px;
+    opacity: 0;
+    transform: translateY(18px);
+    will-change: opacity, transform;
+    overflow: hidden;
+  }
+
+  .ig-masthead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 20px;
+    margin-bottom: 36px;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .ig-masthead .issue {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .ig-masthead .issue .orange { color: var(--accent); }
+  .ig-masthead .dept {
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--ink-60);
+    text-transform: uppercase;
+  }
+
+  .ig-display {
+    font-family: var(--serif-en);
+    font-weight: 300;
+    font-size: 96px;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 6px;
+    opacity: 0;
+    will-change: opacity, transform;
+    text-wrap: pretty;
+    font-feature-settings: "liga" 1, "dlig" 1, "kern" 1;
+  }
+  .ig-display .en {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+    font-feature-settings: "liga" 1, "dlig" 1, "swsh" 1;
+  }
+
+  .ig-deck {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--ink-60);
+    letter-spacing: 0.01em;
+    margin-bottom: 44px;
+    opacity: 0;
+    will-change: opacity;
+    font-feature-settings: "liga" 1, "dlig" 1;
+  }
+
+  /* Grid of 5 stats */
+  .ig-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 44px;
+  }
+  .ig-cell {
+    opacity: 0;
+    will-change: opacity, transform;
+    border-top: 2px solid var(--ink);
+    padding-top: 14px;
+  }
+  .ig-cell.accent { border-top-color: var(--accent); }
+  .ig-cell .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.26em;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .ig-cell .label .en {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+  }
+  .ig-cell .big {
+    font-family: var(--serif-en);
+    font-weight: 300;
+    font-size: 72px;
+    line-height: 0.92;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    font-feature-settings: "onum" 1, "pnum" 1, "kern" 1;
+  }
+  .ig-cell.accent .big { color: var(--accent); }
+  .ig-cell .big .unit {
+    font-size: 28px;
+    color: var(--ink-60);
+    letter-spacing: 0;
+  }
+  .ig-cell .sub {
+    margin-top: 12px;
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-60);
+    line-height: 1.4;
+    font-feature-settings: "liga" 1, "dlig" 1;
+    letter-spacing: 0.005em;
+  }
+
+  /* Comparison bars */
+  .ig-bars {
+    display: grid;
+    grid-template-columns: 140px 1fr 80px;
+    gap: 18px 24px;
+    row-gap: 18px;
+    border-top: 1px solid var(--hairline);
+    padding-top: 28px;
+    align-items: center;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .ig-bars .row-label {
+    font-family: var(--serif-en);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink-80);
+    letter-spacing: 0.005em;
+  }
+  .ig-bars .row-label.highlight { color: var(--accent); font-weight: 500; }
+  .ig-bars .row-bar {
+    height: 6px;
+    background: var(--hairline);
+    position: relative;
+    overflow: hidden;
+  }
+  .ig-bars .row-bar .fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--ink-80);
+    width: 0%;
+    will-change: width;
+  }
+  .ig-bars .row-bar .fill.accent { background: var(--accent); }
+  .ig-bars .row-val {
+    font-family: var(--serif-en);
+    font-size: 16px;
+    color: var(--ink);
+    text-align: right;
+    font-variant-numeric: oldstyle-nums tabular-nums;
+    font-feature-settings: "onum" 1, "tnum" 1;
+    letter-spacing: 0.01em;
+  }
+
+  .ig-footer {
+    position: absolute;
+    bottom: 40px; left: 64px; right: 64px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-top: 1px solid var(--hairline);
+    padding-top: 16px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .ig-footer .folio { color: var(--ink-60); letter-spacing: 0.32em; }
+
+  /* ============ Typography detail zoom ============ */
+  .detail-zoom {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    will-change: opacity;
+    background: radial-gradient(ellipse at center, #0A0A0A, #000000);
+    z-index: 250;
+  }
+  .detail-word {
+    font-family: var(--serif-en);
+    font-weight: 300;
+    font-style: italic;
+    font-size: 320px;
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    /* Enable OpenType ligatures, discretionary ligatures, swashes */
+    font-feature-settings: "liga" 1, "dlig" 1, "swsh" 1, "salt" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    will-change: transform, opacity;
+  }
+  .detail-word .fi {
+    /* fi ligature is default with "liga" */
+    color: var(--accent);
+  }
+  .detail-annotation {
+    position: absolute;
+    top: calc(50% + 170px); left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity;
+    white-space: nowrap;
+  }
+  .detail-annotation .dot {
+    color: var(--accent);
+    padding: 0 8px;
+  }
+
+  /* Callout lines pointing to ligature */
+  .callout {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .callout svg { overflow: visible; display: block; }
+
+  /* ============ Brand Reveal ============ */
+  .brand-wall {
+    position: absolute;
+    inset: 0;
+    background: var(--cd-bg);
+    z-index: 300;
+    opacity: 0;
+    transform: translateY(100%);
+    will-change: transform, opacity;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-wordmark {
+    font-family: var(--serif-en);
+    font-size: 132px;
+    font-weight: 200;
+    color: var(--cd-ink);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    opacity: 0;
+    transform: scale(0.92);
+    will-change: opacity, transform;
+    font-feature-settings: "liga" 1, "dlig" 1;
+  }
+  .brand-wordmark .dot { color: var(--accent); padding: 0 10px; font-weight: 300; }
+  .brand-underline {
+    margin-top: 28px;
+    height: 2px;
+    width: 0;
+    background: var(--accent);
+    will-change: width;
+  }
+  .brand-cn {
+    margin-top: 30px;
+    font-family: var(--serif-cn);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--cd-dim);
+    letter-spacing: 0.4em;
+    opacity: 0;
+    will-change: opacity;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <div class="watermark" id="watermark">HUASHU · DESIGN</div>
+  <div class="v2-mark">V2 · 2026</div>
+
+  <!-- Left: JSON data -->
+  <div class="split-left" id="splitLeft" style="opacity:0">
+    <div class="json-label" id="jsonLabel">DATA &#8594; benchmarks.json</div>
+    <pre class="json-block" id="jsonBlock"></pre>
+  </div>
+
+  <!-- Pipe arrow -->
+  <div class="pipe" id="pipe"></div>
+
+  <!-- Right: Infographic -->
+  <div class="infographic" id="infographic">
+
+    <div class="ig-masthead" id="igMasthead">
+      <div class="issue">Issue &#8470; 05 <span class="orange">&#183; AI Benchmarks</span> &#183; Q2 2026</div>
+      <div class="dept">FRONTIER REPORT</div>
+    </div>
+
+    <h1 class="ig-display" id="igDisplay">
+      The Age of<br>
+      <span class="en">benchmarks</span>.
+    </h1>
+
+    <p class="ig-deck" id="igDeck">
+      Five frontier models, five numbers, one uncomfortable truth.
+    </p>
+
+    <div class="ig-grid" id="igGrid">
+      <div class="ig-cell accent" data-cell="0">
+        <div class="label">Leader <span class="en">&#183; Q2</span></div>
+        <div class="big">Claude 4.7</div>
+        <div class="sub">Sonnet, 1M ctx &#183; Anthropic</div>
+      </div>
+      <div class="ig-cell" data-cell="1">
+        <div class="label"><span class="en">SWE-bench</span></div>
+        <div class="big">77<span class="unit">.2%</span></div>
+        <div class="sub">coding, verified split</div>
+      </div>
+      <div class="ig-cell" data-cell="2">
+        <div class="label"><span class="en">GPQA</span></div>
+        <div class="big">84<span class="unit">.5</span></div>
+        <div class="sub">diamond, graduate science</div>
+      </div>
+      <div class="ig-cell" data-cell="3">
+        <div class="label">Price <span class="en">&#183; input</span></div>
+        <div class="big">$3<span class="unit">/M</span></div>
+        <div class="sub">per million tokens, typical</div>
+      </div>
+    </div>
+
+    <div class="ig-bars" id="igBars">
+      <div class="row-label highlight">Claude 4.7 Sonnet</div>
+      <div class="row-bar"><div class="fill accent" data-w="77.2"></div></div>
+      <div class="row-val">77.2</div>
+
+      <div class="row-label">GPT-5 Turbo</div>
+      <div class="row-bar"><div class="fill" data-w="74.8"></div></div>
+      <div class="row-val">74.8</div>
+
+      <div class="row-label">Gemini 3 Pro</div>
+      <div class="row-bar"><div class="fill" data-w="71.3"></div></div>
+      <div class="row-val">71.3</div>
+
+      <div class="row-label">GLM-5</div>
+      <div class="row-bar"><div class="fill" data-w="68.9"></div></div>
+      <div class="row-val">68.9</div>
+
+      <div class="row-label">Kimi k3</div>
+      <div class="row-bar"><div class="fill" data-w="66.4"></div></div>
+      <div class="row-val">66.4</div>
+    </div>
+
+    <div class="ig-footer" id="igFooter">
+      <span>Set in Source Serif 4 &amp; JetBrains Mono</span>
+      <span class="folio">P. 05</span>
+      <span>Data &#183; 2026 Q2, public benchmarks</span>
+    </div>
+
+  </div>
+
+  <!-- Detail zoom: Typography ligature -->
+  <div class="detail-zoom" id="detailZoom">
+    <div class="detail-word" id="detailWord">bench<span class="fi">ma</span>rks</div>
+    <div class="callout" id="callout" style="display:none"></div>
+    <div class="detail-annotation" id="detailAnnotation">
+      SOURCE SERIF 4 <span class="dot">·</span> ITALIC <span class="dot">·</span> OLDSTYLE FIGURES
+    </div>
+  </div>
+
+  <!-- Brand Reveal -->
+  <div class="brand-wall" id="brandWall">
+    <div class="brand-wordmark" id="brandWord">huashu<span class="dot">·</span>design</div>
+    <div class="brand-underline" id="brandLine"></div>
+    <div class="brand-cn" id="brandCn">D A T A &#183; T Y P O G R A P H Y</div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------- Scale stage to viewport ----------
+  const stage = document.getElementById('stage');
+  function fitStage() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  fitStage();
+  window.addEventListener('resize', fitStage);
+
+  // ---------- Easing ----------
+  const expoOut = t => t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const expoIn = t => t <= 0 ? 0 : Math.pow(2, 10 * (t - 1));
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+  const cubicInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+  const lerp = (t, a, b, c, d, ease=x=>x) => {
+    if (b === a) return c;
+    const k = Math.max(0, Math.min(1, (t - a) / (b - a)));
+    return c + (d - c) * ease(k);
+  };
+  const seg = (t, a, b) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+
+  // ---------- Refs ----------
+  const splitLeft = document.getElementById('splitLeft');
+  const jsonLabel = document.getElementById('jsonLabel');
+  const jsonBlock = document.getElementById('jsonBlock');
+  const pipe = document.getElementById('pipe');
+  const infographic = document.getElementById('infographic');
+  const igMasthead = document.getElementById('igMasthead');
+  const igDisplay = document.getElementById('igDisplay');
+  const igDeck = document.getElementById('igDeck');
+  const igGrid = document.getElementById('igGrid');
+  const igCells = igGrid.querySelectorAll('.ig-cell');
+  const igBars = document.getElementById('igBars');
+  const igBarFills = igBars.querySelectorAll('.fill');
+  const igFooter = document.getElementById('igFooter');
+  const detailZoom = document.getElementById('detailZoom');
+  const detailWord = document.getElementById('detailWord');
+  const detailAnnotation = document.getElementById('detailAnnotation');
+  const callout = document.getElementById('callout');
+  const brandWall = document.getElementById('brandWall');
+  const brandWord = document.getElementById('brandWord');
+  const brandLine = document.getElementById('brandLine');
+  const brandCn = document.getElementById('brandCn');
+  const watermark = document.getElementById('watermark');
+
+  // ---------- JSON content (for progressive reveal) ----------
+  const jsonRaw = [
+    '{',
+    '  "issue": "2026-Q2",',
+    '  "leader": "Claude 4.7",',
+    '  "models": [',
+    '    { "name": "Claude 4.7",   "swe": 77.2 },',
+    '    { "name": "GPT-5 Turbo",  "swe": 74.8 },',
+    '    { "name": "Gemini 3 Pro", "swe": 71.3 },',
+    '    { "name": "GLM-5",        "swe": 68.9 },',
+    '    { "name": "Kimi k3",      "swe": 66.4 }',
+    '  ],',
+    '  "gpqa_top": 84.5,',
+    '  "price_per_M": 3',
+    '}'
+  ];
+
+  function formatJson(lines) {
+    return lines.map(line => {
+      return line
+        .replace(/"([a-zA-Z_]+)":/g, '<span class="k">"$1"</span>:')
+        .replace(/: "([^"]+)"/g, ': <span class="s">"$1"</span>')
+        .replace(/: ([0-9.]+)/g, ': <span class="n">$1</span>')
+        .replace(/([{}\[\],])/g, '<span class="p">$1</span>');
+    }).join('\n');
+  }
+
+  // ---------- Timeline ----------
+  const DURATION = 10.0;
+
+  // SFX cue points (played back in ffmpeg post-processing, not browser):
+  //   t=0.35  → keyboard/type-fast.mp3  (data entering)
+  //   t=2.15  → container/card-snap.mp3 (infographic settles)
+  //   t=6.75  → transition/whoosh-fast.mp3 (zoom-in to typography)
+  //   t=8.70  → impact/logo-reveal.mp3   (brand reveal chime)
+  const sfxFired = new Set();
+  function fireOnce(key) {
+    if (sfxFired.has(key)) return;
+    sfxFired.add(key);
+    // cue emitted for post-processing; no in-browser playback
+  }
+
+  let startTime = null;
+  let raf;
+
+  function tick(now) {
+    if (startTime == null) startTime = now;
+    const t = (now - startTime) / 1000;
+
+    // ── Beat 1: 0-2s · JSON data appears, types in ─────────
+    // JSON label fade in
+    {
+      const k = cubicOut(seg(t, 0.15, 0.55));
+      jsonLabel.style.opacity = k;
+      splitLeft.style.opacity = '1';
+    }
+    // Progressive type-reveal: reveal N lines of JSON by time
+    {
+      const totalLines = jsonRaw.length;
+      const k = seg(t, 0.3, 1.9);
+      const linesShown = Math.floor(k * totalLines);
+      const shown = jsonRaw.slice(0, Math.max(0, linesShown));
+      jsonBlock.innerHTML = formatJson(shown);
+      if (linesShown >= 3 && t < 1.9) fireOnce('datain');
+    }
+
+    // ── Pipe arrow (1.8 → 2.2) ─────────────────────────────
+    {
+      const k = cubicOut(seg(t, 1.8, 2.2));
+      pipe.style.opacity = k;
+    }
+
+    // ── Beat 2a: 2.0-3.2s · Infographic canvas arrives ─────
+    {
+      const k = expoOut(seg(t, 2.0, 2.8));
+      infographic.style.opacity = k;
+      infographic.style.transform = `translateY(${lerp(t, 2.0, 2.8, 18, 0, expoOut)}px)`;
+      if (t > 2.1) fireOnce('settle');
+    }
+    // Masthead
+    {
+      const k = cubicOut(seg(t, 2.6, 3.1));
+      igMasthead.style.opacity = k;
+    }
+
+    // ── Beat 2b: 3.0-4.2s · Display headline appears ──────
+    {
+      const k = expoOut(seg(t, 3.0, 3.8));
+      igDisplay.style.opacity = k;
+      igDisplay.style.transform = `translateY(${lerp(t, 3.0, 3.8, 16, 0, expoOut)}px)`;
+    }
+    // Deck line (italic)
+    {
+      const k = cubicOut(seg(t, 3.6, 4.2));
+      igDeck.style.opacity = k;
+    }
+
+    // ── Beat 2c: 4.0-5.2s · Grid cells (ripple, 4 cells) ──
+    igCells.forEach((cell, i) => {
+      const start = 4.0 + i * 0.12;
+      const end = start + 0.5;
+      const k = expoOut(seg(t, start, end));
+      cell.style.opacity = k;
+      cell.style.transform = `translateY(${lerp(t, start, end, 14, 0, expoOut)}px)`;
+    });
+
+    // ── Beat 2d: 5.2-6.4s · Comparison bars grow ─────────
+    {
+      const k = cubicOut(seg(t, 5.1, 5.4));
+      igBars.style.opacity = k;
+    }
+    igBarFills.forEach((fill, i) => {
+      const start = 5.3 + i * 0.08;
+      const end = start + 0.7;
+      const w = parseFloat(fill.getAttribute('data-w'));
+      const pct = lerp(t, start, end, 0, w, expoOut);
+      fill.style.width = pct + '%';
+    });
+    // Footer
+    {
+      const k = cubicOut(seg(t, 6.0, 6.6));
+      igFooter.style.opacity = k * 0.9;
+    }
+
+    // ── Beat 2e: 6.6-8.2s · Zoom to typography detail ────
+    if (t >= 6.6 && t < 8.3) {
+      const k = expoOut(seg(t, 6.6, 7.4));
+      // Infographic scales up and fades — simulate push-in
+      const scale = lerp(t, 6.6, 7.4, 1, 3.4, expoOut);
+      const ty = lerp(t, 6.6, 7.4, 0, -140, expoOut);
+      infographic.style.transform = `translateY(${ty}px) scale(${scale})`;
+      infographic.style.opacity = String(1 - k * 0.85);
+      splitLeft.style.opacity = String(1 - k);
+      pipe.style.opacity = String(1 - k);
+
+      // Detail zoom fades in
+      const k2 = expoOut(seg(t, 7.0, 7.7));
+      detailZoom.style.opacity = k2;
+      // Word subtle scale-in (starts from 0.96)
+      detailWord.style.transform = `scale(${lerp(t, 7.0, 7.9, 0.96, 1.0, expoOut)})`;
+
+      // SFX at 6.7
+      if (t > 6.7) fireOnce('zoom');
+
+      // Callout + annotation (7.5 → 8.1)
+      const k3 = cubicOut(seg(t, 7.6, 8.1));
+      callout.style.opacity = k3;
+      detailAnnotation.style.opacity = k3;
+    }
+
+    // ── Beat 3: 8.2-10s · Brand reveal ───────────────────
+    // Detail zoom fades under brand wall
+    if (t >= 8.1) {
+      const k = cubicOut(seg(t, 8.1, 8.5));
+      detailZoom.style.opacity = String(Math.max(0, 1 - k));
+    }
+    // Brand wall slides up from bottom
+    {
+      const k = expoOut(seg(t, 8.1, 8.7));
+      brandWall.style.transform = `translateY(${lerp(t, 8.1, 8.7, 100, 0, expoOut)}%)`;
+      brandWall.style.opacity = k > 0 ? '1' : '0';
+      if (k > 0.55) watermark.classList.add('on-light');
+      else watermark.classList.remove('on-light');
+    }
+    // Wordmark
+    {
+      const k = expoOut(seg(t, 8.6, 9.2));
+      brandWord.style.opacity = k;
+      brandWord.style.transform = `scale(${lerp(t, 8.6, 9.2, 0.92, 1.0, expoOut)})`;
+      if (t > 8.65) fireOnce('chime');
+    }
+    // Underline
+    {
+      const k = expoOut(seg(t, 9.0, 9.6));
+      brandLine.style.width = (280 * k) + 'px';
+    }
+    // CN tagline
+    {
+      const k = cubicOut(seg(t, 9.3, 9.9));
+      brandCn.style.opacity = k * 0.9;
+    }
+
+    // Loop / hold
+    if (t < DURATION) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      if (!window.__recording) {
+        setTimeout(() => {
+          // Reset
+          startTime = null;
+          sfxFired.clear();
+          jsonBlock.innerHTML = '';
+          splitLeft.style.opacity = '0';
+          pipe.style.opacity = '0';
+          infographic.style.opacity = '0';
+          infographic.style.transform = 'translateY(18px) scale(1)';
+          igMasthead.style.opacity = '0';
+          igDisplay.style.opacity = '0';
+          igDeck.style.opacity = '0';
+          igBars.style.opacity = '0';
+          igFooter.style.opacity = '0';
+          igCells.forEach(c => { c.style.opacity = '0'; });
+          igBarFills.forEach(f => { f.style.width = '0%'; });
+          detailZoom.style.opacity = '0';
+          callout.style.opacity = '0';
+          detailAnnotation.style.opacity = '0';
+          brandWall.style.transform = 'translateY(100%)';
+          brandWall.style.opacity = '0';
+          brandWord.style.opacity = '0';
+          brandLine.style.width = '0';
+          brandCn.style.opacity = '0';
+          watermark.classList.remove('on-light');
+          raf = requestAnimationFrame(tick);
+        }, 800);
+      }
+    }
+  }
+
+  window.__seek = function(s) {
+    startTime = performance.now() - s * 1000;
+  };
+
+  // Wait for fonts, then start
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+    requestAnimationFrame((now) => {
+      startTime = now;
+      window.__ready = true;
+      raf = requestAnimationFrame(tick);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

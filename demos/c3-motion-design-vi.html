@@ -1,0 +1,1134 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>huashu-design · c3 motion design (EN)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #000000;
+  --ink: #FFFFFF;
+  --ink-80: rgba(255,255,255,0.82);
+  --ink-60: rgba(255,255,255,0.58);
+  --muted: rgba(255,255,255,0.40);
+  --dim: rgba(255,255,255,0.18);
+  --hairline: rgba(255,255,255,0.12);
+  --hair-strong: rgba(255,255,255,0.22);
+  --accent: #D97757;
+  --accent-deep: #B85D3D;
+  --accent-dim: rgba(217,119,87,0.25);
+  --serif-cn: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --serif-en: "Source Serif 4", "Tiempos Headline", Georgia, serif;
+  --sans: "Inter", -apple-system, "PingFang SC", "HarmonyOS Sans SC", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+}
+
+html, body {
+  margin: 0; padding: 0;
+  background: #000;
+  overflow: hidden;
+  font-family: var(--sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+
+.stage {
+  position: fixed;
+  top: 50%; left: 50%;
+  width: 1920px; height: 1080px;
+  transform-origin: center center;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* Subtle film grain overlay, 2% */
+.stage::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+  z-index: 200;
+}
+
+/* Watermark */
+.watermark-tl {
+  position: absolute;
+  top: 40px; left: 56px;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.16);
+  z-index: 50;
+  text-transform: none;
+  font-weight: 500;
+}
+.watermark-br {
+  position: absolute;
+  bottom: 32px; right: 48px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: rgba(255,255,255,0.22);
+  z-index: 100;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.watermark-br.visible { opacity: 1; }
+
+/* Scene container */
+.scene {
+  position: absolute; inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity;
+}
+.scene.visible { visibility: visible; }
+
+/* ============ Split layout ============ */
+.split {
+  position: absolute; inset: 0;
+}
+.split-top {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.split-bottom {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 52%;
+}
+
+/* Horizontal divider hairline */
+.split-divider {
+  position: absolute;
+  left: 160px; right: 160px;
+  top: 48%;
+  height: 1px;
+  background: var(--hairline);
+  z-index: 5;
+}
+
+/* Section label (top-left of each half) */
+.panel-label {
+  position: absolute;
+  top: 32px;
+  left: 160px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+.split-bottom .panel-label { top: 32px; }
+.panel-label .accent { color: var(--accent); font-weight: 500; }
+
+/* ============ Top: Timeline ============ */
+.timeline-wrap {
+  width: 1600px;
+  position: relative;
+  margin-top: 40px;
+}
+.timeline-track {
+  position: relative;
+  height: 2px;
+  background: var(--hairline);
+  width: 100%;
+}
+.timeline-track .fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, rgba(217,119,87,0.4) 100%);
+  width: 0%;
+  will-change: width;
+}
+
+/* Tick marks */
+.tick {
+  position: absolute;
+  width: 1px;
+  height: 10px;
+  background: var(--muted);
+  top: -4px;
+  transform: translateX(-0.5px);
+}
+.tick.major { height: 14px; top: -6px; background: var(--ink-60); }
+.tick-label {
+  position: absolute;
+  top: 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  transform: translateX(-50%);
+}
+
+/* Playhead */
+.playhead {
+  position: absolute;
+  top: -28px;
+  left: 0;
+  width: 2px;
+  height: 58px;
+  background: var(--accent);
+  transform: translateX(-1px);
+  will-change: transform;
+  z-index: 10;
+  box-shadow: 0 0 20px rgba(217,119,87,0.5);
+}
+.playhead::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 16px rgba(217,119,87,0.6);
+}
+.playhead::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px; height: 6px;
+  background: var(--bg);
+  border-radius: 50%;
+  z-index: 2;
+}
+
+/* API capsules on timeline */
+.api-capsule {
+  position: absolute;
+  top: -92px;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink-60);
+  letter-spacing: 0.02em;
+  transition: none;
+  will-change: color, border-color, transform, box-shadow;
+  white-space: nowrap;
+}
+.api-capsule.lit {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 30px rgba(217,119,87,0.35);
+}
+.api-capsule .tiny {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  opacity: 0.7;
+}
+.api-capsule.lit .tiny { color: var(--accent); opacity: 0.9; }
+
+/* Tick connector (short vertical line from capsule to timeline) */
+.capsule-stem {
+  position: absolute;
+  top: -48px;
+  width: 1px;
+  height: 44px;
+  background: var(--hairline);
+  transform: translateX(-0.5px);
+  z-index: 1;
+}
+.capsule-stem.lit { background: var(--accent); }
+
+/* ============ Bottom: Driven stage ============ */
+.driven-stage {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+.viz {
+  position: absolute;
+  top: 46%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1000px; height: 400px;
+  opacity: 0;
+  will-change: opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* viz 1: useTime — clock */
+.viz-clock {
+  position: relative;
+  width: 280px; height: 280px;
+  border: 1.5px solid var(--hair-strong);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.viz-clock .tickmark {
+  position: absolute;
+  width: 1px;
+  height: 8px;
+  background: var(--muted);
+  top: 10px;
+  left: 50%;
+  transform-origin: 50% 130px;
+}
+.viz-clock .tickmark.q {
+  width: 2px;
+  height: 14px;
+  background: var(--ink-60);
+}
+.viz-clock .hand-h {
+  position: absolute;
+  width: 3px; height: 80px;
+  background: var(--ink);
+  left: 50%;
+  bottom: 50%;
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) rotate(30deg);
+  border-radius: 2px;
+  will-change: transform;
+}
+.viz-clock .hand-m {
+  position: absolute;
+  width: 2px; height: 110px;
+  background: var(--ink-80);
+  left: 50%;
+  bottom: 50%;
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) rotate(120deg);
+  border-radius: 2px;
+  will-change: transform;
+}
+.viz-clock .hand-s {
+  position: absolute;
+  width: 1.5px; height: 120px;
+  background: var(--accent);
+  left: 50%;
+  bottom: 50%;
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) rotate(0deg);
+  border-radius: 2px;
+  will-change: transform;
+  box-shadow: 0 0 10px rgba(217,119,87,0.4);
+}
+.viz-clock .center-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  z-index: 5;
+  box-shadow: 0 0 10px rgba(217,119,87,0.6);
+}
+.viz-clock-label {
+  position: absolute;
+  bottom: -48px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.viz-clock-label .val {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* viz 2: interpolate — morph box */
+.viz-morph {
+  display: flex;
+  gap: 80px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.morph-box {
+  width: 260px; height: 260px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.morph-rect {
+  background: var(--accent);
+  border-radius: 4px;
+  will-change: width, height, background, border-radius, transform;
+  box-shadow: 0 0 40px rgba(217,119,87,0.25);
+}
+.morph-label {
+  position: absolute;
+  bottom: -48px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.morph-label .val { color: var(--accent); font-variant-numeric: tabular-nums; }
+.morph-arrow {
+  font-family: var(--mono);
+  font-size: 28px;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+}
+
+/* viz 3: Easing — curves */
+.viz-curves {
+  position: relative;
+  width: 720px; height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.curves-svg {
+  width: 100%; height: 100%;
+}
+.curve-label {
+  position: absolute;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+/* viewBox 720x320 → right edge ≈ 680 of 720 → 94%. Vertical:
+   y=40 is visual top (output value 1), y=260 is bottom (value 0).
+   Labels go at right side, vertically aligned with where each curve
+   approaches its asymptote at t≈0.7.
+   expoOut at t=0.7 ~ 0.99 (≈ y=42)
+   cubicOut at t=0.7 ~ 0.973 (≈ y=46)
+   linear at t=0.7 ~ 0.7 (≈ y=106)
+   So spatial order top→bottom: expoOut, cubicOut, linear
+*/
+.curve-label.l-expo   { top:  6%; right: 4%; color: var(--accent); }
+.curve-label.l-cubic  { top: 16%; right: 4%; color: rgba(255,255,255,0.78); }
+.curve-label.l-linear { top: 36%; right: 4%; color: rgba(255,255,255,0.42); }
+
+.curve-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 14px rgba(217,119,87,0.6);
+  will-change: left, top;
+}
+
+/* viz 4: useSprite — choreographed grid */
+.viz-sprites {
+  display: grid;
+  grid-template-columns: repeat(6, 60px);
+  grid-template-rows: repeat(4, 60px);
+  gap: 18px;
+  justify-content: center;
+  align-content: center;
+  padding: 40px 0;
+}
+.sprite {
+  width: 60px; height: 60px;
+  background: var(--hairline);
+  border: 1px solid var(--dim);
+  will-change: transform, opacity, background;
+  opacity: 0;
+  border-radius: 2px;
+}
+
+.sprite-label {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+.sprite-label .val { color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* ============ Scene 0: Opening title ============ */
+.scene-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.scene-intro .title {
+  font-family: var(--serif-en);
+  font-size: 128px;
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  line-height: 1.02;
+  will-change: opacity, transform, font-weight;
+}
+.scene-intro .title .accent { color: var(--accent); }
+.scene-intro .sub {
+  margin-top: 28px;
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--muted);
+  letter-spacing: 0.3em;
+}
+
+/* ============ Scene 2: Brand reveal (米色面板标准动作) ============ */
+.scene-brand {
+  background: transparent;
+  pointer-events: none;
+  z-index: 150;
+}
+.brand-panel {
+  position: absolute;
+  inset: 0;
+  background: #F5F4F0;
+  transform: translateY(100%);
+  will-change: transform;
+}
+.brand-wordmark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, calc(-50% + 20px));
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: 72px;
+  font-weight: 100;
+  font-variation-settings: "wght" 100;
+  letter-spacing: -0.01em;
+  color: #1A1918;
+  text-align: center;
+  line-height: 1;
+  opacity: 0;
+  white-space: nowrap;
+  will-change: opacity, transform, font-weight, font-variation-settings;
+}
+.brand-wordmark .accent { color: #D97757; font-weight: inherit; }
+.brand-line {
+  position: absolute;
+  top: calc(50% + 60px);
+  left: 50%;
+  transform: translateX(-50%);
+  height: 2px;
+  width: 0px;
+  background: #D97757;
+  will-change: width;
+}
+
+/* ============ Replay button (hidden during record) ============ */
+.replay-btn {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 32px;
+  border: 1px solid var(--hair-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-60);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+  z-index: 300;
+}
+.replay-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- Top-left watermark (always on) -->
+  <div class="watermark-tl">HUASHU · DESIGN</div>
+
+  <!-- ============ Scene 0: Intro (0 → 1.6s) ============ -->
+  <div class="scene scene-intro" id="scene-intro">
+    <div class="title" id="introTitle">Timeline <span class="accent">=</span> Mã lệnh</div>
+    <div class="sub" id="introSub">MOTION · ENGINE · CHUYỂN ĐỘNG</div>
+  </div>
+
+  <!-- ============ Scene 1: Split view (1.6 → 8.2s) ============ -->
+  <div class="scene" id="scene-main">
+    <div class="split">
+
+      <!-- TOP: Timeline -->
+      <div class="split-top">
+        <div class="panel-label">TIMELINE · <span class="accent">ĐẦU ĐỌC</span></div>
+        <div class="timeline-wrap">
+          <div class="timeline-track">
+            <div class="fill" id="timelineFill"></div>
+
+            <!-- Tick marks (10 ticks for 10s) -->
+            <div class="tick" style="left: 0%;"></div>
+            <div class="tick major" style="left: 0%;"></div>
+            <div class="tick" style="left: 10%;"></div>
+            <div class="tick major" style="left: 20%;"></div>
+            <div class="tick" style="left: 30%;"></div>
+            <div class="tick major" style="left: 40%;"></div>
+            <div class="tick" style="left: 50%;"></div>
+            <div class="tick major" style="left: 60%;"></div>
+            <div class="tick" style="left: 70%;"></div>
+            <div class="tick major" style="left: 80%;"></div>
+            <div class="tick" style="left: 90%;"></div>
+            <div class="tick major" style="left: 100%;"></div>
+
+            <div class="tick-label" style="left: 0%;">0s</div>
+            <div class="tick-label" style="left: 20%;">2s</div>
+            <div class="tick-label" style="left: 40%;">4s</div>
+            <div class="tick-label" style="left: 60%;">6s</div>
+            <div class="tick-label" style="left: 80%;">8s</div>
+            <div class="tick-label" style="left: 100%;">10s</div>
+
+            <!-- API capsules anchored at their trigger points -->
+            <!-- Scene-main spans 1.6→8.2; timeline maps 0→10s globally for clarity.
+                 cap positions here mirror when each API is "active" on the lower viz. -->
+            <!-- useTime: global t = 1.8 → 3.3 → center ~2.5s → 25% -->
+            <div class="capsule-stem" id="stem-time" style="left: 18%;"></div>
+            <div class="api-capsule" id="cap-time" style="left: 18%;">
+              <span class="tiny">01</span>useTime
+            </div>
+
+            <!-- interpolate: 3.5 → 5s → center 4.2s → 42% -->
+            <div class="capsule-stem" id="stem-interp" style="left: 38%;"></div>
+            <div class="api-capsule" id="cap-interp" style="left: 38%;">
+              <span class="tiny">02</span>interpolate
+            </div>
+
+            <!-- Easing: 5 → 6.5s → center 5.7s → 57% -->
+            <div class="capsule-stem" id="stem-easing" style="left: 58%;"></div>
+            <div class="api-capsule" id="cap-easing" style="left: 58%;">
+              <span class="tiny">03</span>Easing
+            </div>
+
+            <!-- useSprite: 6.5 → 8s → center 7.2s → 72% -->
+            <div class="capsule-stem" id="stem-sprite" style="left: 80%;"></div>
+            <div class="api-capsule" id="cap-sprite" style="left: 80%;">
+              <span class="tiny">04</span>useSprite
+            </div>
+
+            <!-- Playhead -->
+            <div class="playhead" id="playhead"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="split-divider"></div>
+
+      <!-- BOTTOM: Driven stage -->
+      <div class="split-bottom">
+        <div class="panel-label">ĐIỀU KHIỂN · <span class="accent">SÂN KHẤU</span></div>
+        <div class="driven-stage">
+
+          <!-- viz 1: useTime — clock -->
+          <div class="viz" id="viz-time">
+            <div class="viz-clock" id="clockRoot">
+              <!-- 12 tick marks -->
+              <div class="tickmark q" style="transform: translate(-50%, 0) rotate(0deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(30deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(60deg);"></div>
+              <div class="tickmark q" style="transform: translate(-50%, 0) rotate(90deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(120deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(150deg);"></div>
+              <div class="tickmark q" style="transform: translate(-50%, 0) rotate(180deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(210deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(240deg);"></div>
+              <div class="tickmark q" style="transform: translate(-50%, 0) rotate(270deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(300deg);"></div>
+              <div class="tickmark" style="transform: translate(-50%, 0) rotate(330deg);"></div>
+
+              <div class="hand-h" id="handH"></div>
+              <div class="hand-m" id="handM"></div>
+              <div class="hand-s" id="handS"></div>
+              <div class="center-dot"></div>
+
+              <div class="viz-clock-label">
+                t = <span class="val" id="timeVal">0.00s</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- viz 2: interpolate — morph -->
+          <div class="viz" id="viz-interp">
+            <div class="viz-morph">
+              <div class="morph-box">
+                <div class="morph-rect" id="morphFrom" style="width: 80px; height: 80px; background: var(--hair-strong); border-radius: 2px;"></div>
+                <div class="morph-label">FROM · <span class="val">0 → 100</span></div>
+              </div>
+              <div class="morph-arrow">──────→</div>
+              <div class="morph-box">
+                <div class="morph-rect" id="morphTo"></div>
+                <div class="morph-label">INTERPOLATE · <span class="val" id="interpVal">0.00</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- viz 3: Easing — 3 curves drawn in parallel -->
+          <div class="viz" id="viz-easing">
+            <div class="viz-curves">
+              <svg class="curves-svg" viewBox="0 0 720 320" preserveAspectRatio="none">
+                <!-- Grid -->
+                <line x1="60" y1="260" x2="680" y2="260" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <line x1="60" y1="260" x2="60" y2="40" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+
+                <!-- Axis labels -->
+                <text x="50" y="266" text-anchor="end" fill="rgba(255,255,255,0.4)" font-family="JetBrains Mono, monospace" font-size="11">0</text>
+                <text x="50" y="48" text-anchor="end" fill="rgba(255,255,255,0.4)" font-family="JetBrains Mono, monospace" font-size="11">1</text>
+                <text x="680" y="282" text-anchor="end" fill="rgba(255,255,255,0.4)" font-family="JetBrains Mono, monospace" font-size="11">t</text>
+
+                <!-- Curves -->
+                <path id="pathLinear" d="M 60 260 L 60 260" stroke="rgba(255,255,255,0.42)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <path id="pathCubic" d="M 60 260 L 60 260" stroke="rgba(255,255,255,0.75)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+                <path id="pathExpo" d="M 60 260 L 60 260" stroke="#D97757" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div class="curve-label l-linear">linear</div>
+              <div class="curve-label l-cubic">cubicOut</div>
+              <div class="curve-label l-expo">expoOut</div>
+            </div>
+          </div>
+
+          <!-- viz 4: useSprite — 24 sprites -->
+          <div class="viz" id="viz-sprite">
+            <div class="viz-sprites" id="spriteGrid">
+              <!-- 24 sprites (6x4), filled by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ Scene 2: Brand reveal (米色面板, 8.0 → 10s) ============ -->
+  <div class="scene scene-brand" id="scene-brand">
+    <div class="brand-panel" id="brandPanel"></div>
+    <div class="brand-wordmark" id="wordmark">huashu<span class="accent">-</span>design</div>
+    <div class="brand-line" id="brandLine"></div>
+  </div>
+
+  <!-- Bottom-right watermark -->
+  <div class="watermark-br" id="watermarkBR">V2 · 2026</div>
+
+  <!-- Replay button (hidden during recording) -->
+  <button class="replay-btn no-record" id="replayBtn">REPLAY</button>
+
+</div>
+
+<script>
+(function() {
+  // =============== Timing ===============
+  const T = {
+    DURATION: 10.0,
+
+    // Scene 0: intro
+    intro_in:  [0.0, 0.5],
+    intro_out: [1.3, 1.6],
+
+    // Scene 1: main (timeline + driven stage)
+    main_in:   [1.5, 1.9],     // fade in
+    // Playhead sweeps from 0% (at t=1.6) to 100% (at t=8.2).
+    // API activations use GLOBAL time. Their capsule position is placed so
+    // that playhead passes under the capsule right when the API peaks.
+    main_t0:   1.6,
+    main_t_end: 8.2,
+    main_out:  [8.0, 8.4],
+
+    // API activations (GLOBAL time)
+    // Each API: [activate_start, peak, deactivate_end]
+    // Capsule x% = (peak - 1.6) / (8.2 - 1.6) * 100
+    useTime:     [2.0, 2.8, 3.6],   // capsule @ ~18%
+    interpolate: [3.6, 4.1, 4.8],   // capsule @ ~38%
+    Easing:      [4.8, 5.4, 6.2],   // capsule @ ~58%
+    useSprite:   [6.2, 6.9, 7.9],   // capsule @ ~80%
+
+    // Scene 2: Brand reveal (米色面板 standard, last 2s of T=10)
+    // [T-2.0 → T-1.7]: main fade 1→0 (already handled by main_out 8.0-8.4)
+    // [T-1.7 → T-1.3]: beige panel translateY 100%→0, expoOut
+    // [T-1.3 → T-0.7]: wordmark weight 100→500 + y:20→0 + opacity 0→1, expoOut
+    // [T-0.7 → T-0.3]: orange line width 0→280px, cubicOut
+    // [T-0.3 → T]: hold
+    brand_panel:  [8.3, 8.7],
+    brand_word:   [8.7, 9.3],
+    brand_line:   [9.3, 9.7],
+  };
+
+  // =============== Easings ===============
+  const expoOut = t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+  const expoIn  = t => (t <= 0 ? 0 : Math.pow(2, 10 * (t - 1)));
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+  const cubicIn  = t => t * t * t;
+  const cubicInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const easeInOut  = cubicInOut;
+  const linear = t => t;
+
+  // =============== Utils ===============
+  const clamp = (v, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v));
+  const clampLerp = (t, t0, t1) => clamp((t - t0) / (t1 - t0));
+  function lerp(t, t0, t1, v0, v1, easing = linear) {
+    const p = clampLerp(t, t0, t1);
+    return v0 + (v1 - v0) * easing(p);
+  }
+
+  // =============== DOM refs ===============
+  const scenes = {
+    intro: document.getElementById('scene-intro'),
+    main: document.getElementById('scene-main'),
+    brand: document.getElementById('scene-brand'),
+  };
+  const introTitle = document.getElementById('introTitle');
+  const introSub = document.getElementById('introSub');
+
+  const timelineFill = document.getElementById('timelineFill');
+  const playhead = document.getElementById('playhead');
+
+  const capTime = document.getElementById('cap-time');
+  const capInterp = document.getElementById('cap-interp');
+  const capEasing = document.getElementById('cap-easing');
+  const capSprite = document.getElementById('cap-sprite');
+
+  const stemTime = document.getElementById('stem-time');
+  const stemInterp = document.getElementById('stem-interp');
+  const stemEasing = document.getElementById('stem-easing');
+  const stemSprite = document.getElementById('stem-sprite');
+
+  const vizTime = document.getElementById('viz-time');
+  const vizInterp = document.getElementById('viz-interp');
+  const vizEasing = document.getElementById('viz-easing');
+  const vizSprite = document.getElementById('viz-sprite');
+
+  const handS = document.getElementById('handS');
+  const handM = document.getElementById('handM');
+  const handH = document.getElementById('handH');
+  const timeVal = document.getElementById('timeVal');
+
+  const morphTo = document.getElementById('morphTo');
+  const interpVal = document.getElementById('interpVal');
+
+  const pathLinear = document.getElementById('pathLinear');
+  const pathCubic = document.getElementById('pathCubic');
+  const pathExpo = document.getElementById('pathExpo');
+
+  const spriteGrid = document.getElementById('spriteGrid');
+  const wordmark = document.getElementById('wordmark');
+  const brandLine = document.getElementById('brandLine');
+  const brandPanel = document.getElementById('brandPanel');
+  const watermarkBR = document.getElementById('watermarkBR');
+  const replayBtn = document.getElementById('replayBtn');
+
+  // Build 24 sprites (6x4 grid)
+  const SPRITE_COLS = 6, SPRITE_ROWS = 4;
+  const spriteEls = [];
+  for (let r = 0; r < SPRITE_ROWS; r++) {
+    for (let c = 0; c < SPRITE_COLS; c++) {
+      const el = document.createElement('div');
+      el.className = 'sprite';
+      // center distance for ripple
+      const dc = c - (SPRITE_COLS - 1) / 2;
+      const dr = r - (SPRITE_ROWS - 1) / 2;
+      const dist = Math.sqrt(dc * dc + dr * dr);
+      const maxDist = Math.sqrt(((SPRITE_COLS - 1) / 2) ** 2 + ((SPRITE_ROWS - 1) / 2) ** 2);
+      el.dataset.delay = (dist / maxDist).toFixed(3);
+      spriteGrid.appendChild(el);
+      spriteEls.push(el);
+    }
+  }
+
+  // =============== Scene helpers ===============
+  function showScene(el, opacity) {
+    if (opacity > 0.001) el.classList.add('visible');
+    else el.classList.remove('visible');
+    el.style.opacity = opacity;
+  }
+
+  // =============== API activation logic ===============
+  function apiState(t_local, api) {
+    // Returns { on: bool, strength: 0-1 }
+    const [a, peak, b] = T[api];
+    if (t_local < a || t_local > b) return { on: false, strength: 0 };
+    if (t_local < peak) {
+      return { on: true, strength: expoOut(clampLerp(t_local, a, peak)) };
+    } else {
+      return { on: true, strength: 1 - cubicIn(clampLerp(t_local, peak, b)) };
+    }
+  }
+
+  // =============== Draw easing curves progressively ===============
+  function easingPath(easingFn, progress) {
+    // progress 0-1 draws the curve from left to right
+    // x range: 60 → 680, y range: 260 (0) → 40 (1)
+    const X0 = 60, X1 = 680, Y0 = 260, Y1 = 40;
+    const steps = Math.max(2, Math.floor(progress * 80));
+    let d = `M ${X0} ${Y0}`;
+    for (let i = 1; i <= steps; i++) {
+      const t = (i / 80) * progress;
+      const x = X0 + (X1 - X0) * t;
+      const y = Y0 + (Y1 - Y0) * easingFn(t);
+      d += ` L ${x.toFixed(2)} ${y.toFixed(2)}`;
+    }
+    return d;
+  }
+
+  // =============== Render ===============
+  function render(t) {
+    // ============ Scene 0: Intro ============
+    if (t < T.main_in[1]) {
+      let op = 0;
+      if (t < T.intro_in[1]) op = clampLerp(t, T.intro_in[0], T.intro_in[1]);
+      else if (t < T.intro_out[0]) op = 1;
+      else op = 1 - clampLerp(t, T.intro_out[0], T.intro_out[1]);
+      showScene(scenes.intro, op);
+
+      // weight morph + rise
+      const morphP = expoOut(clampLerp(t, T.intro_in[0], T.intro_in[1] + 0.3));
+      const w = 150 + (400 - 150) * morphP;
+      introTitle.style.fontWeight = Math.round(w);
+      const rise = lerp(t, T.intro_in[0], T.intro_in[1], 16, 0, expoOut);
+      introTitle.style.transform = `translate3d(0, ${rise}px, 0)`;
+      introSub.style.opacity = clampLerp(t, T.intro_in[1], T.intro_in[1] + 0.4);
+    } else {
+      showScene(scenes.intro, 0);
+    }
+
+    // ============ Scene 1: Main (split view) ============
+    if (t >= T.main_in[0] - 0.1 && t < T.main_out[1]) {
+      let op;
+      if (t < T.main_in[1]) op = clampLerp(t, T.main_in[0], T.main_in[1]);
+      else if (t < T.main_out[0]) op = 1;
+      else op = 1 - clampLerp(t, T.main_out[0], T.main_out[1]);
+      showScene(scenes.main, op);
+
+      // Playhead sweeps 0% → 100% across the window [main_t0, main_t_end]
+      const phP = clampLerp(t, T.main_t0, T.main_t_end);
+      const phPct = phP * 100;
+      playhead.style.left = phPct + '%';
+      // Keep: use t directly for API state
+      const t_local_clamped = t;
+
+      // Timeline fill
+      timelineFill.style.width = phPct + '%';
+
+      // API capsules: lit state driven by apiState
+      const stTime = apiState(t_local_clamped, 'useTime');
+      const stInterp = apiState(t_local_clamped, 'interpolate');
+      const stEasing = apiState(t_local_clamped, 'Easing');
+      const stSprite = apiState(t_local_clamped, 'useSprite');
+
+      setLit(capTime, stemTime, stTime);
+      setLit(capInterp, stemInterp, stInterp);
+      setLit(capEasing, stemEasing, stEasing);
+      setLit(capSprite, stemSprite, stSprite);
+
+      // Viz opacities — each viz only visible during its API's window
+      vizTime.style.opacity = stTime.on ? stTime.strength : 0;
+      vizInterp.style.opacity = stInterp.on ? stInterp.strength : 0;
+      vizEasing.style.opacity = stEasing.on ? stEasing.strength : 0;
+      vizSprite.style.opacity = stSprite.on ? stSprite.strength : 0;
+
+      // ========= viz 1: clock =========
+      // Continuous rotation (not just when active) so transition looks natural
+      // But only animate hands when api is near-active, to avoid wasted cpu
+      {
+        const [a, _peak, b] = T.useTime;
+        // Second hand: one revolution over the active window
+        const localP = clampLerp(t_local_clamped, a, b);
+        // Multi-revolution: 1.5 turns over the window
+        const sDeg = localP * 540;
+        const mDeg = localP * 180 + 120;
+        const hDeg = localP * 60 + 30;
+        handS.style.transform = `translateX(-50%) rotate(${sDeg}deg)`;
+        handM.style.transform = `translateX(-50%) rotate(${mDeg}deg)`;
+        handH.style.transform = `translateX(-50%) rotate(${hDeg}deg)`;
+
+        // Display value as t in seconds mapping 0→1.50
+        const displayVal = (localP * 1.5).toFixed(2);
+        timeVal.textContent = displayVal + 's';
+      }
+
+      // ========= viz 2: interpolate =========
+      {
+        const [a, _peak, b] = T.interpolate;
+        const localP = clampLerp(t_local_clamped, a, b);
+        const eased = easeInOut(localP);
+        // morph from 80×80 black → 220×160 orange, rounded
+        const W = 80 + (240 - 80) * eased;
+        const H = 80 + (160 - 80) * eased;
+        const bright = Math.round(30 + (217 - 30) * eased);
+        const brightG = Math.round(30 + (119 - 30) * eased);
+        const brightB = Math.round(30 + (87 - 30) * eased);
+        const rad = 2 + (20 - 2) * eased;
+        morphTo.style.width = W + 'px';
+        morphTo.style.height = H + 'px';
+        morphTo.style.background = `rgb(${bright}, ${brightG}, ${brightB})`;
+        morphTo.style.borderRadius = rad + 'px';
+        interpVal.textContent = eased.toFixed(2);
+      }
+
+      // ========= viz 3: easing curves =========
+      {
+        const [a, _peak, b] = T.Easing;
+        const localP = clampLerp(t_local_clamped, a, b);
+        pathLinear.setAttribute('d', easingPath(linear, localP));
+        pathCubic.setAttribute('d', easingPath(cubicOut, localP));
+        pathExpo.setAttribute('d', easingPath(expoOut, localP));
+      }
+
+      // ========= viz 4: sprites =========
+      {
+        const [a, _peak, b] = T.useSprite;
+        const localP = clampLerp(t_local_clamped, a, b);
+        for (const el of spriteEls) {
+          const delay = parseFloat(el.dataset.delay);
+          const spriteLocalT = clamp((localP - delay * 0.5) / 0.5, 0, 1);
+          const op = expoOut(spriteLocalT);
+          el.style.opacity = op;
+          const scale = 0.5 + 0.5 * op;
+          const y = (1 - op) * 14;
+          el.style.transform = `translateY(${y}px) scale(${scale})`;
+          el.style.background = op > 0.85 ? 'var(--accent)' : 'var(--hairline)';
+        }
+      }
+    } else {
+      showScene(scenes.main, 0);
+    }
+
+    // ============ Scene 2: Brand reveal (米色面板标准动作) ============
+    if (t >= T.brand_panel[0] - 0.1) {
+      showScene(scenes.brand, 1);
+
+      // [T-1.7 → T-1.3]: beige panel slides up, expoOut
+      const panelP = expoOut(clampLerp(t, T.brand_panel[0], T.brand_panel[1]));
+      brandPanel.style.transform = `translateY(${(1 - panelP) * 100}%)`;
+
+      // [T-1.3 → T-0.7]: wordmark weight 100→500 + y:20→0 + opacity:0→1, expoOut
+      const wordP = expoOut(clampLerp(t, T.brand_word[0], T.brand_word[1]));
+      const w = 100 + (500 - 100) * wordP;
+      wordmark.style.fontVariationSettings = `"wght" ${w.toFixed(0)}`;
+      wordmark.style.fontWeight = Math.round(w);
+      wordmark.style.opacity = wordP;
+      const wRise = (1 - wordP) * 20;
+      wordmark.style.transform = `translate(-50%, calc(-50% + ${wRise}px))`;
+
+      // [T-0.7 → T-0.3]: orange line expands 0→280px, cubicOut
+      const lineP = cubicOut(clampLerp(t, T.brand_line[0], T.brand_line[1]));
+      brandLine.style.width = (lineP * 280) + 'px';
+    } else {
+      showScene(scenes.brand, 0);
+      brandPanel.style.transform = 'translateY(100%)';
+      wordmark.style.opacity = 0;
+      brandLine.style.width = '0px';
+    }
+
+    // Watermark visible from start of main until end
+    if (t >= T.main_in[0] && t < T.DURATION - 0.15) {
+      watermarkBR.classList.add('visible');
+    } else {
+      watermarkBR.classList.remove('visible');
+    }
+  }
+
+  function setLit(capsule, stem, state) {
+    if (state.on && state.strength > 0.15) {
+      capsule.classList.add('lit');
+      stem.classList.add('lit');
+      // Subtle scale pulse centered on peak (simplistic)
+      const scale = 1.0 + state.strength * 0.06;
+      capsule.style.transform = `translateX(-50%) scale(${scale})`;
+    } else {
+      capsule.classList.remove('lit');
+      stem.classList.remove('lit');
+      capsule.style.transform = 'translateX(-50%)';
+    }
+  }
+
+  // =============== Driver ===============
+  let manualT = null;
+  let startMs = null;
+  let hasFinishedOnce = false;
+
+  function tick(now) {
+    if (manualT != null) {
+      render(manualT);
+    } else {
+      if (startMs == null) startMs = now;
+      const elapsed = (now - startMs) / 1000;
+      const recording = window.__recording === true;
+      let t;
+      if (recording) {
+        t = Math.min(elapsed, T.DURATION - 0.001);
+        if (elapsed >= T.DURATION && !hasFinishedOnce) hasFinishedOnce = true;
+      } else {
+        t = elapsed % T.DURATION;
+        // Show replay button when we've played at least once
+        if (elapsed >= T.DURATION) {
+          replayBtn.classList.add('visible');
+        }
+      }
+      render(t);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // First paint signal for renderer
+  document.fonts.ready.then(() => {
+    render(0);
+    requestAnimationFrame(() => {
+      window.__ready = true;
+      requestAnimationFrame(tick);
+    });
+  });
+
+  // ========= Stage scaling (fit viewport) =========
+  function fitStage() {
+    const stage = document.getElementById('stage');
+    const scaleX = window.innerWidth / 1920;
+    const scaleY = window.innerHeight / 1080;
+    const scale = Math.min(scaleX, scaleY);
+    stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  }
+  fitStage();
+  window.addEventListener('resize', fitStage);
+
+  // Replay
+  replayBtn.addEventListener('click', () => {
+    startMs = null;
+    replayBtn.classList.remove('visible');
+  });
+
+  // =============== Expose for frame-accurate rendering ===============
+  window.__setTime = (t) => { manualT = t; render(t); };
+  window.__resume = () => { manualT = null; startMs = null; };
+  window.__duration = T.DURATION;
+  window.__render = render;
+})();
+</script>
+</body>
+</html>

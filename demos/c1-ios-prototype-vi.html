@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>huashu-design V2 · c1-ios-prototype · EN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@300;400;500;600&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --dim: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+    --cd-bg: #F5F4F0;
+    --cd-ink: #1A1918;
+    --cd-dim: #8B867E;
+    --cd-green: #2D4A3A;
+
+    --serif-en: "Source Serif 4", Georgia, serif;
+    --serif-cn: "Noto Serif SC", "Songti SC", serif;
+    --sans: "Inter", -apple-system, "PingFang SC", sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Film grain */
+  .stage::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.4'/></svg>");
+    opacity: 0.02;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 200;
+  }
+
+  /* Watermark — always on top, adapts in brand reveal (handled by JS) */
+  .watermark {
+    position: absolute;
+    top: 36px; left: 48px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.16);
+    text-transform: uppercase;
+    z-index: 400;
+    pointer-events: none;
+    transition: color 0.4s;
+  }
+  .watermark.on-light { color: rgba(26,25,24,0.22); }
+
+  /* ============ Terminal (left) ============ */
+  .terminal {
+    position: absolute;
+    top: 50%;
+    left: 120px;
+    transform: translateY(-50%);
+    width: 620px;
+    background: rgba(18, 18, 18, 1);
+    border: 1px solid var(--hairline);
+    border-radius: 14px;
+    overflow: hidden;
+    opacity: 0;
+    will-change: opacity, transform;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.02),
+      0 40px 80px -20px rgba(217,119,87,0.12);
+  }
+  .tty-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--hairline);
+    background: rgba(255,255,255,0.02);
+  }
+  .tty-head .d { width: 11px; height: 11px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+  .tty-head .d.r { background: #5a2a2a; }
+  .tty-head .d.y { background: #5a4a2a; }
+  .tty-head .d.g { background: #2a5a35; }
+  .tty-head .title {
+    margin-left: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .tty-body {
+    padding: 32px 28px;
+    font-family: var(--mono);
+    font-size: 20px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.88);
+    min-height: 220px;
+  }
+  .prompt { color: var(--accent); margin-right: 10px; }
+  .comment { color: var(--ink-60); font-size: 16px; margin-bottom: 10px; }
+  .typed { white-space: pre; }
+  .cursor {
+    display: inline-block;
+    width: 10px; height: 24px;
+    background: var(--accent);
+    vertical-align: -4px;
+    margin-left: 2px;
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+  /* Arrow connector terminal → iPhone */
+  .connector {
+    position: absolute;
+    top: 50%;
+    left: 740px;
+    width: 160px;
+    height: 2px;
+    transform: translateY(-50%);
+    opacity: 0;
+    background: linear-gradient(90deg, var(--accent) 0%, rgba(217,119,87,0) 100%);
+    transform-origin: left center;
+    will-change: opacity, transform;
+  }
+
+  /* ============ iPhone ============ */
+  .phone-wrap {
+    position: absolute;
+    top: 50%;
+    left: 1020px;
+    transform: translateY(-50%);
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .phone {
+    width: 440px;
+    height: 900px;
+    background: #0e0e10;
+    border-radius: 58px;
+    padding: 12px;
+    position: relative;
+    box-shadow:
+      0 0 0 1.5px rgba(255,255,255,0.14),
+      0 0 0 8px rgba(30,30,32,1),
+      0 80px 160px -20px rgba(0,0,0,0.85),
+      0 30px 70px -20px rgba(217,119,87,0.1);
+  }
+  .phone::before {
+    /* subtle metallic ring */
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 62px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0) 40%, rgba(217,119,87,0.05) 80%, rgba(255,255,255,0.08));
+    z-index: -1;
+  }
+  .screen {
+    width: 416px;
+    height: 876px;
+    border-radius: 46px;
+    overflow: hidden;
+    position: relative;
+    background: #F5F4F0;  /* default: claude mist */
+  }
+  .screen.dark { background: #0a0a0a; }
+
+  /* Dynamic island */
+  .island {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 34px;
+    background: #000;
+    border-radius: 999px;
+    z-index: 30;
+  }
+  /* Status bar */
+  .status-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 34px 0 34px;
+    font-family: -apple-system, "SF Pro Text", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    z-index: 20;
+    pointer-events: none;
+    color: inherit;
+  }
+  .status-bar .icons {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .status-bar .icons .bars {
+    display: flex; align-items: flex-end; gap: 2px; height: 11px;
+  }
+  .status-bar .icons .bars div {
+    width: 3px; background: currentColor; border-radius: 1px;
+  }
+  .status-bar .icons .bat {
+    width: 26px; height: 12px;
+    border: 1.2px solid currentColor; border-radius: 3px; padding: 1px;
+    position: relative;
+    opacity: 0.9;
+  }
+  .status-bar .icons .bat::after {
+    content: ''; position: absolute; top: 3px; right: -3px; width: 2px; height: 6px;
+    background: currentColor; border-radius: 0 1px 1px 0;
+  }
+  .status-bar .icons .bat .fill {
+    width: 84%; height: 100%; background: currentColor; border-radius: 1px;
+  }
+  .home-indicator {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 5px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 999px;
+    z-index: 10;
+  }
+  .screen.dark .home-indicator { background: rgba(255,255,255,0.5); }
+
+  /* Content area (below status bar) */
+  .content {
+    position: absolute;
+    top: 64px; left: 0; right: 0; bottom: 30px;
+    overflow: hidden;
+    z-index: 5;
+  }
+
+  /* Screen views */
+  .screen-view {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+
+  /* 1. Wireframe (ghost) */
+  .wire {
+    padding: 40px 28px;
+  }
+  .wire .ghost {
+    background: rgba(26, 25, 24, 0.08);
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .wire .g1 { height: 36px; width: 60%; }
+  .wire .g2 { height: 180px; }
+  .wire .g3 { height: 20px; width: 80%; }
+  .wire .g4 { height: 20px; width: 50%; }
+  .wire .g5 { height: 52px; margin-top: 24px; }
+
+  /* 2. Trang chủ screen — 主屏 · pomodoro */
+  .home-screen { padding: 40px 28px; color: var(--cd-ink); }
+  .home-screen .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    color: var(--cd-dim);
+    text-transform: uppercase;
+  }
+  .home-screen .title {
+    font-family: var(--serif-en);
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1.02;
+    margin-top: 14px;
+    letter-spacing: -0.035em;
+    font-style: italic;
+  }
+  .home-screen .time-big {
+    margin-top: 50px;
+    font-family: var(--serif-en);
+    font-size: 168px;
+    font-weight: 200;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--cd-ink);
+  }
+  .home-screen .time-big .sep { color: var(--accent); }
+  .home-screen .sub {
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--cd-dim);
+    margin-top: 18px;
+    letter-spacing: 0.02em;
+  }
+  .home-screen .cta {
+    margin-top: 64px;
+    height: 62px;
+    background: var(--cd-ink);
+    color: #fff;
+    border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    position: relative;
+  }
+  .home-screen .cta::before {
+    content: '';
+    width: 0; height: 0;
+    border-left: 10px solid #fff;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    margin-right: 10px;
+  }
+
+  /* 3. Hẹn giờ · 计时 · ring */
+  .timer-screen {
+    padding: 40px 28px;
+    color: var(--cd-ink);
+    text-align: center;
+  }
+  .timer-screen .phase {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    color: var(--accent);
+    text-transform: uppercase;
+    text-align: left;
+  }
+  .ring-wrap {
+    margin: 80px auto 0;
+    width: 320px; height: 320px;
+    position: relative;
+  }
+  .ring-wrap svg {
+    width: 100%; height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-wrap .bg-ring {
+    fill: none; stroke: rgba(26,25,24,0.08); stroke-width: 14;
+  }
+  .ring-wrap .fg-ring {
+    fill: none; stroke: #D97757; stroke-width: 14; stroke-linecap: round;
+    stroke-dasharray: 880;
+    stroke-dashoffset: 880;
+  }
+  .ring-wrap .ring-label {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .ring-wrap .rl-time {
+    font-family: var(--serif-en);
+    font-size: 86px;
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--cd-ink);
+  }
+  .ring-wrap .rl-tag {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--cd-dim);
+    text-transform: uppercase;
+  }
+  .timer-screen .actions {
+    margin-top: 60px;
+    display: flex; gap: 14px; justify-content: center;
+  }
+  .timer-screen .act-btn {
+    padding: 14px 32px;
+    border-radius: 999px;
+    background: rgba(26,25,24,0.05);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--cd-ink);
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(26,25,24,0.08);
+  }
+  .timer-screen .act-btn.primary {
+    background: var(--cd-ink);
+    color: #fff;
+    border-color: transparent;
+  }
+
+  /* 4. Thống kê · 统计 · bar chart */
+  .stats-screen { padding: 40px 28px; color: var(--cd-ink); }
+  .stats-screen .stats-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    color: var(--cd-dim);
+    text-transform: uppercase;
+  }
+  .stats-screen .stats-hero {
+    font-family: var(--serif-en);
+    font-size: 120px;
+    font-weight: 200;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-top: 10px;
+  }
+  .stats-screen .stats-hero .unit {
+    font-size: 28px;
+    color: var(--cd-dim);
+    margin-left: 8px;
+    font-weight: 300;
+  }
+  .stats-screen .stats-sub {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--cd-dim);
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+  .chart {
+    margin-top: 52px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    height: 200px;
+    padding: 0 4px;
+  }
+  .chart .bar {
+    flex: 1;
+    background: var(--accent);
+    border-radius: 6px 6px 0 0;
+    opacity: 0.85;
+    transform-origin: bottom;
+    will-change: transform;
+  }
+  .chart .bar.dim { background: rgba(26,25,24,0.15); }
+  .chart-x {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cd-dim);
+    letter-spacing: 0.08em;
+    padding: 0 4px;
+  }
+
+  /* 5. Cài đặt · 设置 · list */
+  .settings-screen { padding: 40px 28px; color: var(--cd-ink); }
+  .settings-screen .title-row {
+    font-family: var(--serif-en);
+    font-size: 48px;
+    font-weight: 300;
+    letter-spacing: -0.035em;
+    font-style: italic;
+  }
+  .settings-screen .list {
+    margin-top: 40px;
+    background: #FFFFFF;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(26,25,24,0.06);
+  }
+  .settings-screen .row {
+    padding: 22px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(26,25,24,0.06);
+  }
+  .settings-screen .row:last-child { border-bottom: none; }
+  .settings-screen .row .k {
+    font-family: var(--sans);
+    font-size: 16px;
+    color: var(--cd-ink);
+  }
+  .settings-screen .row .v {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--cd-dim);
+    letter-spacing: 0.04em;
+  }
+  .toggle {
+    width: 48px; height: 28px;
+    border-radius: 999px;
+    background: var(--cd-green);
+    position: relative;
+  }
+  .toggle::after {
+    content: ''; position: absolute;
+    top: 3px; right: 3px;
+    width: 22px; height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .toggle.off { background: rgba(26,25,24,0.15); }
+  .toggle.off::after { left: 3px; right: auto; }
+
+  /* Tab bar (bottom of home-like screens) */
+  .tab-bar {
+    position: absolute;
+    bottom: 30px; left: 28px; right: 28px;
+    height: 58px;
+    background: #FFFFFF;
+    border-radius: 999px;
+    border: 1px solid rgba(26,25,24,0.08);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 14px;
+    box-shadow: 0 10px 28px -10px rgba(0,0,0,0.15);
+  }
+  .tab-bar .tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cd-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border-radius: 999px;
+  }
+  .tab-bar .tab.active {
+    background: var(--cd-ink);
+    color: #fff;
+  }
+  .tab-bar .tab .ico {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    background: currentColor;
+    opacity: 0.9;
+    margin-bottom: 3px;
+  }
+
+  /* Finger / tap */
+  .tap {
+    position: absolute;
+    z-index: 40;
+    width: 64px; height: 64px;
+    pointer-events: none;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .tap .core {
+    position: absolute;
+    inset: 18px;
+    background: rgba(217, 119, 87, 0.85);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.5), 0 0 24px rgba(217,119,87,0.5);
+  }
+  .tap .ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(217,119,87,0.6);
+    border-radius: 50%;
+    animation: tapring 0.6s ease-out;
+  }
+  @keyframes tapring {
+    0% { transform: scale(0.4); opacity: 1; }
+    100% { transform: scale(1.3); opacity: 0; }
+  }
+
+  /* ============ Brand Reveal ============ */
+  .brand-wall {
+    position: absolute;
+    inset: 0;
+    background: var(--cd-bg);
+    z-index: 300;
+    opacity: 0;
+    transform: translateY(100%);
+    will-change: transform, opacity;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-wordmark {
+    font-family: var(--serif-en);
+    font-size: 132px;
+    font-weight: 200;
+    color: var(--cd-ink);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    opacity: 0;
+    transform: scale(0.92);
+    will-change: opacity, transform;
+  }
+  .brand-wordmark .dot { color: var(--accent); padding: 0 10px; font-weight: 300; }
+  .brand-underline {
+    margin-top: 28px;
+    height: 2px;
+    width: 0;
+    background: var(--accent);
+    will-change: width;
+  }
+  .brand-cn {
+    margin-top: 30px;
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--cd-dim);
+    letter-spacing: 0.12em;
+    opacity: 0;
+    will-change: opacity;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <div class="watermark">HUASHU · DESIGN</div>
+
+  <!-- Terminal -->
+  <div class="terminal" id="terminal">
+    <div class="tty-head">
+      <div class="d r"></div>
+      <div class="d y"></div>
+      <div class="d g"></div>
+      <div class="title">~/projects</div>
+    </div>
+    <div class="tty-body">
+      <div class="comment" id="comment" style="opacity:0">&gt; Gõ một câu, nhận về một app có thể bấm được.</div>
+      <div style="margin-top:6px">
+        <span class="prompt">$</span><span class="typed" id="typed"></span><span class="cursor" id="ttyCursor"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector" id="connector"></div>
+
+  <!-- Phone -->
+  <div class="phone-wrap" id="phoneWrap">
+    <div class="phone">
+      <div class="screen" id="screen">
+
+        <!-- Status bar -->
+        <div class="status-bar" id="statusBar" style="color:#1A1918">
+          <span>9:41</span>
+          <div class="icons">
+            <div class="bars">
+              <div style="height:4px"></div>
+              <div style="height:6px"></div>
+              <div style="height:8px"></div>
+              <div style="height:10px"></div>
+            </div>
+            <div class="bat"><div class="fill"></div></div>
+          </div>
+        </div>
+
+        <div class="island"></div>
+
+        <div class="content">
+
+          <!-- 1. Wireframe -->
+          <div class="screen-view" id="view-wire">
+            <div class="wire">
+              <div class="ghost g1"></div>
+              <div class="ghost g2"></div>
+              <div class="ghost g3"></div>
+              <div class="ghost g4"></div>
+              <div class="ghost g5"></div>
+            </div>
+          </div>
+
+          <!-- 2. Trang chủ -->
+          <div class="screen-view" id="view-home">
+            <div class="home-screen">
+              <div class="kicker">POMODORO</div>
+              <div class="title">Tiếp theo.</div>
+              <div class="time-big">25<span class="sep">:</span>00</div>
+              <div class="sub">Viết xong một phần. Nghỉ năm phút.</div>
+              <div class="cta">Bắt đầu tập trung</div>
+            </div>
+          </div>
+
+          <!-- 3. Hẹn giờ -->
+          <div class="screen-view" id="view-timer">
+            <div class="timer-screen">
+              <div class="phase">TẬP TRUNG · VÒNG 1</div>
+              <div class="ring-wrap">
+                <svg viewBox="0 0 320 320">
+                  <circle class="bg-ring" cx="160" cy="160" r="140"/>
+                  <circle class="fg-ring" id="fgRing" cx="160" cy="160" r="140"/>
+                </svg>
+                <div class="ring-label">
+                  <div class="rl-time" id="ringTime">24:12</div>
+                  <div class="rl-tag">CÒN LẠI</div>
+                </div>
+              </div>
+              <div class="actions">
+                <div class="act-btn">Tạm dừng</div>
+                <div class="act-btn primary">Bỏ qua</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Thống kê -->
+          <div class="screen-view" id="view-stats">
+            <div class="stats-screen">
+              <div class="stats-label">TUẦN NÀY</div>
+              <div class="stats-hero">23<span class="unit">vòng</span></div>
+              <div class="stats-sub">+5 so với tuần trước</div>
+              <div class="chart" id="chart">
+                <div class="bar dim" style="height:30%"></div>
+                <div class="bar" style="height:52%"></div>
+                <div class="bar" style="height:70%"></div>
+                <div class="bar" style="height:42%"></div>
+                <div class="bar" style="height:86%"></div>
+                <div class="bar" style="height:95%"></div>
+                <div class="bar" style="height:64%"></div>
+              </div>
+              <div class="chart-x">
+                <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. Cài đặt -->
+          <div class="screen-view" id="view-settings">
+            <div class="settings-screen">
+              <div class="title-row">Cài đặt</div>
+              <div class="list">
+                <div class="row">
+                  <span class="k">Thời lượng tập trung</span>
+                  <span class="v">25 MIN</span>
+                </div>
+                <div class="row">
+                  <span class="k">Tiếng ồn trắng</span>
+                  <div class="toggle"></div>
+                </div>
+                <div class="row">
+                  <span class="k">Chuông báo</span>
+                  <div class="toggle off"></div>
+                </div>
+                <div class="row">
+                  <span class="k">Chủ đề</span>
+                  <span class="v">CLAUDE MIST</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab bar (shared, appears on home/stats/settings) -->
+          <div class="tab-bar" id="tabBar" style="display:none">
+            <div class="tab active" data-tab="home">
+              <div class="ico"></div>
+              <span>TRANG CHỦ</span>
+            </div>
+            <div class="tab" data-tab="timer">
+              <div class="ico"></div>
+              <span>HẸN GIỜ</span>
+            </div>
+            <div class="tab" data-tab="stats">
+              <div class="ico"></div>
+              <span>THỐNG KÊ</span>
+            </div>
+            <div class="tab" data-tab="settings">
+              <div class="ico"></div>
+              <span>CÀI ĐẶT</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="home-indicator"></div>
+
+        <!-- Tap overlay (inside screen so z-index > content) -->
+        <div class="tap" id="tap">
+          <div class="ring"></div>
+          <div class="core"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Brand reveal -->
+  <div class="brand-wall" id="brandWall">
+    <div class="brand-wordmark" id="brandWord">huashu<span class="dot">·</span>design</div>
+    <div class="brand-underline" id="brandLine"></div>
+    <div class="brand-cn" id="brandCn">Nói ý tưởng. Nhận ngay app.</div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  // ── Scale to viewport (1920×1080 canvas) ─────────────────────────
+  function fit() {
+    const stage = document.getElementById('stage');
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  fit();
+  window.addEventListener('resize', fit);
+
+  // ── Easing ───────────────────────────────────────────────────────
+  const expoOut = t => (t <= 0 ? 0 : t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+  const expoIn  = t => (t <= 0 ? 0 : t >= 1 ? 1 : Math.pow(2, 10 * (t - 1)));
+  const cubicInOut = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // Animate a value by requestAnimationFrame between timeline markers
+  function seg(t, start, end) {
+    return clamp((t - start) / (end - start), 0, 1);
+  }
+
+  // ── Elements ─────────────────────────────────────────────────────
+  const el = (id) => document.getElementById(id);
+  const terminal = el('terminal');
+  const comment  = el('comment');
+  const typed    = el('typed');
+  const ttyCursor = el('ttyCursor');
+  const connector = el('connector');
+  const phoneWrap = el('phoneWrap');
+  const views = {
+    wire: el('view-wire'),
+    home: el('view-home'),
+    timer: el('view-timer'),
+    stats: el('view-stats'),
+    settings: el('view-settings'),
+  };
+  const tap = el('tap');
+  const tabBar = el('tabBar');
+  const fgRing = el('fgRing');
+  const ringTime = el('ringTime');
+  const brandWall = el('brandWall');
+  const brandWord = el('brandWord');
+  const brandLine = el('brandLine');
+  const brandCn = el('brandCn');
+
+  // Typing text
+  const typeStr = 'tạo app pomodoro';
+  function setTyping(progress) {
+    const n = Math.floor(typeStr.length * progress);
+    typed.textContent = typeStr.slice(0, n);
+  }
+
+  // Show/hide views — hard swap (no cross-fade overlap)
+  function showView(name) {
+    Object.keys(views).forEach(k => {
+      const isActive = (k === name);
+      views[k].style.opacity = isActive ? '1' : '0';
+      views[k].style.visibility = isActive ? 'visible' : 'hidden';
+      views[k].style.transform = isActive ? 'translateY(0)' : 'translateY(0)';
+      views[k].style.transition = isActive ? 'opacity 0.22s ease-out' : 'none';
+    });
+  }
+
+  // Active tab
+  function setActiveTab(name) {
+    document.querySelectorAll('.tab-bar .tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === name);
+    });
+  }
+
+  // Play tap at screen coords (relative to .screen: 416×876)
+  function playTap(x, y) {
+    tap.style.left = (x - 32) + 'px';
+    tap.style.top = (y - 32) + 'px';
+    tap.style.opacity = '1';
+    // restart keyframe animation
+    const ring = tap.querySelector('.ring');
+    ring.style.animation = 'none';
+    ring.offsetHeight; // reflow
+    ring.style.animation = '';
+    // fade out
+    setTimeout(() => { tap.style.opacity = '0'; }, 550);
+  }
+
+  // ── SFX via WebAudio ─────────────────────────────────────────────
+  let audioCtx = null;
+  function ac() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){}
+    }
+    return audioCtx;
+  }
+  function sfxClick(vol = 0.16) {
+    const c = ac(); if (!c) return;
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = 'square';
+    o.frequency.setValueAtTime(1200, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(500, c.currentTime + 0.04);
+    g.gain.setValueAtTime(vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.05);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + 0.06);
+  }
+  function sfxEnter() {
+    const c = ac(); if (!c) return;
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(180, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(440, c.currentTime + 0.25);
+    g.gain.setValueAtTime(0.22, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.3);
+    o.connect(g); g.connect(c.destination);
+    o.start(); o.stop(c.currentTime + 0.32);
+  }
+  function sfxChime() {
+    const c = ac(); if (!c) return;
+    [523.25, 783.99].forEach((f, i) => {
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine';
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0, c.currentTime + i * 0.08);
+      g.gain.linearRampToValueAtTime(0.18, c.currentTime + i * 0.08 + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + i * 0.08 + 1.2);
+      o.connect(g); g.connect(c.destination);
+      o.start(c.currentTime + i * 0.08);
+      o.stop(c.currentTime + i * 0.08 + 1.25);
+    });
+  }
+
+  // ── Timeline ─────────────────────────────────────────────────────
+  const DURATION = 10.0;
+
+  const sfxFired = new Set();
+  function fireOnce(id, fn) {
+    if (sfxFired.has(id)) return;
+    sfxFired.add(id);
+    fn();
+  }
+
+  // Screen switch schedule (within Beat 2, 2.0s → 8.0s)
+  // Tap coords are relative to the 416×876 .screen
+  const schedule = [
+    { t: 2.0, view: 'wire',     tabIco: null,       tap: null },
+    { t: 3.1, view: 'home',     tabIco: 'home',     tap: null },                 // home materializes (no tap — it's the fill moment)
+    { t: 4.4, view: 'timer',    tabIco: 'timer',    tap: {x: 208, y: 624} },     // tap "开始专注" CTA
+    { t: 6.3, view: 'stats',    tabIco: 'stats',    tap: {x: 300, y: 810} },     // tap stats tab
+    { t: 7.5, view: 'settings', tabIco: 'settings', tap: {x: 370, y: 810} },     // tap settings tab
+  ];
+  let scheduleIdx = 0;
+
+  let startTime = null;
+  let raf = null;
+
+  function tick(now) {
+    if (!startTime) startTime = now;
+    const t = (now - startTime) / 1000;
+
+    // ── Beat 1: 0-2s ─────────────────────────────────────────
+    // Terminal fade in (0 → 0.4s)
+    {
+      const k = expoOut(seg(t, 0.0, 0.4));
+      terminal.style.opacity = k;
+      terminal.style.transform = `translateY(-50%) translateX(${lerp(-30, 0, k)}px)`;
+    }
+    // iPhone fade in (0.2 → 0.9s)
+    {
+      const k = expoOut(seg(t, 0.2, 0.9));
+      phoneWrap.style.opacity = k;
+      phoneWrap.style.transform = `translateY(-50%) translateX(${lerp(60, 0, k)}px) scale(${lerp(0.96, 1, k)})`;
+      if (t > 0.25) fireOnce('enter', sfxEnter);
+    }
+    // Connector fade
+    {
+      const k = expoOut(seg(t, 0.7, 1.2));
+      connector.style.opacity = k;
+      connector.style.transform = `translateY(-50%) scaleX(${k})`;
+    }
+    // Comment
+    {
+      const k = expoOut(seg(t, 0.8, 1.2));
+      comment.style.opacity = k * 0.82;
+    }
+    // Typing (0.6 → 1.9s)
+    {
+      const k = cubicInOut(seg(t, 0.6, 1.9));
+      setTyping(k);
+      // key click SFX at certain progress points
+      if (t > 0.8 && t < 1.85) {
+        const charsShown = Math.floor(typeStr.length * k);
+        const key = 'typ' + charsShown;
+        if (!sfxFired.has(key) && charsShown > 0 && charsShown % 3 === 0) {
+          fireOnce(key, () => sfxClick(0.08));
+        }
+      }
+    }
+    // Hide cursor when typing done
+    ttyCursor.style.opacity = t > 1.85 ? '0' : '1';
+
+    // ── Beat 2: 2-8s ─────────────────────────────────────────
+    // Execute scheduled screen transitions
+    while (scheduleIdx < schedule.length && t >= schedule[scheduleIdx].t) {
+      const s = schedule[scheduleIdx];
+      showView(s.view);
+      // status bar color: dark-text on light screens, but wire also light, keep dark
+      if (s.view === 'wire') {
+        tabBar.style.display = 'none';
+      } else {
+        tabBar.style.display = 'flex';
+        setActiveTab(s.tabIco);
+      }
+      if (s.tap) {
+        // small delay so tap appears at moment of switch
+        setTimeout(() => playTap(s.tap.x, s.tap.y), 120);
+        if (s.view !== 'wire') fireOnce('click_' + s.view, () => sfxClick(0.18));
+      }
+      scheduleIdx++;
+    }
+
+    // Hẹn giờ ring animation: once timer appears (4.4s), animate ring from empty → 42% filled
+    if (t >= 4.4 && t < 6.3) {
+      const ringT = clamp((t - 4.5) / 1.2, 0, 1);
+      const fillPct = expoOut(ringT) * 0.42;
+      const offset = 880 * (1 - fillPct);
+      // Set as both style AND attr so neither overrides the other
+      fgRing.style.strokeDashoffset = offset;
+      fgRing.setAttribute('stroke-dashoffset', offset);
+      // Count down visually: 24:12 → 14:03
+      const mins = Math.floor(lerp(24, 14, expoOut(ringT)));
+      const secs = Math.floor(lerp(12, 3, expoOut(ringT)));
+      ringTime.textContent = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+    }
+
+    // ── Beat 3: 8-10s ────────────────────────────────────────
+    // Phone + terminal fade out fast (7.5 → 7.9) so wall doesn't guillotine
+    if (t >= 7.5) {
+      const k = cubicOut(seg(t, 7.5, 7.9));
+      phoneWrap.style.opacity = String(1 - k);
+      phoneWrap.style.transform = `translateY(-50%) scale(${lerp(1, 0.94, k)})`;
+      terminal.style.opacity = String(1 - k);
+      terminal.style.transform = `translateY(-50%) scale(${lerp(1, 0.96, k)})`;
+      connector.style.opacity = String(1 - k);
+    }
+    // Brand wall slides up (7.9 → 8.6) — starts AFTER phone is gone
+    {
+      const k = expoOut(seg(t, 7.9, 8.6));
+      brandWall.style.transform = `translateY(${lerp(100, 0, k)}%)`;
+      brandWall.style.opacity = k > 0 ? '1' : '0';
+      const watermark = document.querySelector('.watermark');
+      if (k > 0.6) watermark.classList.add('on-light');
+      else watermark.classList.remove('on-light');
+    }
+    // Wordmark appears
+    {
+      const k = expoOut(seg(t, 8.5, 9.2));
+      brandWord.style.opacity = k;
+      brandWord.style.transform = `scale(${lerp(0.92, 1, k)})`;
+      if (t > 8.55) fireOnce('chime', sfxChime);
+    }
+    // Underline
+    {
+      const k = expoOut(seg(t, 9.0, 9.6));
+      brandLine.style.width = (280 * k) + 'px';
+    }
+    // CN label
+    {
+      const k = cubicOut(seg(t, 9.3, 9.9));
+      brandCn.style.opacity = k * 0.9;
+    }
+
+    if (t < DURATION) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      // Hold final frame
+      if (!window.__recording) {
+        // loop for preview
+        setTimeout(() => {
+          startTime = null;
+          scheduleIdx = 0;
+          sfxFired.clear();
+          // Reset views
+          showView('wire');
+          tabBar.style.display = 'none';
+          fgRing.style.strokeDashoffset = 880;
+          fgRing.setAttribute('stroke-dashoffset', 880);
+          ringTime.textContent = '24:12';
+          // Reset brand
+          brandWall.style.transform = 'translateY(100%)';
+          brandWall.style.opacity = '0';
+          brandWord.style.opacity = '0';
+          brandWord.style.transform = 'scale(0.92)';
+          brandLine.style.width = '0';
+          brandCn.style.opacity = '0';
+          // Reset terminal typing
+          typed.textContent = '';
+          ttyCursor.style.opacity = '1';
+          comment.style.opacity = '0';
+          terminal.style.opacity = '0';
+          phoneWrap.style.opacity = '0';
+          connector.style.opacity = '0';
+          document.querySelector('.watermark').classList.remove('on-light');
+          raf = requestAnimationFrame(tick);
+        }, 600);
+      }
+    }
+  }
+
+  // seek(0) helper for render-video.js
+  window.__seek = function(s) {
+    startTime = performance.now() - s * 1000;
+  };
+
+  // Initial state
+  showView('wire');
+  tabBar.style.display = 'none';
+
+  // Wait for fonts, then start animation
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+    requestAnimationFrame((now) => {
+      startTime = now;
+      window.__ready = true;
+      raf = requestAnimationFrame(tick);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

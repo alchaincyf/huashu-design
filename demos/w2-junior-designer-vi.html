@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<title>w2 · Bản nháp sớm luôn tốt hơn bản hoàn hảo quá muộn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Noto+Serif+SC:wght@200;300;400;500;600&family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --ink: #FFFFFF;
+    --ink-80: rgba(255,255,255,0.82);
+    --ink-60: rgba(255,255,255,0.58);
+    --muted: rgba(255,255,255,0.40);
+    --dim: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.12);
+    --accent: #D97757;
+    --accent-deep: #B85D3D;
+    --bad: #6E3A2E;           /* 失败暗红调，不刺眼 */
+    --bad-strong: #C85A42;    /* 失败叉号强调，对比度提升 */
+    --cool: rgba(255,255,255,0.42); /* 冷色参考线（左路径） */
+    --cd-bg: #F5F4F0;
+    --cd-panel: #FFFFFF;
+    --cd-ink: #1A1918;
+
+    --serif-zh: "Noto Serif SC", "Songti SC", serif;
+    --serif-en: "Source Serif 4", "Tiempos Headline", Georgia, serif;
+    --sans: "Inter", -apple-system, "PingFang SC", "HarmonyOS Sans SC", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  * { box-sizing: border-box; }
+
+  .stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform-origin: center center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* Film grain */
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Chrome · watermark */
+  .mark {
+    position: absolute;
+    top: 48px; left: 64px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,1);
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .mark-right {
+    position: absolute;
+    top: 48px; right: 64px;
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,1);
+    opacity: 0.16;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  /* Title */
+  .title-line {
+    position: absolute;
+    top: 112px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.28em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0;
+    will-change: opacity;
+    white-space: nowrap;
+  }
+
+  /* Splitter — horizontal line dividing the two halves */
+  .splitter {
+    position: absolute;
+    left: 160px;
+    right: 160px;
+    top: 50%;
+    height: 1px;
+    background: var(--hairline);
+    transform: scaleX(0);
+    transform-origin: left center;
+    will-change: transform;
+    z-index: 5;
+  }
+  .splitter-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg);
+    padding: 0 28px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    color: var(--muted);
+    z-index: 6;
+    opacity: 0;
+    will-change: opacity;
+    white-space: nowrap;
+  }
+
+  /* ======================================================
+   * TOP HALF · 闷头一把梭（3 hours, all at once）
+   * ====================================================== */
+  .half-top {
+    position: absolute;
+    top: 200px;
+    left: 160px;
+    right: 160px;
+    height: 300px;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .half-label {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.24em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .half-label .tag {
+    padding: 3px 10px;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    color: var(--ink-60);
+  }
+  .half-top .half-label .tag { border-color: rgba(160,74,56,0.4); color: rgba(200,120,100,0.85); }
+  .half-label .zh {
+    font-family: var(--serif-zh);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--ink-80);
+    margin-left: 4px;
+  }
+
+  /* Single huge terminal panel */
+  .terminal-big {
+    width: 100%;
+    height: 200px;
+    background: rgba(20, 20, 20, 1);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.02),
+      0 40px 80px -30px rgba(0,0,0,0.7);
+    position: relative;
+  }
+  .tty-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--hairline);
+    background: rgba(255,255,255,0.02);
+  }
+  .tty-head .d {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--hairline);
+  }
+  .tty-title {
+    margin-left: 14px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+  .tty-body {
+    padding: 28px 30px;
+    font-family: var(--mono);
+    font-size: 17px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.86);
+  }
+  .tty-body .line {
+    opacity: 0;
+    will-change: opacity;
+  }
+  .tty-body .prompt { color: var(--accent); margin-right: 10px; }
+  .tty-body .dim { color: var(--muted); }
+
+  /* The long running progress bar (simulated "3-hour render") */
+  .progress-row {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink-60);
+    opacity: 0;
+    will-change: opacity;
+  }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--hairline);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    will-change: width, background;
+  }
+  .progress-bar.failed .progress-bar-fill {
+    background: var(--bad-strong);
+  }
+  .progress-pct {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    min-width: 54px;
+    text-align: right;
+  }
+  .progress-hours {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+  .progress-row.failed {
+    color: var(--bad-strong);
+  }
+
+  /* Big X overlay for failure stamp */
+  .fail-stamp {
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-8deg);
+    width: 120px; height: 120px;
+    pointer-events: none;
+    opacity: 0;
+    will-change: opacity, transform;
+    z-index: 10;
+  }
+  .fail-stamp svg { width: 100%; height: 100%; }
+  .fail-stamp .stamp-text {
+    position: absolute;
+    bottom: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    color: var(--bad-strong);
+    white-space: nowrap;
+  }
+
+  /* ======================================================
+   * BOTTOM HALF · 尽早 show（small iterations）
+   * ====================================================== */
+  .half-bot {
+    position: absolute;
+    top: 580px;
+    left: 160px;
+    right: 160px;
+    height: 340px;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .half-bot .half-label .tag {
+    border-color: rgba(217,119,87,0.35);
+    color: var(--accent);
+  }
+
+  .iter-row {
+    display: flex;
+    gap: 32px;
+    align-items: flex-end;
+    height: 240px;
+    margin-top: 12px;
+  }
+
+  .iter-panel {
+    flex: 1;
+    background: rgba(20, 20, 20, 1);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: opacity, transform;
+    display: flex;
+    flex-direction: column;
+  }
+  .iter-panel .ip-head {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--hairline);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .iter-panel .ip-version {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .iter-panel .ip-body {
+    flex: 1;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+  /* Rough mockup blocks that grow more detailed each iteration */
+  .iter-panel .m-block {
+    height: 8px;
+    background: var(--dim);
+    border-radius: 2px;
+    opacity: 0.8;
+  }
+  .iter-panel .m-block.accent { background: var(--accent); opacity: 0.8; }
+  .iter-panel .m-block.short { width: 40%; }
+  .iter-panel .m-block.med { width: 70%; }
+  .iter-panel .m-block.full { width: 100%; }
+  .iter-panel .m-block.tall { height: 24px; }
+  .iter-panel .m-block.big { height: 40px; }
+
+  .iter-panel .nod {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    width: 16px; height: 16px;
+    opacity: 0;
+    will-change: opacity, transform;
+  }
+  .iter-panel .nod svg {
+    width: 100%; height: 100%;
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 2;
+  }
+  .iter-panel .ip-minutes {
+    position: absolute;
+    bottom: 10px;
+    left: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  /* Rising curve visualization for bottom half */
+  .curve-wrap {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 340px;
+    height: 180px;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .curve-wrap svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .curve-wrap .axis {
+    stroke: var(--hairline);
+    stroke-width: 1;
+    fill: none;
+  }
+  .curve-wrap .curve-path {
+    stroke: var(--accent);
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .curve-wrap .curve-dot {
+    fill: var(--accent);
+    r: 3;
+  }
+  .curve-wrap .curve-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    fill: var(--muted);
+    letter-spacing: 0.12em;
+  }
+
+  /* ======================================================
+   * BEAT 3 · Full comparison chart crossfade
+   * ====================================================== */
+  .final-chart {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 1280px;
+    height: 620px;
+    opacity: 0;
+    will-change: opacity;
+    z-index: 60;
+  }
+  .final-chart svg {
+    width: 100%; height: 100%;
+    overflow: visible;
+  }
+  .final-chart .axis {
+    stroke: var(--hairline);
+    stroke-width: 1;
+    fill: none;
+  }
+  .final-chart .axis-label {
+    font-family: var(--mono);
+    font-size: 13px;
+    fill: var(--muted);
+    letter-spacing: 0.16em;
+  }
+  .final-chart .tick-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    fill: var(--dim);
+    letter-spacing: 0.06em;
+  }
+  .final-chart .curve-a {
+    stroke: var(--cool);
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .final-chart .curve-a-dash {
+    stroke: var(--bad-strong);
+    stroke-width: 2.5;
+    fill: none;
+    stroke-dasharray: 5 7;
+    stroke-linecap: round;
+  }
+  .final-chart .curve-b {
+    stroke: var(--accent);
+    stroke-width: 3;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .final-chart .curve-b-glow {
+    stroke: var(--accent);
+    stroke-width: 6;
+    fill: none;
+    opacity: 0.18;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .final-chart .curve-dot {
+    fill: var(--accent);
+  }
+  .final-chart .fail-dot {
+    fill: none;
+    stroke: var(--bad-strong);
+    stroke-width: 2.5;
+  }
+  .final-chart .cool-dot {
+    fill: var(--cool);
+  }
+  .final-chart .anchor-label {
+    font-family: var(--serif-zh);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  .final-chart .anchor-en {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* ======================================================
+   * BRAND REVEAL — 统一动作
+   * ====================================================== */
+  .brand-sheet {
+    position: absolute;
+    inset: 0;
+    background: var(--cd-bg);
+    transform: translateY(100%);
+    will-change: transform;
+    z-index: 80;
+  }
+  .brand-reveal {
+    position: absolute;
+    inset: 0;
+    z-index: 81;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    will-change: opacity;
+  }
+  .brand-reveal .wordmark {
+    font-family: var(--sans);
+    font-weight: 100;
+    font-size: 128px;
+    letter-spacing: -0.045em;
+    color: var(--cd-ink);
+    line-height: 1;
+  }
+  .brand-reveal .wordmark .accent { color: var(--accent-deep); }
+  .brand-reveal .underline {
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    margin-top: 36px;
+    will-change: width;
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="mark">HUASHU · DESIGN</div>
+    <div class="mark-right">V2 · 2026</div>
+
+    <div class="title-line" id="titleLine">w2 · rough draft now beats perfect draft later</div>
+
+    <!-- Splitter -->
+    <div class="splitter" id="splitter"></div>
+    <div class="splitter-label" id="splitterLabel">VS</div>
+
+    <!-- ============ TOP HALF: All-at-once ============ -->
+    <div class="half-top" id="halfTop">
+      <div class="half-label">
+        <span class="tag">A</span>
+        <span class="zh" style="font-family: var(--serif-en); font-style: italic; letter-spacing: 0.01em;">All-at-once</span>
+        <span style="font-family: var(--mono); color: var(--muted); letter-spacing: 0.18em; font-size: 11px; margin-left: auto;">3&nbsp;HOUR&nbsp;SESSION</span>
+      </div>
+      <div class="terminal-big">
+        <div class="tty-head">
+          <div class="d"></div><div class="d"></div><div class="d"></div>
+          <div class="tty-title">designer@studio · 3h session</div>
+        </div>
+        <div class="tty-body">
+          <div class="line" id="ttyL1"><span class="prompt">$</span>build final_design.html <span class="dim">// v1.0 · ship it all at once</span></div>
+          <div class="progress-row" id="progRow">
+            <div class="progress-bar" id="progBar">
+              <div class="progress-bar-fill" id="progFill"></div>
+            </div>
+            <span class="progress-pct" id="progPct">0%</span>
+            <span class="progress-hours" id="progHours">03:00:00</span>
+          </div>
+        </div>
+        <div class="fail-stamp" id="failStamp">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#A04A38" stroke-width="3"/>
+            <path d="M 38 38 L 82 82 M 82 38 L 38 82" stroke="#A04A38" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <div class="stamp-text">REJECTED</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ BOTTOM HALF: Show early ============ -->
+    <div class="half-bot" id="halfBot">
+      <div class="half-label">
+        <span class="tag">B</span>
+        <span class="zh" style="font-family: var(--serif-en); font-style: italic; letter-spacing: 0.01em;">Show early</span>
+        <span style="font-family: var(--mono); color: var(--muted); letter-spacing: 0.18em; font-size: 11px; margin-left: auto;">SMALL&nbsp;ITERATIONS</span>
+      </div>
+      <div class="iter-row">
+        <div class="iter-panel" id="iter1">
+          <div class="ip-head">
+            <span>draft · v1</span>
+            <span class="ip-version">15 min</span>
+          </div>
+          <div class="ip-body">
+            <div class="m-block short"></div>
+            <div class="m-block med"></div>
+            <div class="m-block short"></div>
+          </div>
+          <div class="nod" id="nod1">
+            <svg viewBox="0 0 16 16"><path d="M3 8 L7 12 L13 4"/></svg>
+          </div>
+        </div>
+        <div class="iter-panel" id="iter2">
+          <div class="ip-head">
+            <span>draft · v2</span>
+            <span class="ip-version">25 min</span>
+          </div>
+          <div class="ip-body">
+            <div class="m-block full tall"></div>
+            <div class="m-block med"></div>
+            <div class="m-block short"></div>
+            <div class="m-block med accent"></div>
+          </div>
+          <div class="nod" id="nod2">
+            <svg viewBox="0 0 16 16"><path d="M3 8 L7 12 L13 4"/></svg>
+          </div>
+        </div>
+        <div class="iter-panel" id="iter3">
+          <div class="ip-head">
+            <span>draft · v3</span>
+            <span class="ip-version">35 min</span>
+          </div>
+          <div class="ip-body">
+            <div class="m-block full big"></div>
+            <div class="m-block full tall accent"></div>
+            <div class="m-block med"></div>
+            <div class="m-block full"></div>
+            <div class="m-block short"></div>
+          </div>
+          <div class="nod" id="nod3">
+            <svg viewBox="0 0 16 16"><path d="M3 8 L7 12 L13 4"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Beat 3 · Final comparison chart ============ -->
+    <div class="final-chart" id="finalChart">
+      <svg viewBox="0 0 1280 620" preserveAspectRatio="xMidYMid meet">
+        <!-- Axes -->
+        <line class="axis" x1="110" y1="60" x2="110" y2="520"/>
+        <line class="axis" x1="110" y1="520" x2="1200" y2="520"/>
+
+        <!-- Y-axis label -->
+        <text class="axis-label" x="58" y="290" transform="rotate(-90 58 290)" text-anchor="middle">QUALITY</text>
+        <!-- X-axis label -->
+        <text class="axis-label" x="655" y="570" text-anchor="middle">TIME</text>
+
+        <!-- Tick marks -->
+        <text class="tick-label" x="110" y="545" text-anchor="middle">0</text>
+        <text class="tick-label" x="290" y="545" text-anchor="middle">15m</text>
+        <text class="tick-label" x="480" y="545" text-anchor="middle">25m</text>
+        <text class="tick-label" x="680" y="545" text-anchor="middle">35m</text>
+        <text class="tick-label" x="1200" y="545" text-anchor="middle">3h</text>
+
+        <!-- Curve A (All-at-once): flat crawl near zero, late spike, then crash -->
+        <path class="curve-a" id="curveA"
+              d="M 110 500 L 400 495 L 700 490 L 1000 485 L 1140 180" />
+        <path class="curve-a-dash" id="curveACrash"
+              d="M 1140 180 L 1200 510" />
+        <circle class="fail-dot" id="failDot" cx="1140" cy="180" r="9"/>
+        <g id="failX" opacity="0">
+          <line x1="1130" y1="170" x2="1150" y2="190" stroke="#C85A42" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="1150" y1="170" x2="1130" y2="190" stroke="#C85A42" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <text class="anchor-label" x="1200" y="150" fill="#C85A42" text-anchor="end" style="font-family: var(--serif-en); font-style: italic;">All-at-once</text>
+        <text class="anchor-en" x="1200" y="170" fill="#C85A42" text-anchor="end">REJECTED</text>
+
+        <!-- Curve B (Show early): steady step rise across first 35 min -->
+        <path class="curve-b-glow" id="curveBGlow"
+              d="M 110 500 L 290 380 L 480 270 L 680 140" />
+        <path class="curve-b" id="curveB"
+              d="M 110 500 L 290 380 L 480 270 L 680 140" />
+        <circle class="curve-dot" cx="290" cy="380" r="6"/>
+        <circle class="curve-dot" cx="480" cy="270" r="6"/>
+        <circle class="curve-dot" cx="680" cy="140" r="8"/>
+
+        <text class="anchor-label" x="680" y="115" fill="#D97757" text-anchor="middle" style="font-family: var(--serif-en); font-style: italic;">Show early</text>
+        <text class="anchor-en" x="680" y="96" fill="#D97757" text-anchor="middle">SHIPPED</text>
+
+        <text class="tick-label" x="555" y="477" text-anchor="middle" fill="rgba(255,255,255,0.3)" style="letter-spacing: 0.12em;">— 3 hours silence —</text>
+      </svg>
+    </div>
+
+    <!-- Brand reveal -->
+    <div class="brand-sheet" id="brandSheet"></div>
+    <div class="brand-reveal" id="brandReveal">
+      <div class="wordmark">huashu<span class="accent"> · </span>design</div>
+      <div class="underline" id="brandUnderline"></div>
+    </div>
+  </div>
+
+<script>
+  // Auto-scale stage
+  function fitStage() {
+    const stage = document.getElementById('stage');
+    const sx = window.innerWidth / 1920;
+    const sy = window.innerHeight / 1080;
+    const s = Math.min(sx, sy);
+    stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+  fitStage();
+  window.addEventListener('resize', fitStage);
+
+  // Easings
+  const expoOut = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const expoIn  = t => t === 0 ? 0 : Math.pow(2, 10 * (t - 1));
+  const cubicInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const cubicOut = t => 1 - Math.pow(1 - t, 3);
+  const cubicIn  = t => t * t * t;
+
+  function lerp(t, a, b, easing) {
+    if (t <= 0) return a;
+    if (t >= 1) return b;
+    const e = easing ? easing(t) : t;
+    return a + (b - a) * e;
+  }
+  function seg(time, start, end) {
+    if (time <= start) return 0;
+    if (time >= end) return 1;
+    return (time - start) / (end - start);
+  }
+
+  // ────────────────────────────────────
+  // Timeline — total 12s (Beat 1: 0-2 · Beat 2: 2-10 · Beat 3: 10-12)
+  //
+  // 0.0-0.6    title + splitter grow
+  // 0.6-1.4    two half-labels fade in (top first, then bot)
+  // 1.4-2.0    top terminal line 1 types; bot panel 1 enters
+  //
+  // Top track (闷头):
+  //   2.0-7.8  progress bar crawls from 0 to 99% (slow, painful)
+  //   7.8-8.4  stuck at 99%
+  //   8.4-8.9  fail stamp lands + bar turns red + bar drops to 0
+  //
+  // Bottom track (尽早):
+  //   2.0-2.6  iter1 enters, nod1 appears @ 2.8
+  //   3.6-4.2  iter2 enters, nod2 appears @ 4.4
+  //   5.6-6.2  iter3 enters, nod3 appears @ 6.4 (final tick — biggest)
+  //
+  // 8.8-9.8    both halves dim; final chart crossfades in
+  //             (curves draw via stroke-dasharray)
+  // 9.8-10.4   chart settles, anchor labels bloom
+  // 10.0-12.0  brand reveal (sheet + wordmark + underline)
+  // ────────────────────────────────────
+
+  const el = {
+    title:      document.getElementById('titleLine'),
+    splitter:   document.getElementById('splitter'),
+    splitterLb: document.getElementById('splitterLabel'),
+    halfTop:    document.getElementById('halfTop'),
+    halfBot:    document.getElementById('halfBot'),
+    ttyL1:      document.getElementById('ttyL1'),
+    progRow:    document.getElementById('progRow'),
+    progBar:    document.getElementById('progBar'),
+    progFill:   document.getElementById('progFill'),
+    progPct:    document.getElementById('progPct'),
+    progHours:  document.getElementById('progHours'),
+    failStamp:  document.getElementById('failStamp'),
+    iter1:      document.getElementById('iter1'),
+    iter2:      document.getElementById('iter2'),
+    iter3:      document.getElementById('iter3'),
+    nod1:       document.getElementById('nod1'),
+    nod2:       document.getElementById('nod2'),
+    nod3:       document.getElementById('nod3'),
+    finalChart: document.getElementById('finalChart'),
+    brandSheet: document.getElementById('brandSheet'),
+    brandReveal:document.getElementById('brandReveal'),
+    brandUnder: document.getElementById('brandUnderline'),
+    curveA:     document.getElementById('curveA'),
+    curveACrash:document.getElementById('curveACrash'),
+    curveB:     document.getElementById('curveB'),
+    curveBGlow: document.getElementById('curveBGlow'),
+  };
+
+  // Precompute path lengths for draw-on animation
+  const lenA = el.curveA.getTotalLength();
+  const lenACrash = el.curveACrash.getTotalLength();
+  const lenB = el.curveB.getTotalLength();
+
+  el.curveA.style.strokeDasharray = `${lenA} ${lenA}`;
+  el.curveA.style.strokeDashoffset = lenA;
+  el.curveACrash.style.strokeDasharray = `${lenACrash} ${lenACrash}`;
+  el.curveACrash.style.strokeDashoffset = lenACrash;
+  el.curveB.style.strokeDasharray = `${lenB} ${lenB}`;
+  el.curveB.style.strokeDashoffset = lenB;
+  el.curveBGlow.style.strokeDasharray = `${lenB} ${lenB}`;
+  el.curveBGlow.style.strokeDashoffset = lenB;
+
+  // Also precompute chart dot selections (hide initially)
+  const chartDots = el.finalChart.querySelectorAll('circle');
+  const chartAnchors = el.finalChart.querySelectorAll('.anchor-label, .anchor-en');
+  const chartTicks = el.finalChart.querySelectorAll('.tick-label, .axis-label');
+
+  const DURATION = 12.0;
+  let startTime = null;
+  let loop = true;
+  if (window.__recording === true) loop = false;
+
+  function tick(now) {
+    if (startTime === null) startTime = now;
+    let t = (now - startTime) / 1000;
+
+    if (t >= DURATION) {
+      if (loop) { startTime = now; t = 0; }
+      else { t = DURATION; }
+    }
+
+    // ────── Title
+    const titleIn = seg(t, 0.1, 1.0);
+    const titleOut = seg(t, 9.2, 9.8);
+    el.title.style.opacity = Math.max(0, Math.min(cubicOut(titleIn), 1 - titleOut));
+
+    // ────── Splitter (fade out earlier so Beat 3 is clean)
+    const splitT = seg(t, 0.0, 0.8);
+    const splitOut = seg(t, 8.4, 8.9);
+    el.splitter.style.transform = `scaleX(${expoOut(splitT) * (1 - splitOut)})`;
+    const splitLabelT = seg(t, 0.4, 1.0);
+    const splitLabelOut = seg(t, 8.2, 8.7);
+    el.splitterLb.style.opacity = Math.max(0, Math.min(cubicOut(splitLabelT), 1 - splitLabelOut));
+
+    // ────── Halves fade in / out (fade out earlier to clear for Beat 3 chart)
+    const topIn = seg(t, 0.6, 1.4);
+    const topOut = seg(t, 8.4, 9.0);
+    el.halfTop.style.opacity = Math.max(0, Math.min(cubicOut(topIn), 1 - topOut));
+
+    const botIn = seg(t, 1.0, 1.8);
+    const botOut = seg(t, 8.4, 9.0);
+    el.halfBot.style.opacity = Math.max(0, Math.min(cubicOut(botIn), 1 - botOut));
+
+    // ────── TOP track: terminal line + progress bar
+    const ttyL1In = seg(t, 1.4, 1.8);
+    el.ttyL1.style.opacity = cubicOut(ttyL1In);
+
+    // Progress bar appears @ 1.8, starts crawling 2.0-7.8, stuck 7.8-8.4, fails @ 8.4
+    const progRowIn = seg(t, 1.8, 2.2);
+    el.progRow.style.opacity = cubicOut(progRowIn);
+
+    let pct = 0;
+    let hoursTxt = '03:00:00';
+    if (t >= 2.0 && t < 7.8) {
+      const p = seg(t, 2.0, 7.8);
+      // Easing: starts fast, slows down to 99% (mimics the "last 10% takes forever" trope)
+      pct = 99 * (1 - Math.pow(1 - p, 2.2));
+      const remaining = Math.max(0, (1 - p) * 3 * 60 * 60);
+      const hh = String(Math.floor(remaining / 3600)).padStart(2, '0');
+      const mm = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+      const ss = String(Math.floor(remaining % 60)).padStart(2, '0');
+      hoursTxt = `${hh}:${mm}:${ss}`;
+    } else if (t >= 7.8 && t < 8.4) {
+      pct = 99;
+      // Micro-jitter to show "stuck"
+      const jitter = Math.sin(t * 30) * 0.1;
+      pct = 99 + jitter;
+      hoursTxt = '00:00:12';
+    } else if (t >= 8.4 && t < 8.7) {
+      // Fail animation — pct stays at 99 briefly then snaps to 0
+      pct = 99;
+      hoursTxt = '— REJECTED —';
+    } else if (t >= 8.7) {
+      pct = 0;
+      hoursTxt = '— REJECTED —';
+    }
+
+    el.progFill.style.width = `${pct}%`;
+    el.progPct.textContent = `${Math.floor(Math.max(0, pct))}%`;
+    el.progHours.textContent = hoursTxt;
+
+    // Fail state toggle
+    if (t >= 8.4) {
+      el.progBar.classList.add('failed');
+      el.progRow.classList.add('failed');
+    } else {
+      el.progBar.classList.remove('failed');
+      el.progRow.classList.remove('failed');
+    }
+
+    // Fail stamp lands at 8.4
+    const stampIn = seg(t, 8.4, 8.7);
+    if (stampIn > 0) {
+      el.failStamp.style.opacity = cubicOut(stampIn);
+      const scale = lerp(stampIn, 1.6, 1.0, expoOut);
+      el.failStamp.style.transform = `translateY(-50%) rotate(-8deg) scale(${scale})`;
+    } else {
+      el.failStamp.style.opacity = 0;
+    }
+
+    // ────── BOTTOM track: 3 iter panels
+    const iterTimings = [
+      { enter: [2.0, 2.6], nod: [2.8, 3.2] },
+      { enter: [3.6, 4.2], nod: [4.4, 4.8] },
+      { enter: [5.6, 6.2], nod: [6.4, 6.9] },
+    ];
+
+    [el.iter1, el.iter2, el.iter3].forEach((panel, i) => {
+      const { enter } = iterTimings[i];
+      const p = seg(t, enter[0], enter[1]);
+      const op = expoOut(p);
+      const ty = lerp(p, 20, 0, expoOut);
+      panel.style.opacity = op;
+      panel.style.transform = `translateY(${ty}px)`;
+    });
+
+    [el.nod1, el.nod2, el.nod3].forEach((n, i) => {
+      const { nod } = iterTimings[i];
+      const p = seg(t, nod[0], nod[1]);
+      const op = expoOut(p);
+      const scale = lerp(p, 0.4, 1.0, expoOut);
+      n.style.opacity = op;
+      n.style.transform = `scale(${scale})`;
+    });
+
+    // ────── Beat 3 · final chart crossfade (chart appears as halves fade)
+    const chartIn = seg(t, 8.5, 9.2);
+    el.finalChart.style.opacity = cubicOut(chartIn);
+
+    const curveBT = seg(t, 8.8, 9.8);
+    el.curveB.style.strokeDashoffset = lenB * (1 - expoOut(curveBT));
+    el.curveBGlow.style.strokeDashoffset = lenB * (1 - expoOut(curveBT));
+
+    const curveAT = seg(t, 8.9, 9.7);
+    el.curveA.style.strokeDashoffset = lenA * (1 - cubicOut(curveAT));
+    const curveACrashT = seg(t, 9.7, 9.95);
+    el.curveACrash.style.strokeDashoffset = lenACrash * (1 - expoOut(curveACrashT));
+    const failXT = seg(t, 9.65, 9.85);
+    const failXEl = document.getElementById('failX');
+    if (failXEl) {
+      failXEl.style.opacity = cubicOut(failXT);
+      failXEl.style.transform = `scale(${lerp(failXT, 1.6, 1.0, expoOut)})`;
+      failXEl.style.transformOrigin = '1140px 180px';
+    }
+
+    chartDots.forEach((dot, i) => {
+      const dotT = seg(t, 9.0 + i * 0.12, 9.3 + i * 0.12);
+      dot.style.opacity = cubicOut(dotT);
+    });
+    chartAnchors.forEach((a) => {
+      const aT = seg(t, 9.5, 9.95);
+      a.style.opacity = cubicOut(aT);
+    });
+    chartTicks.forEach((tk) => {
+      const tkT = seg(t, 8.7, 9.3);
+      tk.style.opacity = cubicOut(tkT) * 0.9;
+    });
+
+    // ────── Brand reveal 10.0-12.0
+    const sheetT = seg(t, 10.0, 10.6);
+    el.brandSheet.style.transform = `translateY(${lerp(sheetT, 100, 0, expoOut)}%)`;
+
+    const wordT = seg(t, 10.6, 11.4);
+    el.brandReveal.style.opacity = cubicOut(wordT);
+
+    const underT = seg(t, 11.4, 11.9);
+    el.brandUnder.style.width = `${lerp(underT, 0, 280, expoOut)}px`;
+
+    // Mark ready for recorder
+    if (!window.__ready) window.__ready = true;
+
+    if (loop || t < DURATION) requestAnimationFrame(tick);
+  }
+
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+    .then(() => requestAnimationFrame(tick));
+</script>
+</body>
+</html>
