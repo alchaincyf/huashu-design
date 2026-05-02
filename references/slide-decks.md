@@ -3,9 +3,19 @@
 做幻灯片是设计工作的高频场景。这份文档说明怎么做好HTML幻灯片——从架构选型、单页设计，到 PDF/PPTX 导出的完整路径。
 
 **本 skill 的能力覆盖**：
-- HTML 播放/PDF 导出 → 本文档 + `scripts/export_deck_pdf.mjs` / `scripts/export_deck_stage_pdf.mjs`
-- 可编辑 PPTX 导出 → `references/editable-pptx.md` + `scripts/html2pptx.js` + `scripts/export_deck_pptx.mjs --mode editable`
-- 图片铺底 PPTX（不可编辑但视觉保真）→ `scripts/export_deck_pptx.mjs --mode image`
+- **HTML 演示版（基础产物，永远默认必做）** → 每页独立 HTML + `assets/deck_index.html` 聚合，浏览器里键盘翻页、全屏演讲
+- HTML → PDF 导出 → `scripts/export_deck_pdf.mjs` / `scripts/export_deck_stage_pdf.mjs`
+- HTML → 可编辑 PPTX 导出 → `references/editable-pptx.md` + `scripts/html2pptx.js` + `scripts/export_deck_pptx.mjs`（要求 HTML 按 4 条硬约束写）
+
+> **⚠️ HTML 是基础，PDF/PPTX 是衍生物。** 不管最终交付什么格式，都**必须**先做 HTML 聚合演示版（`index.html` + `slides/*.html`），它是幻灯片作品的「源」。PDF/PPTX 是从 HTML 一行命令导出的快照。
+>
+> **为什么 HTML 优先**：
+> - 演讲/演示现场最好用（投影仪 / 共享屏幕直接全屏，键盘翻页，不依赖 Keynote/PPT 软件）
+> - 开发过程中每页可单独双击打开验证，不用每次重新跑导出
+> - 是 PDF/PPTX 导出的唯一上游（避免「导出后才发现要改 HTML 又要重出」的死循环）
+> - 交付物可以是「HTML + PDF」或「HTML + PPTX」双份，接收方爱用哪个用哪个
+>
+> 2026-04-22 moxt brochure 实测：做完 13 页 HTML + index.html 聚合后，`export_deck_pdf.mjs` 一行导出 PDF，零改动。HTML 版本身就是可直接浏览器演讲的交付物。
 
 ---
 
@@ -13,20 +23,37 @@
 
 **这个决策比「单文件还是多文件」更先。** 2026-04-20 期权私董会项目实测：**不在动手前确认交付格式 = 2-3 小时返工。**
 
-### 决策树
+### 决策树（HTML-first 架构）
+
+所有交付都从同一套 HTML 聚合页（`index.html` + `slides/*.html`）开始。交付格式只决定 **HTML 的写法约束** 和 **导出命令**：
 
 ```
-│ 问：最终要交付什么？
-├── 只要浏览器全屏演讲 / 本地 HTML    → 视觉最自由，随便做
-├── 要 PDF（打印 / 发群 / 存档）      → 视觉最自由，任何架构都能导出
-└── 要可编辑 PPTX（同事会改文字）    → 🛑 从第一行 HTML 开始就按 `references/editable-pptx.md` 的 4 条硬约束写
+【永远默认 · 必做】 HTML 聚合演示版（index.html + slides/*.html）
+   │
+   ├── 只要浏览器演讲 / 本地 HTML 存档   → 到这里已经完成，HTML 视觉自由度最大
+   │
+   ├── 还要 PDF（打印 / 发群 / 存档）     → 跑 export_deck_pdf.mjs 一键出
+   │                                          HTML 写法自由，视觉无约束
+   │
+   └── 还要可编辑 PPTX（同事要改文字）    → 从第一行 HTML 就按 4 条硬约束写
+                                              跑 export_deck_pptx.mjs 一键出
+                                              牺牲渐变 / web component / 复杂 SVG
 ```
 
-### 为什么「要 PPTX 就得从头走 Path A」
+### 开工话术（抄走即用）
+
+> 不管最后交付是 HTML、PDF 还是 PPTX，我都会先做一个可在浏览器里切换和演讲的 HTML 聚合版（`index.html` 加键盘翻页）——这是永远的默认基础产物。在此之上再问你要不要额外出 PDF / PPTX 的快照。
+>
+> 你需要哪个导出格式？
+> - **只要 HTML**（演讲/存档）→ 视觉完全自由
+> - **还要 PDF** → 同上，加一条导出命令
+> - **还要可编辑 PPTX**（同事会在 PPT 里改文字）→ 我必须从第一行 HTML 就按 4 条硬约束写，会牺牲一些视觉能力（无渐变、无 web component、无复杂 SVG）。
+
+### 为什么「要 PPTX 就得从头走 4 条硬约束」
 
 PPTX 可编辑的前提是 `html2pptx.js` 能把 DOM 逐元素翻译为 PowerPoint 对象。它需要 **4 条硬约束**：
 
-1. body 固定 720pt × 405pt（不是 1920×1080px）
+1. body 固定 960pt × 540pt（匹配 `LAYOUT_WIDE`，13.333″ × 7.5″，不是 1920×1080px）
 2. 所有文字包在 `<p>`/`<h1>`-`<h6>` 里（禁止 div 直接放文字，禁止用 `<span>` 承载主文字）
 3. `<p>`/`<h*>` 自身不能有 background/border/shadow（放外层 div）
 4. `<div>` 不能用 `background-image`（用 `<img>` 标签）
@@ -39,15 +66,7 @@ PPTX 可编辑的前提是 `html2pptx.js` 能把 DOM 逐元素翻译为 PowerPoi
 | 路径 | 做法 | 结果 | 代价 |
 |------|------|------|------|
 | ❌ **先自由写 HTML，事后补救 PPTX** | 单文件 deck-stage + 大量 SVG/span 装饰 | 要可编辑 PPTX 只剩两条路：<br>A. 手写 pptxgenjs 几百行 hardcode 坐标<br>B. 重写 17 页 HTML 成 Path A 格式 | 2-3 小时返工，且手写版**维护成本永续**（HTML 改一个字，PPTX 要再人肉同步） |
-| ✅ **从第一步按 Path A 约束写** | 每页独立 HTML + 4 条硬约束 + 720×405pt | 一条命令导出 100% 可编辑 PPTX，同时也能浏览器全屏演讲（Path A HTML 就是浏览器可播放的标准 HTML） | 写 HTML 时多花 5 分钟想「文字怎么包进 `<p>`」，零返工 |
-
-### 开工话术（抄走即用）
-
-> 动手之前先确认交付格式：
-> - **浏览器演讲 / PDF** → 我按设计自由度最大的方式做（可以用动画、web component、复杂 SVG、CSS 渐变）
-> - **需要可编辑 PPTX**（同事会改文字） → 我必须从一开始就按 `references/editable-pptx.md` 的 4 条硬约束写 HTML。视觉能力会少一些（无渐变、无 web component、无复杂 SVG），但导出就是一条命令的事
->
-> 你选哪条？
+| ✅ **从第一步按 Path A 约束写** | 每页独立 HTML + 4 条硬约束 + 960×540pt | 一条命令导出 100% 可编辑 PPTX，同时也能浏览器全屏演讲（Path A HTML 就是浏览器可播放的标准 HTML） | 写 HTML 时多花 5 分钟想「文字怎么包进 `<p>`」，零返工 |
 
 ### 混合交付怎么办
 
@@ -57,12 +76,115 @@ PPTX 可编辑的前提是 `html2pptx.js` 能把 DOM 逐元素翻译为 PowerPoi
 
 ### 事后才知道要 PPTX 怎么办（紧急补救）
 
-极个别情况：HTML 已经写好了才发现要 PPTX。此时两个选项都不完美：
+极个别情况：HTML 已经写好了才发现要 PPTX。推荐走 **fallback 流程**（完整说明见 `references/editable-pptx.md` 末尾「Fallback：已有视觉稿但用户坚持要 editable PPTX」）：
 
-1. **图片铺底 PPTX**（`scripts/export_deck_pptx.mjs` image 模式）——视觉 100% 保真但文字不可编辑。适合「演讲用 PPT 播放、不改内容」场景
-2. **手写 pptxgenjs 重建**（为每页手写 addText/addShape + 图形 PNG 嵌入）——文字可编辑，但位置、字体、对齐都要手调，维护成本高。**只有用户明确接受「HTML 源要改就得重新手调 PPTX」才走这条**
+1. **首选：改出 PDF**（视觉 100% 保留，跨平台，接收方能看能印）—— 如果接收方实际需求是「演讲/存档」，PDF 就是最佳交付物
+2. **次选：AI 以视觉稿为蓝本，重写一版 editable HTML** → 导出 editable PPTX —— 保留色彩/布局/文案的设计决策，牺牲渐变、web component、复杂 SVG 等视觉能力
+3. **不推荐：手写 pptxgenjs 重建**——位置、字体、对齐都要手调，维护成本高，且后续 HTML 改一个字都得再人肉同步一次
 
-永远优先把选择告诉用户，让他决定。**永远不要第一反应就开始手写 pptxgenjs**——那是最后的兜底手段。
+永远把选择告诉用户，让他决定。**永远不要第一反应就开始手写 pptxgenjs**——那是最后的兜底手段。
+
+---
+
+## 🛑 批量制作前：先做 2 页 showcase 定 grammar
+
+**只要 deck ≥ 5 页，绝对不能从第 1 页直接写到最后一页。** 2026-04-22 moxt brochure 实战验证的正确顺序：
+
+1. 选 **2 个视觉差异最大的页面类型**先做 showcase（如「封面」+「情绪/引用页」，或「封面」+「产品展示页」）
+2. 截图让用户确认 grammar（masthead / 字体 / 色 / 间距 / 结构 / 中英双语比例）
+3. 方向通过了再批量推剩下 N-2 页，每页复用已建立的 grammar
+4. 全部完成后一起合成 HTML 聚合 + PDF / PPTX 衍生物
+
+**为什么**：直接写 13 页到底 → 用户说「方向不对」= 返工 13 次。先做 2 页 showcase → 方向错 = 返工 2 次。视觉 grammar 一旦确立，后续 N 页的决策空间大幅收窄，只剩「内容怎么放进去」。
+
+**showcase 页选择原则**：选视觉结构最不一样的两页。这两页过了 = 其他中间态都能过。
+
+| Deck 类型 | 推荐 showcase 页组合 |
+|-----------|---------------------|
+| B2B brochure / 产品宣发 | 封面 + 内容页（理念/情感页） |
+| 品牌发布 | 封面 + 产品特色页 |
+| 数据报告 | 数据大图页 + 分析结论页 |
+| 教程课件 | 章节封页 + 具体知识点页 |
+
+---
+
+## 📐 出版物 grammar 模板（moxt 实测可复用）
+
+适合 B2B brochure / 产品宣发 / 长报告类 deck。每页复用这套结构 = 13 页视觉完全一致、0 返工。
+
+### 每页骨架
+
+```
+┌─ masthead（顶部 strip + 横线）────────────┐
+│  [logo 22-28px] · A Product Brochure                Issue · Date · URL │
+├──────────────────────────────────────────┤
+│                                          │
+│  ── kicker（绿色短横 + uppercase 标签）   │
+│  CHAPTER XX · SECTION NAME                 │
+│                                          │
+│  H1（中文 Noto Serif SC 900）             │
+│  重点词单独上品牌主色                      │
+│                                          │
+│  English subtitle (Lora italic，副标题)   │
+│  ─────────── 分隔线 ──────────            │
+│                                          │
+│  [具体内容：双栏 60/40 / 2x2 grid / 列表] │
+│                                          │
+├──────────────────────────────────────────┤
+│ section name                     XX / total │
+└──────────────────────────────────────────┘
+```
+
+### 样式约定（直接抄走）
+
+- **H1**：中文 Noto Serif SC 900，字号 80-140px 看信息量，重点词单独上品牌主色（不要全文堆色）
+- **英文副**：Lora italic 26-46px，品牌签名词（如 "AI team"）粗体 + 主色斜体
+- **正文**：Noto Serif SC 17-21px，line-height 1.75-1.85
+- **accent 高亮**：正文里用主色加粗标注关键词，每页不超过 3 处（过多就失去锚点作用）
+- **背景**：暖米底 #FAFAFA + 极淡 radial-gradient noise（`rgba(33,33,33,0.015)`）增加纸感
+
+### 视觉主角必须差异化
+
+13 页如果全是「文字 + 一张截图」就太单调。**每页的视觉主角类型轮换**：
+
+| 视觉类型 | 适合的 section |
+|---------|---------------|
+| 封面排版（大字 + masthead + pillar） | 首页 / 篇章封 |
+| 单角色 portrait（超大单只 momo 等） | 介绍单个概念/角色 |
+| 多角色合影 / 头像卡并排 | 团队 / 用户案例 |
+| 时间轴卡片递进 | 展示「长期关系」「演进」 |
+| 知识图谱 / 连接节点图 | 展示「协作」「流动」 |
+| Before/After 对比卡 + 中间箭头 | 展示「改变」「差异」 |
+| 产品 UI 截图 + 描边设备框 | 具体功能展示 |
+| 大引号 big-quote（半页大字） | 情绪页 / 问题页 / 引文页 |
+| 真人头像 + 引言卡（2×2 或 1×4） | 用户见证 / 使用场景 |
+| 大字封底 + URL 椭圆按钮 | CTA / 结尾 |
+
+---
+
+## ⚠️ 常见踩坑（moxt 实战总结）
+
+### 1. Emoji 在 Chromium / Playwright 导出时不渲染
+
+Chromium 默认不带彩色 emoji 字体，`page.pdf()` 或 `page.screenshot()` 时 emoji 显示为空方框。
+
+**对策**：用 Unicode 文字符号（`✦` `✓` `✕` `→` `·` `—`）替代，或直接改纯文字（「Email · 23」而不是「📧 23 emails」）。
+
+### 2. `export_deck_pdf.mjs` 报错 `Cannot find package 'playwright'`
+
+原因：ESM 模块解析从脚本所在位置向上找 `node_modules`。脚本在 `~/.claude/skills/huashu-design/scripts/`，那里没依赖。
+
+**对策**：把脚本复制到 deck 项目目录（例如 `brochure/build-pdf.mjs`），在项目根跑 `npm install playwright pdf-lib`，然后 `node build-pdf.mjs --slides slides --out output/deck.pdf`。
+
+### 3. Google Fonts 没加载完就截图 → 中文显示为系统默认黑体
+
+Playwright 截图/PDF 前至少 `wait-for-timeout=3500` 让 webfont 下载并 paint。或者把字体 self-host 到 `shared/fonts/` 减少网络依赖。
+
+### 4. 信息密度失衡：内容页塞太多
+
+moxt philosophy 页第一版用 2×2 = 4 段 + 底部 3 信条 = 7 块内容，挤压且重复。改成 1×3 = 3 段后呼吸感立刻回来。
+
+**对策**：每页控制在「1 个核心信息 + 3-4 个辅助点 + 1 个视觉主角」，超过就拆到新页。**少即是多**——观众一页看 10 秒，给他 1 个记忆点比 4 个记忆点更容易记住。
 
 ---
 
@@ -511,22 +633,16 @@ await page.pdf({ width: '1920px', height: '1080px', printBackground: true, prefe
 
 ---
 
-### `export_deck_pptx.mjs` — 导出 PPTX（两种模式）
+### `export_deck_pptx.mjs` — 导出可编辑 PPTX
 
 ```bash
-# 图片铺底（视觉 100% 保真，不可编辑文字）
-node scripts/export_deck_pptx.mjs --slides <dir> --out deck.pptx --mode image
-
-# 每个文本独立文本框（可编辑，但字体会回落）
-node scripts/export_deck_pptx.mjs --slides <dir> --out deck.pptx --mode editable
+# 唯一模式：文本框原生可编辑（字体会回落到系统字体）
+node scripts/export_deck_pptx.mjs --slides <dir> --out deck.pptx
 ```
 
-| 模式 | 视觉保真 | 文字可编辑 | 工作原理 | 限制 |
-|------|---------|----------|---------|------|
-| `image` | ✅ 100% | ❌ | Playwright 截图 → pptxgenjs addImage | 文字变图片 |
-| `editable` | 🟡 ~70% | ✅ | html2pptx 提取每个文本框 | 见下方约束 |
+工作原理：`html2pptx` 逐元素读 computedStyle 把 DOM 翻译成 PowerPoint 对象（text frame / shape / picture）。文字变成真文本框，PPT 里双击即可编辑。
 
-**editable 模式的硬性约束**（用户 HTML 必须满足，否则该页 skip）：
+**硬性约束**（HTML 必须满足，否则该页 skip，详细说明见 `references/editable-pptx.md`）：
 - 所有文字必须在 `<p>`/`<h1>`-`<h6>`/`<ul>`/`<ol>` 里（禁止裸文本 div）
 - `<p>`/`<h*>` 标签自身不能有 background/border/shadow（放外层 div）
 - 不用 `::before`/`::after` 插入装饰文字（伪元素提不出来）
@@ -536,14 +652,16 @@ node scripts/export_deck_pptx.mjs --slides <dir> --out deck.pptx --mode editable
 
 脚本已内置**自动预处理器**——把 "叶子 div 里的裸文本" 自动包成 `<p>`（保留 class）。这解决了最常见的违规（裸文本）。但其他违规（p 上有 border、span 上有 margin 等）仍需 HTML 源头合规。
 
-**editable 模式的另一个 caveat——字体回落**：
+**字体回落 caveat**：
 - Playwright 用 webfont 测量 text-box 尺寸；PowerPoint/Keynote 用本机字体渲染
 - 两者不同时会有**溢出或错位**——每页都要肉眼过
 - 建议目标机器装好 HTML 里用的字体，或 fallback 到 `system-ui`
 
+**视觉优先场景不要走这条路径** → 改用 `export_deck_pdf.mjs` 出 PDF。PDF 视觉 100% 保真、矢量、跨平台、文字可搜——是视觉优先 deck 的真正归宿，不是什么「不可编辑的妥协」。
+
 ### 从一开始就让 HTML 对导出友好
 
-对性能最稳的 deck：**从写 HTML 时就按 editable 模式的约束写**。这样 `--mode editable` 可以直接全部 pass。额外成本不大：
+对性能最稳的 deck：**从写 HTML 时就按 editable 的 4 条硬约束写**。这样 `export_deck_pptx.mjs` 可以直接全部 pass。额外成本不大：
 
 ```html
 <!-- ❌ 不好 -->
@@ -567,12 +685,12 @@ node scripts/export_deck_pptx.mjs --slides <dir> --out deck.pptx --mode editable
 |------|------|
 | 给主办方/档案存档 | **PDF**（通用、高保真、文字可搜） |
 | 发给协作者让他们微调文字 | **PPTX editable**（接受字体回落） |
-| 要现场演讲、不改内容 | **PDF** 或 **PPTX image** |
+| 要现场演讲、不改内容 | **PDF**（矢量保真，跨平台） |
 | HTML 是首选呈现媒介 | 直接浏览器播放，导出只是备份 |
 
 ## 导出为可编辑 PPTX 的深度路径（仅长期项目）
 
-如果你的 deck 会长期维护、反复修改、团队协作——建议**一开始就按 html2pptx 约束写 HTML**，让 `--mode editable` 稳定通过。详见 `references/editable-pptx.md`（4 条硬约束 + HTML 模板 + 常见错误速查）。
+如果你的 deck 会长期维护、反复修改、团队协作——建议**一开始就按 html2pptx 约束写 HTML**，这样 `export_deck_pptx.mjs` 可以直接全部 pass。详见 `references/editable-pptx.md`（4 条硬约束 + HTML 模板 + 常见错误速查 + 已有视觉稿的 fallback 流程）。
 
 ---
 

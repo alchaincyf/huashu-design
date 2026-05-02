@@ -1,8 +1,10 @@
 # 可编辑 PPTX 导出：HTML 硬约束 + 尺寸决策 + 常见错误
 
-本文档讲的是**用 `scripts/html2pptx.js` + `pptxgenjs` 把 HTML 逐元素翻译成真·可编辑 PowerPoint 文本框**的路径。和 `export_deck_pptx.mjs --mode image`（截图铺底、文字变图片、不可编辑）是两回事。
+本文档讲的是**用 `scripts/html2pptx.js` + `pptxgenjs` 把 HTML 逐元素翻译成真·可编辑 PowerPoint 文本框**的路径，也是 `export_deck_pptx.mjs` 唯一支持的路径。
 
 > **核心前提**：要走这条路，HTML 必须从第一行就按下面 4 条约束写。**不是写完再转**——事后补救会触发 2-3 小时返工（2026-04-20 期权私董会项目实测踩坑）。
+>
+> 视觉自由度优先的场景（动画 / web component / CSS 渐变 / 复杂 SVG）请改走 PDF 路径（`export_deck_pdf.mjs` / `export_deck_stage_pdf.mjs`），**不要**指望 pptx 导出能兼得视觉保真和可编辑——这是 PPTX 文件格式本身的物理约束（见文末「为什么 4 条约束不是 Bug 而是物理约束」）。
 
 ---
 
@@ -225,9 +227,65 @@ const html2pptx = require('../scripts/html2pptx.js');  // 本 skill 脚本
 |------|------|
 | 同事会改 PPTX 里的文字 / 发给非技术人员继续编辑 | **本文路径**（editable，需从头按 4 条约束写 HTML） |
 | 只是演讲用 / 发存档，不再改 | `export_deck_pdf.mjs`（多文件）或 `export_deck_stage_pdf.mjs`（单文件 deck-stage），出矢量 PDF |
-| 视觉自由度优先（动画、web component、CSS 渐变、复杂 SVG），接受不可编辑 | `export_deck_pptx.mjs --mode image`（图片铺底 PPTX） |
+| 视觉自由度优先（动画、web component、CSS 渐变、复杂 SVG），接受不可编辑 | **PDF**（同上）——PDF 既保真又跨平台，比「图片 PPTX」更合适 |
 
-**绝不要在视觉自由写好的 HTML 上硬跑 html2pptx**——实测视觉驱动的 HTML pass 率 < 30%，剩下的逐页改造比重写还慢。
+**绝不要在视觉自由写好的 HTML 上硬跑 html2pptx**——实测视觉驱动的 HTML pass 率 < 30%，剩下的逐页改造比重写还慢。这种场景应该出 PDF，不是硬挤 PPTX。
+
+---
+
+## Fallback：已有视觉稿但用户坚持要 editable PPTX
+
+偶尔会遇到这个场景：你/用户已经写好一份视觉驱动的 HTML（渐变、web component、复杂 SVG 都用上了），本来出 PDF 最合适，但用户明确说「不行，必须是可编辑的 PPTX」。
+
+**不要硬跑 `html2pptx` 期待它 pass**——实测视觉驱动 HTML 在 html2pptx 上 pass 率 <30%，剩下 70% 会报错或走样。正确的 fallback 是：
+
+### Step 1 · 先告知局限性（透明沟通）
+
+一句话跟用户说清三件事：
+
+> 「你现在的 HTML 用了 [具体列出：渐变 / web component / 复杂 SVG / ...]，直接转 editable PPTX 会 fail。我有两个方案：
+> - A. **出 PDF**（推荐）——视觉 100% 保留，接收方能看能印但不能改文字
+> - B. **以视觉稿为蓝本，重写一版 editable HTML**（保留色彩/布局/文案的设计决策，但按 4 条硬约束重新组织 HTML 结构，**牺牲**渐变、web component、复杂 SVG 等视觉能力）→ 再导出 editable PPTX
+>
+> 你选哪个？」
+
+不要把 B 方案说得云淡风轻——明确告知**会丢失什么**。让用户做取舍。
+
+### Step 2 · 如果用户选 B：AI 主动改写，不要求用户自己写
+
+这里的 doctrine 是：**用户给的是设计意图，你负责翻译成合规实现**。不是让用户去学 4 条硬约束然后自己重写。
+
+改写时的遵循原则：
+- **保留**：色彩系统（主色/辅色/中性色）、信息层级（标题/副标题/正文/注解）、核心文案、layout 骨架（上中下 / 左右分栏 / 网格）、页面节奏
+- **降级**：CSS 渐变 → 纯色或 flex 分段、web component → 段落级 HTML、复杂 SVG → 简化的 `<img>` 或纯色几何、阴影 → 删除或降为极弱、自定义字体 → 向系统字体靠齐
+- **重写**：裸文字 → 包进 `<p>` / `<h*>`、`background-image` → `<img>` 标签、`<p>` 上的背景边框 → 外层 div 承载
+
+### Step 3 · 产出对照清单（透明交付）
+
+改写完成后给用户一份 before/after 对照，让他知道哪些视觉细节被简化了：
+
+```
+原设计 → editable 版调整
+- 标题区紫色渐变 → 主色 #5B3DE8 纯色背景
+- 数据卡片阴影 → 删除（改为 2pt 描边区分）
+- 复杂 SVG 折线图 → 简化为 <img> PNG（从 HTML 截图生成）
+- Hero 区 web component 动效 → 静态首帧（web component 无法翻译）
+```
+
+### Step 4 · 导出 & 双格式交付
+
+- `editable` 版 HTML → 跑 `scripts/export_deck_pptx.mjs` 出可编辑 PPTX
+- **建议同时保留**原视觉稿 → 跑 `scripts/export_deck_pdf.mjs` 出高保真 PDF
+- 双格式交付给用户：视觉稿的 PDF + 可编辑的 PPTX，各司其职
+
+### 什么情况下直接拒绝 B 方案
+
+个别场景下改写代价过高，应该劝用户放弃 editable PPTX：
+- HTML 核心价值是动画或交互（改写后只剩静态首帧，信息量损失 50%+）
+- 页数 > 30，改写成本超过 2 小时
+- 视觉设计深度依赖精确 SVG / 自定义 filter（改写后和原图几乎无关）
+
+此时告诉用户：「这个 deck 改写代价过高，建议出 PDF 而不是 PPTX。如果接收方确实要 pptx 格式，就接受视觉会大幅朴素化——要不要换成 PDF？」
 
 ---
 
