@@ -1,9 +1,72 @@
 Huashu Design · Personal Use License
 Copyright (c) 2026 alchaincyf (花叔 · 花生)
 
-本 skill（以下简称「本作品」）包含 SKILL.md、scripts、references、assets、demos 及其全部派生内容。使用本作品视为同意以下条款：
+This skill (hereinafter the "Work") includes SKILL.md, scripts, references, assets, demos, and all derivative content. By using the Work you agree to the following terms.
+
+================================================================================
+ENGLISH
+================================================================================
+
+## 1. Permitted Use (free for individuals)
+
+The following uses require no authorization and no notice:
+
+- **Learning and research**: reading the code, modifying it, or adapting it for your own understanding
+- **Personal creation**: using the Work for your own articles, videos, side projects, or content on Xiaohongshu / WeChat Official Accounts / Bilibili / YouTube / X, etc.
+- **Non-commercial sharing**: building demos or tutorials based on the Work and publishing them on social platforms, blogs, or podcasts
+- **Derivative works**: creating derivative skills under your own personal repositories, provided you visibly credit the source in your README (`Derived from alchaincyf/huashu-design`)
+
+## 2. Restricted Use (prior authorization required)
+
+The following uses **require prior written authorization from Huasheng**:
+
+- Any **company, team, studio, or organization** integrating the Work into its internal toolchain or external products
+- Using the Work or its derivatives as a **delivery mechanism for paying clients** (including design outsourcing, brand consulting, B2B SaaS, etc.)
+- Building **commercial software products**, paid templates, or paid subscription services on top of the Work
+- **For-profit** training courses, commercial workshops, or paid private communities built on the Work
+- Using Work-generated content in **client-deliverable projects** (vendor-to-client deliverables)
+
+## 3. Commercial Licensing — Indicative Pricing
+
+Two standard commercial licensing options are typically offered:
+
+| Option | Fee | Term | Updates |
+|---|---|---|---|
+| **Annual License** | USD 1,800 | 12 months, renewable | All Updates released during the term |
+| **Perpetual License** | USD 3,500 | One-time, perpetual | Updates released within the first 12 months |
+
+Pricing above is indicative and may be adjusted based on company size, scope of use, and the number of licensed entities. Custom enterprise terms (multi-entity coverage, extended update windows, dedicated support, etc.) are available on request.
+
+Payment is made by SWIFT international wire transfer; bank charges are borne by the licensee.
+
+## 4. How to Request Commercial Authorization
+
+Email is the preferred contact channel for commercial inquiries:
+
+- **Email**: alchaincyf@gmail.com
+
+Alternatively, reach Huasheng on any of the following platforms:
+
+- X / Twitter: https://x.com/AlchainHust
+- WeChat Official Account: search "花叔" in WeChat
+- Bilibili: https://space.bilibili.com/14097567
+- YouTube: https://www.youtube.com/@Alchain
+- Xiaohongshu: https://www.xiaohongshu.com/user/profile/5abc6f17e8ac2b109179dfdf
+- Official site: https://www.huasheng.ai/
+
+## 5. Disclaimer
+
+The Work is provided "as is", without warranty of any kind, express or implied. The author shall not be liable for any damages arising from the use of the Work.
 
 ---
+
+In short: **personal use is free; commercial use requires a license — email alchaincyf@gmail.com.**
+
+================================================================================
+中文
+================================================================================
+
+本 skill（以下简称「本作品」）包含 SKILL.md、scripts、references、assets、demos 及其全部派生内容。使用本作品视为同意以下条款。
 
 ## 1. 允许的使用（个人免费）
 
@@ -24,9 +87,26 @@ Copyright (c) 2026 alchaincyf (花叔 · 花生)
 - 以**营利为目的**的培训课程、商业工作坊、闭门付费社群
 - 在**商单创作**（乙方向甲方交付物）中使用本作品生成的内容
 
-## 3. 授权联系方式
+## 3. 商用授权参考价位
 
-商用授权请通过以下任一平台联系花生：
+常用两种方案：
+
+| 方案 | 费用 | 有效期 | 更新 |
+|---|---|---|---|
+| **年度授权** | USD 1,800 | 12 个月，可续约 | 授权期内所有更新 |
+| **永久授权** | USD 3,500 | 一次性永久 | 首 12 个月内发布的更新 |
+
+以上为参考价位，具体可根据公司规模、使用范围、授权实体数量调整。如需企业定制条款（多实体覆盖、延长更新期、专属支持等）可单独商议。
+
+收款方式为 SWIFT 国际电汇，银行手续费由授权方承担。
+
+## 4. 商用授权联系方式
+
+优先邮箱联系：
+
+- **邮箱**：alchaincyf@gmail.com
+
+也可通过以下任一平台联系花生：
 
 - X / Twitter：https://x.com/AlchainHust
 - 公众号：微信搜索「花叔」
@@ -35,10 +115,10 @@ Copyright (c) 2026 alchaincyf (花叔 · 花生)
 - 小红书：https://www.xiaohongshu.com/user/profile/5abc6f17e8ac2b109179dfdf
 - 官网：https://www.huasheng.ai/
 
-## 4. 免责声明
+## 5. 免责声明
 
 本作品按「现状」提供，不提供任何明示或默示的担保。作者不对因使用本作品导致的任何损失承担责任。
 
 ---
 
-简而言之：**个人随便用，企业要打招呼。**
+简而言之：**个人随便用，企业请授权 —— 邮件 alchaincyf@gmail.com。**
