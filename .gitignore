@@ -9,6 +9,14 @@
 # Personal asset index（个人真实数据，只保留 .example.json 模板）
 assets/personal-asset-index.json
 
+# 环境变量（API key 等敏感信息，只保留 .env.example 模板）
+.env
+.env.local
+
+# Voiceover 工作目录（TTS mp3、timeline.json 临时产物，可重新生成）
+**/_narration/
+**/_narration_*/
+
 # Node / editor / OS
 node_modules/
 *.swp
