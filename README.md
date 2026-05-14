@@ -27,6 +27,8 @@ Not "decent for AI" quality — it looks like a real design team made it. Give t
 npx skills add alchaincyf/huashu-design
 ```
 
+> 📣 **Now MIT-licensed.** As of 2026-05-14 this skill is fully open-source under the [MIT License](LICENSE) — free for personal **and** commercial use, no authorization required. ([what changed](#license))
+
 [See it work](#demo-gallery) · [Install](#install) · [What it does](#what-it-does) · [How it works](#core-mechanics) · [vs. Claude Design](#vs-claude-design)
 
 > 📖 **Note for English readers**: this skill is built by a Chinese-speaking developer. The skill's agent prompts (`SKILL.md`, `references/*.md`) are in Chinese but the agent is bilingual — works fine with English tasks. The demos below are the English parallel versions; the Chinese ones are in the default-named files (see the [Chinese README](README.zh.md)).
@@ -284,7 +286,9 @@ Thanks to Anthropic for writing the Claude Design prompts so clearly. This kind 
 
 ## License
 
-[MIT License](LICENSE) — free to use, modify, and distribute for any purpose, including commercial use. Attribution appreciated but not required.
+**Relicensed to MIT on 2026-05-14.** This skill was previously released under a Personal Use License that restricted commercial use. That restriction is now removed.
+
+Under the [MIT License](LICENSE) you are free to **use, modify, and distribute** this skill for any purpose, **including commercial use** — inside companies, in client deliverables, as part of a paid product, anywhere. No prior authorization, no licensing fee, no notification required. Attribution is appreciated but not required.
 
 ---
 
