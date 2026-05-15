@@ -840,15 +840,27 @@ async function extractSlideData(page) {
 
       if (rotation !== null) baseStyle.rotate = rotation;
 
+      const isBold = computed.fontWeight === 'bold' || parseInt(computed.fontWeight) >= 600;
+      const isItalic = computed.fontStyle === 'italic';
+      const hasUnderline = computed.textDecoration.includes('underline');
       const hasFormatting = el.querySelector('b, i, u, strong, em, span, br');
 
       if (hasFormatting) {
-        // Text with inline formatting
+        // Text with inline formatting — pass parent element's computed bold/italic/underline
+        // as baseOptions so they are inherited by plain text runs (e.g. text nodes adjacent
+        // to <br> tags). Without this, a <h1 style="font-weight:900">text<br/>more</h1>
+        // would produce runs with no bold flag because parseInlineFormatting only reads
+        // computed styles on inline *elements* (b/i/span), not on bare text nodes.
         const transformStr = computed.textTransform;
-        const runs = parseInlineFormatting(el, {}, [], (str) => applyTextTransform(str, transformStr));
+        const parentRunOptions = {};
+        if (isBold && !shouldSkipBold(computed.fontFamily)) parentRunOptions.bold = true;
+        if (isItalic) parentRunOptions.italic = true;
+        if (hasUnderline) parentRunOptions.underline = true;
+
+        const runs = parseInlineFormatting(el, parentRunOptions, [], (str) => applyTextTransform(str, transformStr));
 
         // Adjust lineSpacing based on largest fontSize in runs
-        const adjustedStyle = { ...baseStyle };
+        const adjustedStyle = { ...baseStyle, ...parentRunOptions };
         if (adjustedStyle.lineSpacing) {
           const maxFontSize = Math.max(
             adjustedStyle.fontSize,
@@ -871,8 +883,6 @@ async function extractSlideData(page) {
         const textTransform = computed.textTransform;
         const transformedText = applyTextTransform(text, textTransform);
 
-        const isBold = computed.fontWeight === 'bold' || parseInt(computed.fontWeight) >= 600;
-
         elements.push({
           type: el.tagName.toLowerCase(),
           text: transformedText,
@@ -880,8 +890,8 @@ async function extractSlideData(page) {
           style: {
             ...baseStyle,
             bold: isBold && !shouldSkipBold(computed.fontFamily),
-            italic: computed.fontStyle === 'italic',
-            underline: computed.textDecoration.includes('underline')
+            italic: isItalic,
+            underline: hasUnderline
           }
         });
       }
