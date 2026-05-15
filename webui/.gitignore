@@ -1,0 +1,5 @@
+node_modules/
+dist/
+verification-*.png
+public/demos/
+public/skill-assets/

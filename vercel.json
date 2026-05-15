@@ -1,0 +1,16 @@
+{
+  "installCommand": "npm install && cd webui && npm install",
+  "buildCommand": "cd webui && npm run build",
+  "outputDirectory": "webui/dist",
+  "rewrites": [
+    {
+      "source": "/mockup/:path*",
+      "destination": "/"
+    }
+  ],
+  "functions": {
+    "api/*.js": {
+      "includeFiles": "{SKILL.md,references/**,demos/**,assets/showcases/**}"
+    }
+  }
+}

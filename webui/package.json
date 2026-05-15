@@ -1,0 +1,25 @@
+{
+  "name": "huashu-design-webui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development node server/index.js",
+    "prebuild": "node scripts/prepare-public.mjs",
+    "build": "vite build",
+    "start": "NODE_ENV=production node server/index.js"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "express": "^5.1.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "vite": "^7.0.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.59.1"
+  }
+}
