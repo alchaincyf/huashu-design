@@ -1,171 +1,171 @@
-# Design Context：从已有上下文出发
+# Design Context: Start from What's Already There
 
-**这是这个skill最重要的one thing。**
+**This is the most important one thing in this skill.**
 
-好的hi-fi设计一定是从已有design context长出来的。**凭空做hi-fi是last resort，一定会产出generic的作品**。所以每次设计任务开始，先问：有没有可以参考的东西？
+Good hi-fi design always grows out of existing design context. **Doing hi-fi from a blank slate is a last resort — it will always produce something generic**. So at the start of every design task, ask: is there anything to reference?
 
-## 什么是Design Context
+## What Counts as Design Context
 
-按优先级从高到低：
+In priority order, high to low:
 
-### 1. 用户的Design System/UI Kit
-用户自己产品已有的组件库、色彩token、字型规范、icon系统。**最完美的情况**。
+### 1. The user's Design System / UI Kit
+The user's own product's component library, color tokens, type spec, icon system. **The ideal case**.
 
-### 2. 用户的Codebase
-如果用户给了代码库，里面就有活生生的组件实现。Read那些组件文件：
+### 2. The user's Codebase
+If the user provides a codebase, it contains living component implementations. Read those component files:
 - `theme.ts` / `colors.ts` / `tokens.css` / `_variables.scss`
-- 具体的组件（Button.tsx、Card.tsx）
-- Layout scaffold（App.tsx、MainLayout.tsx）
+- Specific components (Button.tsx, Card.tsx)
+- Layout scaffolds (App.tsx, MainLayout.tsx)
 - Global stylesheets
 
-**读代码抄exact values**：hex codes、spacing scale、font stack、border radius。不要凭记忆重画。
+**Read the code and copy exact values**: hex codes, spacing scale, font stack, border radius. Don't redraw from memory.
 
-### 3. 用户已发布的产品
-如果用户有上线的产品但没给代码，用Playwright或让用户提供截图。
+### 3. The user's shipped product
+If the user has a live product but no code, use Playwright or ask for screenshots.
 
 ```bash
-# 用Playwright截图一个公开URL
+# Screenshot a public URL with Playwright
 npx playwright screenshot https://example.com screenshot.png --viewport-size=1920,1080
 ```
 
-让你看到真实的视觉vocabulary。
+This lets you see the real visual vocabulary.
 
-### 4. 品牌指南/Logo/已有素材
-用户可能有：Logo文件、品牌色规范、营销物料、slide模板。这些都是context。
+### 4. Brand guidelines / Logo / existing assets
+The user may have: logo files, brand color spec, marketing materials, slide templates. These are all context.
 
-### 5. 竞品参考
-用户说"像XX网站那样"——让他提供URL或截图。**不要**凭你训练数据里的模糊印象做。
+### 5. Competitor references
+If the user says "like that XX site" — have them provide the URL or a screenshot. **Don't** work from a vague impression in your training data.
 
-### 6. 已知的design system（fallback）
-如果以上都没有，用公认的设计系统作为base：
+### 6. Known design systems (fallback)
+If none of the above exist, use a recognized design system as a base:
 - Apple HIG
 - Material Design 3
-- Radix Colors（配色）
-- shadcn/ui（组件）
-- Tailwind默认palette
+- Radix Colors (palette)
+- shadcn/ui (components)
+- Tailwind default palette
 
-明确告诉用户你用的什么，让他知道这是起点不是定稿。
+Tell the user explicitly what you're using, so they know it's a starting point, not the final answer.
 
-## 获取Context的流程
+## Workflow for Acquiring Context
 
-### Step 1：问用户
+### Step 1: Ask the user
 
-任务开始时的必问清单（来自`workflow.md`）：
+Required questions at task start (from `workflow.md`):
 
 ```markdown
-1. 你有现成的design system/UI kit/组件库吗？在哪？
-2. 有品牌指南、色彩/字体规范吗？
-3. 可以给我现有产品的截图或URL吗？
-4. 有codebase我可以读吗？
+1. Do you have an existing design system / UI kit / component library? Where?
+2. Brand guidelines, color / type spec?
+3. Can you share screenshots or URLs of the existing product?
+4. Is there a codebase I can read?
 ```
 
-### Step 2：用户说"没有"时，帮他找
+### Step 2: When the user says "no", help them find it
 
-别直接放弃。尝试：
+Don't give up immediately. Try:
 
 ```markdown
-让我看看有没有线索：
-- 你之前的项目有相关设计吗？
-- 公司的marketing网站用什么色彩/字型？
-- 你产品的Logo什么风格？能给我一张吗？
-- 有什么你欣赏的产品作为参考？
+Let me look for clues:
+- Do your past projects have related designs?
+- What colors / type does your marketing site use?
+- What style is your product's logo? Got an image?
+- Any product you admire as a reference?
 ```
 
-### Step 3：Read所有能找到的context
+### Step 3: Read every piece of context you can find
 
-如果用户给了codebase路径，你读：
-1. **先list文件结构**：找style/theme/component相关的文件
-2. **读theme/token文件**：lift具体的hex/px values
-3. **读2-3个代表性组件**：看视觉vocabulary（hover state、shadow、border、padding node pattern）
-4. **读global stylesheet**：基础重置、font loading
-5. **如果有Figma链接/截图**：看图，但**更相信代码**
+If the user provided a codebase path, you read:
+1. **List the file structure first**: find style / theme / component-related files
+2. **Read theme / token files**: lift specific hex / px values
+3. **Read 2-3 representative components**: see the visual vocabulary (hover state, shadow, border, padding node pattern)
+4. **Read the global stylesheet**: base reset, font loading
+5. **If there's a Figma link / screenshots**: look at the image, but **trust the code more**
 
-**重要**：**不要**看了一眼就凭印象做。读下来有30+个具体values才真的lift到了。
+**Important**: **Do not** glance once and design from impression. Lifting 30+ specific values is what counts as actually internalizing it.
 
-### Step 4：Vocalize你要用的系统
+### Step 4: Vocalize the system you're going to use
 
-看完context后，告诉用户你要用的系统：
+After reading the context, tell the user the system you're going to use:
 
 ```markdown
-根据你的codebase和产品截图，我提炼的设计系统：
+Based on your codebase and product screenshots, the design system I distilled:
 
-**色彩**
-- Primary: #C27558（从tokens.css）
+**Color**
+- Primary: #C27558 (from tokens.css)
 - Background: #FDF9F0
 - Text: #1A1A1A
 - Muted: #6B6B6B
 
-**字型**
-- Display: Instrument Serif（从global.css的@font-face）
+**Type**
+- Display: Instrument Serif (from @font-face in global.css)
 - Body: Geist Sans
 - Mono: JetBrains Mono
 
-**Spacing**（来自你的scale系统）
+**Spacing** (from your scale system)
 - 4, 8, 12, 16, 24, 32, 48, 64
 
 **Shadow pattern**
-- `0 1px 2px rgba(0,0,0,0.04)`（subtle card）
-- `0 10px 40px rgba(0,0,0,0.1)`（elevated modal）
+- `0 1px 2px rgba(0,0,0,0.04)` (subtle card)
+- `0 10px 40px rgba(0,0,0,0.1)` (elevated modal)
 
 **Border-radius**
-- 小组件 4px，卡片 12px，按钮 8px
+- Small elements 4px, cards 12px, buttons 8px
 
-**component vocabulary**
-- Button：filled primary，outlined secondary，ghost tertiary，全部圆角8px
-- Card：白色背景，subtle shadow，无border
+**Component vocabulary**
+- Button: filled primary, outlined secondary, ghost tertiary, all 8px radius
+- Card: white background, subtle shadow, no border
 
-我按这套系统开始做。确认没问题？
+I'll start building with this. Sound right?
 ```
 
-用户确认后再动手。
+Move once the user confirms.
 
-## 凭空做设计（没Context时的 fallback）
+## Designing from a Blank Slate (fallback when there's no context)
 
-**强烈警告**：这种情况下的产出质量会显著下降。明确告诉用户。
+**Strong warning**: output quality drops significantly in this case. Tell the user clearly.
 
 ```markdown
-你没有design context，我就只能基于通用直觉做。
-产出会是"看起来OK但缺乏独特性"的东西。
-你愿意继续，还是先补一些参考材料？
+You have no design context, so I can only work from generic intuition.
+The output will be "looks OK but lacks uniqueness".
+Want to keep going, or supply some reference material first?
 ```
 
-用户执意要你做，按这个顺序做决策：
+If the user insists, decide in this order:
 
-### 1. 选一个aesthetic direction
-不要给generic结果。挑一个明确方向：
+### 1. Pick an aesthetic direction
+Don't ship generic results. Pick a clear direction:
 - brutally minimal
-- editorial/magazine
-- brutalist/raw
-- organic/natural
-- luxury/refined
-- playful/toy
+- editorial / magazine
+- brutalist / raw
+- organic / natural
+- luxury / refined
+- playful / toy
 - retro-futuristic
-- soft/pastel
+- soft / pastel
 
-告诉用户你选了哪个。
+Tell the user which you picked.
 
-### 2. 选一个known design system作为骨架
-- 用Radix Colors做配色（https://www.radix-ui.com/colors）
-- 用shadcn/ui做组件vocabulary（https://ui.shadcn.com）
-- 用Tailwind spacing scale（4的倍数）
+### 2. Pick a known design system as a skeleton
+- Use Radix Colors for palette (https://www.radix-ui.com/colors)
+- Use shadcn/ui for component vocabulary (https://ui.shadcn.com)
+- Use Tailwind spacing scale (multiples of 4)
 
-### 3. 选有特点的字体配对
+### 3. Pick a distinctive type pairing
 
-不要用Inter/Roboto。建议组合（从Google Fonts白嫖）：
+Don't use Inter/Roboto. Suggested combos (free from Google Fonts):
 - Instrument Serif + Geist Sans
 - Cormorant Garamond + Inter Tight
-- Bricolage Grotesque + Söhne（付费）
-- Fraunces + Work Sans（注意Fraunces已经被AI用烂）
-- JetBrains Mono + Geist Sans（technical feel）
+- Bricolage Grotesque + Söhne (paid)
+- Fraunces + Work Sans (note: Fraunces has been overused by AI)
+- JetBrains Mono + Geist Sans (technical feel)
 
-### 4. 每个关键决策都有reasoning
+### 4. Every key decision gets reasoning
 
-不要默默选。在HTML的comment里写：
+Don't decide silently. Write it in an HTML comment:
 
 ```html
 <!--
 Design decisions:
-- Primary color: warm terracotta (oklch 0.65 0.18 25) — fits the "editorial" direction  
+- Primary color: warm terracotta (oklch 0.65 0.18 25) — fits the "editorial" direction
 - Display: Instrument Serif for humanist, literary feel
 - Body: Geist Sans for cleanness contrast
 - No gradients — committed to minimal, no AI slop
@@ -173,41 +173,41 @@ Design decisions:
 -->
 ```
 
-## Import策略（用户给了codebase）
+## Import Strategy (user gave you a codebase)
 
-如果用户说"import这个codebase做参考"：
+If the user says "import this codebase as reference":
 
-### 小型（<50文件）
-全部Read，把context内化。
+### Small (<50 files)
+Read all of it, internalize the context.
 
-### 中型（50-500文件）
-Focus在：
-- `src/components/` 或 `components/`
-- 所有styles/tokens/theme相关的文件
-- 2-3个代表性的整页组件（Home.tsx、Dashboard.tsx）
+### Medium (50-500 files)
+Focus on:
+- `src/components/` or `components/`
+- All styles / tokens / theme-related files
+- 2-3 representative full-page components (Home.tsx, Dashboard.tsx)
 
-### 大型（>500文件）
-让用户指明focus：
-- "我要做settings页面" → 读现有的settings相关
-- "我要做一个新的feature" → 读整体shell + 最接近的参考
-- 不求全，求准
+### Large (>500 files)
+Have the user point you at the focus:
+- "I want to do the settings page" → read existing settings-related code
+- "I'm doing a new feature" → read the overall shell + closest reference
+- Don't aim for complete, aim for precise.
 
-## 和Figma/设计稿的配合
+## Working with Figma / Design Mockups
 
-如果用户给了Figma链接：
+If the user provides a Figma link:
 
-- **不要**期望你能直接"转Figma为HTML"——那需要额外工具
-- Figma链接通常不公开可访问
-- 让用户：导出为**截图**发给你 + 告诉你具体的color/spacing values
+- **Don't** expect to "convert Figma to HTML" directly — that needs extra tooling
+- Figma links often aren't publicly accessible
+- Ask the user to: export as **screenshots** + tell you the specific color / spacing values
 
-如果只给了Figma截图，告诉用户：
-- 我能看到视觉，但取不到精确values
-- 关键数字（hex、px）请告诉我，或者export as code（Figma支持）
+If you only get Figma screenshots, tell the user:
+- I can see the visuals but can't pull exact values
+- Send me the key numbers (hex, px), or export as code (Figma supports it)
 
-## 最后的提醒
+## Final Reminder
 
-**一个项目的设计质量上限，由你拿到的context质量决定**。
+**A project's design quality ceiling is set by the quality of context you receive**.
 
-花10分钟收集context，比花1小时凭空画hi-fi更有价值。
+10 minutes spent gathering context beats 1 hour doing hi-fi from thin air.
 
-**遇到没context的情况，优先问用户要，而不是硬上**。
+**When there's no context, prioritize asking the user — don't muscle through**.

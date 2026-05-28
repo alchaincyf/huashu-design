@@ -1,60 +1,60 @@
-# Voiceover Pipeline · 解说驱动动画
+# Voiceover Pipeline · Narration-Driven Animation
 
-> 把动画从「无声画面 + 后期配音」升级为「**先有解说词，再按音频实测时长驱动画面**」的工作流。
-> 适用：5-20 分钟概念解说视频、教程视频、长篇知识科普。
+> Upgrade animations from "silent visuals + post-hoc dubbing" to a workflow where **the narration is written first, then visuals are driven by the audio's measured duration**.
+> Use for: 5-20 minute concept explainers, tutorial videos, long-form knowledge explainers.
 >
-> 配套 `references/animation-best-practices.md` 使用——本文件管 **怎么把解说和画面对上**，
-> animation-best-practices 管 **每一帧画面怎么动**。
+> Pairs with `references/animation-best-practices.md` — this file covers **how to sync narration with visuals**,
+> animation-best-practices covers **how each frame should move**.
 
 ---
 
-## 🛑 铁律 · 在写一行代码之前必读
+## 🛑 Ironclad Rules · Required Reading Before Writing a Single Line of Code
 
-> **强调多少遍都不够：解说动画的失败模式 #1 是做成了带配音的 PowerPoint。**
+> **You cannot say this enough: failure mode #1 of narrated animation is making a PowerPoint with voiceover.**
 
-### 第一条 · 整片是一个连续的运动叙事，不是一组独立场景
+### Rule 1 · The Whole Film Is One Continuous Motion Narrative, Not a Set of Independent Scenes
 
-PowerPoint 是 7 张幻灯片。我们做的是 **1 段持续 X 分钟的电影**。
+PowerPoint is 7 slides. What you're making is **1 film, X minutes long**.
 
-**身份切换**：
-- ❌ 你不是「在做 7 个 scene 的内容」
-- ✅ 你是「在屏幕上让一个或几个 hero element 演 X 分钟的戏」
+**Identity shift**:
+- ❌ You're not "making content for 7 scenes"
+- ✅ You're "letting one or a few hero elements perform an X-minute play on screen"
 
-**视觉骨架 = 一个或几个贯穿全片的 hero element**：
-- 它从 t=0 出现，到结束才离场
-- 每个 cue 是它的**状态变化**（位置 / 大小 / 颜色 / 透视 / 形态），不是「换一个新元素」
-- scene 边界在剧本里有，**在画面里不应该有**——观众看不出"这是第 3 个 scene"，只看到一段连续的运动
+**Visual skeleton = one or a few hero elements that persist through the whole film**:
+- They appear at t=0 and don't leave until the end
+- Each cue is a **state change** of the hero (position / size / color / perspective / form), not "swap in a new element"
+- Scene boundaries exist in the script, **but should not exist in the visuals** — viewers shouldn't be able to tell "this is the 3rd scene"; they should see one continuous motion
 
-**反例（本 skill v1 实战踩坑 · 2026-05-10）**：
-- 7 个 `<Scene>` 各自独立 layout，scene 切换 = 整页 opacity 1→0 切到下一页
-- 每个 cue = `opacity: p, transform: translateY((1-p)*30px)`（fade-up 单调使用）
-- 结果：观众看完第一反应「像一页页 keynote」，整片质感归零
+**Anti-example (skill v1 lessons learned · 2026-05-10)**:
+- 7 `<Scene>` blocks each with an independent layout; scene change = whole page opacity 1→0 cutting to the next
+- Each cue = `opacity: p, transform: translateY((1-p)*30px)` (monotonic fade-up overuse)
+- Result: viewers' first reaction "this looks like one keynote slide after another"; the whole film's quality zeroed out
 
-**正确模式**：
-- 选定 1-2 个 hero element（如本文章 demo 应选「md」「html」两个字符作为骨架）
-- 这两个字符**从片头到片尾**一直在屏幕上
-- 每段「scene」实际是 hero element 的一次状态变化
-  - opening：两字符在屏幕中央对峙
-  - md-side：md 变大变粗占据画面，html 退到角落小字；数据围绕 md 涌入
-  - html-side：html 反转为主角；md 退到角落
-  - the-real-question：两字符回到中央，但中间出现「≠」分隔
-  - the-split：两字符向两侧推开，中间空白展开
-  - activity-proof：两字符在 timeline 上交替闪烁
-  - closing：两字符落地为最终答案位置
-- 这样整片是「md 和 html 在屏幕上演了 X 分钟」，不是 7 张独立 PPT
+**Correct pattern**:
+- Pick 1-2 hero elements (e.g. for this article's demo, "md" and "html" as the two skeletal characters)
+- These two characters **stay on screen from opening to closing**
+- Each "scene" is really a state transition of the hero element
+  - opening: the two characters face off center screen
+  - md-side: md scales up and bolds to dominate the frame, html retreats to a corner as tiny text; data flows around md
+  - html-side: html flips to hero; md retreats to a corner
+  - the-real-question: both return to center, but a "≠" separator appears between them
+  - the-split: both push apart, whitespace opens in the middle
+  - activity-proof: they alternately blink along a timeline
+  - closing: both settle into their final answer positions
+- The whole film becomes "md and html performed for X minutes on screen", not 7 isolated PPT slides
 
-**最小实现骨架**（直接抄改）：
+**Minimum implementation skeleton** (copy and adapt):
 
 ```jsx
-// ── Step 1: 定义 hero 在每个 scene 的目标状态（位置/大小/不透明度）──
+// ── Step 1: Define the hero's target state per scene (position/scale/opacity) ──
 const HERO_KEYS = {
   opening:    { md: { x: 50, y: 35, scale: 1.0, opacity: 1 }, html: { x: 50, y: 65, scale: 1.0, opacity: 1 } },
   'md-side':  { md: { x: 78, y: 50, scale: 1.6, opacity: 1 }, html: { x: 92, y: 8,  scale: 0.25, opacity: 0.4 } },
   'html-side':{ md: { x: 8,  y: 8,  scale: 0.25, opacity: 0.4 }, html: { x: 22, y: 50, scale: 1.6, opacity: 1 } },
-  // ... 每段一个 entry，连贯的运动从前一段的 final → 本段的 from
+  // ... one entry per segment; continuous motion runs from previous segment's final → current segment's from
 };
 
-// ── Step 2: easing + lerp 工具 ──
+// ── Step 2: easing + lerp helpers ──
 const expoOut = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 const lerp = (a, b, t) => a + (b - a) * t;
 const lerpPos = (from, to, t) => ({
@@ -63,7 +63,7 @@ const lerpPos = (from, to, t) => ({
   opacity: lerp(from.opacity ?? 1, to.opacity ?? 1, t),
 });
 
-// ── Step 3: HeroAnchor 组件 —— 直接挂在 <NarrationStage> 子级，不放进 <Scene> ──
+// ── Step 3: HeroAnchor component — mounted directly under <NarrationStage>, NOT inside a <Scene> ──
 const HeroAnchor = () => {
   const { time, scene, timeline } = useNarration();
   if (!scene) return null;
@@ -72,13 +72,13 @@ const HeroAnchor = () => {
   const from = HERO_KEYS[prevId];
   const to   = HERO_KEYS[scene.id];
 
-  // 段内前 ~45% 时间用于从 prev 状态 morph 到本段状态，剩余 hold
+  // First ~45% of segment time used to morph from prev state to current state, hold the rest
   const transitionDur = Math.min(2.0, scene.duration * 0.45);
   const t = expoOut(Math.min(1, (time - scene.start) / transitionDur));
   const md   = lerpPos(from.md,   to.md,   t);
   const html = lerpPos(from.html, to.html, t);
 
-  // 加 subtle breathing 让任意一帧都有运动（对应铁律第三条）
+  // Add subtle breathing so every frame has motion (per Rule 3)
   const breath = 1 + Math.sin(time * 0.6) * 0.012;
 
   const renderHero = (label, pos, color) => (
@@ -95,11 +95,11 @@ const HeroAnchor = () => {
   </>;
 };
 
-// ── Step 4: 主组件 —— hero 在 NarrationStage 子级，scene 内辅助元素另外管 ──
+// ── Step 4: Main component — hero under NarrationStage, scene-local helpers managed separately ──
 const App = () => (
   <NarrationStage timeline={TIMELINE} audioSrc="_narration/voiceover.mp3" width={1920} height={1080}>
-    <HeroAnchor />  {/* ← 跨 scene 持续存在，整片视觉骨架 */}
-    {/* scene 内辅助元素用 useSceneFade 控制软淡入淡出，不要硬切 */}
+    <HeroAnchor />  {/* ← persists across scenes, the full-film visual skeleton */}
+    {/* Scene-local helpers use useSceneFade for soft fade in/out — never hard cuts */}
     <MdSideAux />
     <HtmlSideAux />
     {/* ... */}
@@ -107,114 +107,114 @@ const App = () => (
 );
 ```
 
-**完整可运行参考**：`demos/md-html-narration/md-html-demo.html`（3 分 21 秒，7 段，21 cue，已实战验证）
+**Full runnable reference**: `demos/md-html-narration/md-html-demo.html` (3min 21s, 7 segments, 21 cues, battle-tested)
 
-### 第二条 · 场景之间不能「硬切」
+### Rule 2 · No "Hard Cuts" Between Scenes
 
-| 错误模式（PowerPoint slop） | 正确模式（电影感） |
+| Wrong pattern (PowerPoint slop) | Right pattern (cinematic) |
 |---|---|
-| scene A 整体 `opacity 1→0` 同时 scene B `opacity 0→1` | scene A 的核心元素 **morph 进** B（位置/大小/颜色平滑变换） |
-| 每个 scene 独立 layout，元素出现/消失 | 元素在屏幕上**持续存在**，只是位置和形态在变 |
-| `keepMounted=false`，scene 切换瞬间组件被卸载 | hero 用 `keepMounted=true`，跨 scene 共享 DOM 节点 |
-| 字幕条/数据卡片各自 fade in fade out | 字幕条作为画面唯一的"非 hero" 入场，hold 后**配合 hero 的运动一起退出** |
+| Scene A whole `opacity 1→0` while scene B `opacity 0→1` | Scene A's core elements **morph into** B (smooth position/scale/color transition) |
+| Each scene has its own layout; elements appear/disappear | Elements **persist on screen**, only position and form change |
+| `keepMounted=false`, component unmounts the instant scenes switch | Hero uses `keepMounted=true`, sharing DOM nodes across scenes |
+| Subtitle bars/data cards each fade in and out independently | The subtitle bar is the only "non-hero" entrance; after holding, it **exits with the hero's motion** |
 
-实现层面：
-- **共享元素跨 scene** → 把 hero 提到 `<NarrationStage>` 直接子级，**不放在任何 `<Scene>` 里**
-- 用 `useNarration()` hook 在 hero 里读 `time`、`scene`、`isCueTriggered`，自己根据当前时间决定形态
-- `<Scene>` 只用来管那些只在该段出现的辅助元素（数据卡、引用块等），并且**这些辅助元素也不要硬切**——出场用 expoOut + stagger，退场用 fade overlap 跟下一段叠
+Implementation:
+- **Cross-scene shared elements** → lift hero to a direct child of `<NarrationStage>`, **not inside any `<Scene>`**
+- Inside the hero, use `useNarration()` to read `time`, `scene`, `isCueTriggered` and decide its form from the current time
+- `<Scene>` is only for helpers that exist solely in that segment (data cards, quote blocks, etc.), and **those helpers must not hard-cut either** — entrance uses expoOut + stagger; exit overlaps with the next segment's entrance via fade
 
-### 第三条 · 每一帧画面都必须有运动
+### Rule 3 · Every Frame Must Have Motion
 
-**自检方法**：在录制中**任意截一帧**（不是 cue 触发那一秒）。
-- 如果画面看起来「**完全静止**」→ 错。回去加底层运动（background drift / hero subtle scale / camera pan / parallax）
-- 永远有一个**底层运动**在跑（即使不是焦点）：
-  - hero element 的 `scale: 1 ↔ 1.02` 5 秒呼吸循环
-  - 背景 `translateX: 0 ↔ -20px` 缓慢漂移
-  - 数据卡片入场后保留 `translateY` 微抖（Perlin noise）
-- 一个完全静止的画面 = PowerPoint slop
+**Self-check**: grab **any random frame** during recording (not the second a cue fires).
+- If the frame looks **completely static** → wrong. Go add base-layer motion (background drift / hero subtle scale / camera pan / parallax)
+- Always have a **base-layer motion** running (even if it's not the focus):
+  - hero element `scale: 1 ↔ 1.02` 5-second breathing loop
+  - background `translateX: 0 ↔ -20px` slow drift
+  - data cards retain micro `translateY` jitter after entering (Perlin noise)
+- A perfectly still frame = PowerPoint slop
 
-### 第四条 · Easing / Stagger / Hold 是底线
+### Rule 4 · Easing / Stagger / Hold Are the Floor
 
-| 项 | 必须 | 禁止 |
+| Item | Required | Forbidden |
 |---|---|---|
-| Easing | `expoOut` 主轴（`cubic-bezier(0.16, 1, 0.3, 1)`），`overshoot` 强调，`spring` 落位 | `linear`、`ease`、CSS 默认 |
-| 多元素入场 | 30ms stagger（每个晚 30ms 进） | 一刀切全部出现 |
-| 关键 cue 前 | hold 0.3-0.5s 让观众"看见"（前一段元素先静止 0.3s，再触发 cue） | 一段说完无缝切下一段 |
-| 收尾 | 戛然而止，最后一帧 hold 1s | fade to black |
+| Easing | `expoOut` on main axis (`cubic-bezier(0.16, 1, 0.3, 1)`), `overshoot` for emphasis, `spring` for settling | `linear`, `ease`, CSS defaults |
+| Multi-element entrance | 30ms stagger (each one 30ms later) | All in at once |
+| Before a key cue | Hold 0.3-0.5s so viewers "see" it (previous segment's element holds still 0.3s, then cue fires) | One segment finishes, next starts seamlessly |
+| Closing | Cut hard, last frame holds 1s | Fade to black |
 
-详细规则参考 `animation-best-practices.md` 的 §1-§4。
+See `animation-best-practices.md` §1-§4 for detailed rules.
 
-### 自检 · 第一观众反应
+### Self-check · First-Viewer Reaction
 
-做完拿给一个没看过的人看（或自己 24 小时后再看），**他们的第一反应**是什么？
+After you finish, show it to someone who hasn't seen it (or rewatch 24 hours later). What's their **first reaction**?
 
-| 反应 | 评级 | 行动 |
+| Reaction | Rating | Action |
 |---|---|---|
-| 「这是带配音的 PPT」 | 失败 | 回去重做 |
-| 「画面跟着声音在切换」 | 不及格 | 缺连续叙事，hero element 不存在或没贯穿 |
-| 「这个东西在动」 | 合格 | 但没记忆点 |
-| 「我想看完」 | 良 | 节奏对了 |
-| 「这一段我想截图」 | great | 你做到了 |
+| "This is a PPT with voiceover" | Fail | Redo it |
+| "The visuals switch with the audio" | Not passing | No continuous narrative; hero element missing or not threaded |
+| "This thing moves" | Pass | But forgettable |
+| "I want to keep watching" | Good | Pacing works |
+| "I want to screenshot this segment" | Great | You did it |
 
 ---
 
-## 工作流（高层）
+## Workflow (High Level)
 
 ```
                 ┌──────────────────────────┐
-                │  解说稿 .md（## scene + │
-                │  [[cue:xx]] 标关键句）   │
+                │  Narration .md (## scene │
+                │  + [[cue:xx]] markers)   │
                 └──────────────┬───────────┘
                                │
                   narrate-pipeline.mjs
                                │
                                ▼
             ┌──────────────────────────────┐
-            │ voiceover.mp3 (拼接的整段)  │
-            │ timeline.json (实测时长)    │
+            │ voiceover.mp3 (concatenated) │
+            │ timeline.json (measured)     │
             └──────────────┬───────────────┘
                            │
               ┌────────────┴────────────┐
               ▼                         ▼
     ┌─────────────────┐      ┌──────────────────┐
-    │ HTML 动画       │      │ 录制 MP4 + 混音  │
+    │ HTML animation  │      │ Record MP4 + mix │
     │ (NarrationStage)│      │ render-narration │
-    │ 实播带 audio 同步│      │ → 最终发布 MP4   │
+    │ Live audio sync │      │ → final MP4      │
     └─────────────────┘      └──────────────────┘
-       交付形态 1                交付形态 2
+       Delivery form 1          Delivery form 2
 ```
 
-## 解说稿格式
+## Narration Script Format
 
-放在项目目录下任意位置，文件名建议 `script.md`：
+Place anywhere under the project directory; recommended filename `script.md`:
 
 ```markdown
 ---
-title: 什么是 LLM
-voice: S_JSdgdWk22   # 可选，覆盖 .env 默认音色
-speed: 1.0           # 可选，0.5-2.0
-gap: 0.4             # 段间静音秒数，默认 0.3
+title: What Is an LLM
+voice: S_JSdgdWk22   # optional, overrides the default voice from .env
+speed: 1.0           # optional, 0.5-2.0
+gap: 0.4             # silence between segments in seconds, default 0.3
 ---
 
 ## intro
-大家好，今天我们 5 分钟讲清楚 LLM 是什么。
+Hi everyone, today we'll explain LLMs in 5 minutes.
 
 ## what-is
-LLM 全称 Large Language Model，[[cue:bigmodel]]它是一个有几千亿参数的神经网络。
-本质是一个文字接龙的预测器。
+LLM stands for Large Language Model. [[cue:bigmodel]]It is a neural network with hundreds of billions of parameters.
+At its core, it's a next-token predictor for text.
 
 ## demo
-比如你输入「今天天气」，[[cue:input]]模型会预测下一个字最可能是什么。
-[[cue:predict]]也许是「真好」，也许是「不错」。
+For example, if you type "today's weather", [[cue:input]]the model predicts what the next character is most likely to be.
+[[cue:predict]]Maybe "is great", maybe "is nice".
 ```
 
-**规则**：
-- 段标题 `## scene-id` 是英文/数字 + 连字符（如 `## what-is`、`## scene-1`）
-- `[[cue:xx]]` 标在**关键句中间**——脚本运行时会在该位置切割文本，cue 之后那一刻就是画面的触发点
-- cue id 在动画 HTML 里用 `<Cue id="xx">` 监听
-- 写解说时**关注节奏 + 短句**，长句 TTS 出来会平淡
+**Rules**:
+- Segment heading `## scene-id` is English/digit + hyphen (e.g. `## what-is`, `## scene-1`)
+- `[[cue:xx]]` is placed **in the middle of a key sentence** — the script splits the text at that point, and the moment right after the cue marker is the visual trigger
+- The cue id is watched in the animation HTML via `<Cue id="xx">`
+- When writing narration, **focus on rhythm + short sentences** — TTS flattens long sentences
 
-## timeline.json schema
+## timeline.json Schema
 
 ```ts
 {
@@ -222,31 +222,31 @@ LLM 全称 Large Language Model，[[cue:bigmodel]]它是一个有几千亿参数
   voice: string | null,
   speed: number,
   gap: number,
-  totalDuration: number,        // 整段 voiceover.mp3 的实测秒数
-  voiceover: 'voiceover.mp3',   // 相对 timeline.json 的路径
+  totalDuration: number,        // measured duration of the full voiceover.mp3 in seconds
+  voiceover: 'voiceover.mp3',   // path relative to timeline.json
   scenes: [
     {
       id: string,
-      start: number,            // 该段在整段音频里的开始时间
+      start: number,            // start time of this segment in the full track
       end: number,
       duration: number,
-      audio: 'audio/<id>.mp3',  // 该段单独音频（合并前的子段已 concat）
-      text: string,             // 已剥离 [[cue:xx]] 标记的整段文本
-      // chunks 是字幕显示的源——每个 chunk 是被 cue 切开的子段，含 TTS 实测时间窗
+      audio: 'audio/<id>.mp3',  // this segment's standalone audio (sub-segments already concatenated)
+      text: string,             // full segment text with [[cue:xx]] markers stripped
+      // chunks is the source for subtitles — each chunk is a cue-split sub-segment with its TTS-measured window
       chunks: [
         {
-          text: string,            // 子段文本
-          start: number,           // 段内相对时间
+          text: string,            // sub-segment text
+          start: number,           // segment-relative time
           end: number,
-          absoluteStart: number,   // 整轨绝对时间（对齐 voiceover.mp3）
+          absoluteStart: number,   // absolute time on the full track (aligns with voiceover.mp3)
           absoluteEnd: number,
         }
       ],
       cues: [
         {
           id: string,
-          offset: number,       // 段内相对时间
-          absoluteTime: number, // 整段时间轴上的绝对时间
+          offset: number,       // segment-relative time
+          absoluteTime: number, // absolute time on the full timeline
         }
       ]
     }
@@ -254,48 +254,48 @@ LLM 全称 Large Language Model，[[cue:bigmodel]]它是一个有几千亿参数
 }
 ```
 
-`absoluteTime` 和 `absoluteStart/End` 都是**真实测出来的**——pipeline 把段内文本按 cue 切成子段分别 TTS，时间 = 累加前面子段的实测时长。**不是按字符数线性估算的近似值**。
+`absoluteTime` and `absoluteStart/End` are **all actually measured** — the pipeline splits each segment's text at the cue boundaries, runs TTS on each sub-segment, and accumulates measured durations. **Not character-count linear estimates.**
 
-## 字幕（Subtitles）
+## Subtitles
 
-> **字幕是默认带的**——长解说视频没字幕，留存率会显著下降。NarrationStage 提供 `<Subtitles />` 开箱即用。
+> **Subtitles are on by default** — long narrated videos without subtitles see a measurable drop in retention. NarrationStage ships `<Subtitles />` out of the box.
 
-### 用法（一行）
+### Usage (one line)
 
 ```jsx
 const { NarrationStage, Subtitles } = NarrationStageLib;
 <NarrationStage timeline={TIMELINE} audioSrc="...">
-  {/* 你的 hero / scene 内容 */}
-  <Subtitles />  {/* ← 自动从 timeline.scenes[].chunks 取活动文本 */}
+  {/* your hero / scene content */}
+  <Subtitles />  {/* ← auto-pulls active text from timeline.scenes[].chunks */}
 </NarrationStage>
 ```
 
-### 视觉规则（B 站风 · 反 PowerPoint）
+### Visual Rules (Bilibili style · anti-PowerPoint)
 
-| 项 | 规则 | 反例 |
+| Item | Rule | Anti-example |
 |---|---|---|
-| 背景 | **无背景**（不要黑色横条不要 backdrop-blur）| 半透明黑底 + blur = 字幕条压住画面 = PPT 感 |
-| 字色 | **浅底用深墨 `#1a1a1a` + 白光晕**；深底用白字 + 黑光晕 | 浅底白字+黑描边 = 字糊 |
-| 字号 | 32px（1080p 视频）| <24px 看不清，>40px 抢主视觉 |
-| 字体 | `PingFang SC` / `Noto Sans SC`（无衬线，B 站标准）| 衬线字体 = 像电影字幕 |
-| 位置 | bottom: 90px（不贴边）| 贴底边显得廉价 |
-| 单行长度 | **≤ 12-13 字**（中英混合时英文按 0.5 字算）| >15 字一行手机端读不完 |
-| 切句规则 | **绝不跨句号截断**：先按 `。！？` 切句，每句再按 `，、；：` 合并到 ≤maxLen | 按字数硬切，把「这是好的」切成「这是好」+「的」 |
+| Background | **No background** (no black bar, no backdrop-blur) | Semi-transparent black + blur = subtitle bar smothers the frame = PPT vibe |
+| Text color | **Dark ink `#1a1a1a` + white halo on light backgrounds**; white text + black halo on dark | White text + black outline on light backgrounds = blurry |
+| Font size | 32px (1080p video) | <24px is unreadable, >40px hijacks the main visual |
+| Font | `PingFang SC` / `Noto Sans SC` (sans-serif, Bilibili standard) | Serif fonts = looks like a movie subtitle |
+| Position | bottom: 90px (not flush) | Flush bottom looks cheap |
+| Line length | **≤ 12-13 characters** (mixed CN/EN counts English at 0.5 char) | >15 chars per line is unreadable on mobile |
+| Line breaking | **Never break across periods**: split by `。！？` first, then merge clauses by `，、；：` to ≤maxLen | Hard char-count cuts that split "this is good" into "this is" + "good" |
 
-`<Subtitles />` 默认按以上规则跑，不需要传 props。深底场景：`<Subtitles color="#fff" haloColor="rgba(0,0,0,0.85)" />`。
+`<Subtitles />` runs the rules above by default; no props needed. Dark scenes: `<Subtitles color="#fff" haloColor="rgba(0,0,0,0.85)" />`.
 
-### 切句算法（已在 narration_stage.jsx 内置）
+### Line-Breaking Algorithm (Already in narration_stage.jsx)
 
 ```js
 splitChunkToLines(text, maxLen = 13)
-// 1. 强标点切句（。！？\n）
-// 2. 每句 ≤ maxLen 直接保留
-// 3. 否则按弱标点（，、；：）切片，合并到 ≤ maxLen
-// 4. 兜底硬切（罕见）
-// 中英混合：英文/数字按 0.5 字算视觉宽度
+// 1. Hard-punctuation split (。！？\n)
+// 2. Sentences ≤ maxLen kept as-is
+// 3. Otherwise split by weak punctuation (，、；：) and merge to ≤ maxLen
+// 4. Fallback hard cut (rare)
+// Mixed CN/EN: English/digits count as 0.5 visual width
 ```
 
-如果 chunk 切完后某行明显太长或太短，**改解说稿里 cue 位置**（cue 把段切得更细），不要在前端调切句逻辑。
+If a line looks clearly too long or too short after chunking, **change the cue position in the narration script** (cue splits the segment more finely). Don't tweak the front-end line-break logic.
 
 ## NarrationStage API
 
@@ -304,16 +304,16 @@ import 'assets/narration_stage.jsx';
 const { NarrationStage, Scene, Cue, useNarration } = NarrationStageLib;
 
 <NarrationStage
-  timeline={TIMELINE}                  // timeline.json 内容
-  audioSrc="_narration/voiceover.mp3"  // 相对当前 HTML 的路径
+  timeline={TIMELINE}                  // contents of timeline.json
+  audioSrc="_narration/voiceover.mp3"  // path relative to the current HTML
   width={1920} height={1080}
   background="#f5f1e8"
-  controls={true}                      // 实播时显示底部播放条
+  controls={true}                      // show bottom playback bar in live mode
 >
-  {/* hero element：跨 scene 持续存在 —— 直接放在 NarrationStage 子级 */}
+  {/* hero element: persists across scenes — direct child of NarrationStage */}
   <HeroAnchor />
 
-  {/* scene 内辅助元素：只在该段出现 */}
+  {/* scene-local helper: only appears in this segment */}
   <Scene id="intro">
     <Cue id="bigmodel">{(triggered, progress) => (
       <SomeElement style={{ opacity: progress }} />
@@ -322,36 +322,36 @@ const { NarrationStage, Scene, Cue, useNarration } = NarrationStageLib;
 </NarrationStage>
 ```
 
-**Hooks**：
-- `useNarration()` 返回 `{ time, scene, sceneTime, isCueTriggered, cueProgress }`
-- 在自定义组件里直接读，不需要传 props
+**Hooks**:
+- `useNarration()` returns `{ time, scene, sceneTime, isCueTriggered, cueProgress }`
+- Read directly in custom components; no props needed
 
-**Scene 组件**：
-- 默认只在 `scene.id === id` 时挂载
-- 加 `keepMounted` 持续挂载（跨 scene 动画连续时用）
+**Scene component**:
+- By default only mounts when `scene.id === id`
+- Add `keepMounted` to mount continuously (use for cross-scene continuous animations)
 
-**Cue 组件**：
-- children 必须是 `(triggered, progress) => ReactNode`
-- progress 是 cue 触发后 0→1 的渐进值（默认 0.6s ramp）
+**Cue component**:
+- children must be `(triggered, progress) => ReactNode`
+- progress is the 0→1 ramp after the cue fires (default 0.6s ramp)
 
-## 时间源（双轨）
+## Time Source (Dual Track)
 
-NarrationStage 自动检测 `window.__recording`：
-- **实播模式**（默认）：跟随 audio 元素的 currentTime，用户暂停/拖动 seek 都能同步
-- **录视频模式**（render-video.js 设置 `window.__recording = true`）：rAF wall-clock 自驱动从 0 开始，暴露 `window.__seek(t)` 给 render-video.js 复位
+NarrationStage auto-detects `window.__recording`:
+- **Live mode** (default): follows the audio element's currentTime; pause/seek by the user stays in sync
+- **Recording mode** (render-video.js sets `window.__recording = true`): rAF wall-clock self-driven from 0, exposes `window.__seek(t)` for render-video.js to reset
 
-## 三个脚本
+## The Three Scripts
 
-| 脚本 | 输入 | 输出 |
+| Script | Input | Output |
 |---|---|---|
-| `scripts/tts-doubao.mjs` | 单段文本 | 单个 mp3 + 实测时长 |
-| `scripts/narrate-pipeline.mjs` | 解说稿 .md | voiceover.mp3 + timeline.json |
-| `scripts/mix-voiceover.sh` | 视频 + voiceover.mp3 [+ BGM] | 带音频的 MP4 |
-| `scripts/render-narration.sh` | 解说 HTML + timeline.json | 最终 MP4（录制 + 混音一条龙）|
+| `scripts/tts-doubao.mjs` | single-segment text | one mp3 + measured duration |
+| `scripts/narrate-pipeline.mjs` | narration .md | voiceover.mp3 + timeline.json |
+| `scripts/mix-voiceover.sh` | video + voiceover.mp3 [+ BGM] | MP4 with audio |
+| `scripts/render-narration.sh` | narration HTML + timeline.json | final MP4 (record + mix in one shot) |
 
-## .env 配置
+## .env Configuration
 
-skill 根目录下 `.env`（已 gitignore）：
+`.env` in the skill root (gitignored):
 
 ```
 DOUBAO_TTS_API_KEY=<your_key>
@@ -360,38 +360,38 @@ DOUBAO_TTS_CLUSTER=volcano_icl
 DOUBAO_TTS_ENDPOINT=https://openspeech.bytedance.com/api/v1/tts
 ```
 
-参考 `.env.example` 模板。豆包语音克隆音色 ID 在火山引擎控制台获取。
+See `.env.example` template. The Doubao voice clone ID is obtained from the Volcano Engine console.
 
-## 标准工作流（10 步）
+## Standard Workflow (10 Steps)
 
-1. **写解说稿**：解说稿是源代码。先把整段口播写完整，标段标题 `## scene-id`，关键句前加 `[[cue:xx]]`
-2. **跑 narrate-pipeline**：`node scripts/narrate-pipeline.mjs --script script.md --out-dir _narration`
-3. **听整段 voiceover.mp3**：节奏不对回去改稿。**这一步决定整片质量上限**
-4. **🛑 设计前先回答铁律**：hero element 是什么？它在每段是什么状态？跨场景怎么 morph？答不上不要写代码
-5. **写动画 HTML**：用 NarrationStage + 一个或几个 hero element 跨 scene 演戏
-6. **实播预览**：浏览器打开 HTML，点 ▶ Play，听画面+解说同步
-7. **第一观众自检**：用上面「自检 · 第一观众反应」表打分。失败回到 Step 4 重做
-8. **录视频**：`bash scripts/render-narration.sh demo.html --timeline=_narration/timeline.json`（自动录无声 MP4 + 混入 voiceover）
-9. **可选 BGM**：在 render-narration 加 `--bgm-mood=educational`（或 tech / tutorial 等）
-10. **交付**：浏览器 HTML（实时演示用）+ 最终 MP4（发布用）
+1. **Write the narration**: the narration is the source code. Write the full voiceover, mark segment headings `## scene-id`, prepend `[[cue:xx]]` to key sentences
+2. **Run narrate-pipeline**: `node scripts/narrate-pipeline.mjs --script script.md --out-dir _narration`
+3. **Listen to the full voiceover.mp3**: if the pacing is off, rewrite. **This step sets the upper bound on the final quality.**
+4. **🛑 Before designing, answer the ironclad rules**: what is the hero element? What's its state in each segment? How does it morph across scenes? If you can't answer, don't write code
+5. **Write the animation HTML**: use NarrationStage + one or a few hero elements performing across scenes
+6. **Live preview**: open the HTML in browser, hit ▶ Play, listen for visual + narration sync
+7. **First-viewer self-check**: score with the "Self-check · First-Viewer Reaction" table above. If it fails, go back to Step 4
+8. **Record video**: `bash scripts/render-narration.sh demo.html --timeline=_narration/timeline.json` (auto-records silent MP4 + mixes in voiceover)
+9. **Optional BGM**: add `--bgm-mood=educational` to render-narration (or tech / tutorial etc.)
+10. **Deliver**: browser HTML (for live demos) + final MP4 (for publishing)
 
-## 异常处理
+## Troubleshooting
 
-| 问题 | 解决 |
+| Problem | Fix |
 |---|---|
-| TTS API 报错 | 检查 .env 里 `DOUBAO_TTS_API_KEY` 是否正确 |
-| 某段音频明显比脚本长/短 | 该段文本里有奇怪标点或 emoji，TTS 解析异常 → 改稿 |
-| cue absoluteTime 不准 | 段内子段拼接时 ffmpeg 有问题 → 检查 mp3 编码一致性 |
-| 录视频结果有黑屏 | render-video.js 没拿到 `window.__ready` 信号 → 检查 NarrationStage 是否正常挂载 |
-| 录视频画面卡顿 | 动画里有重 layout（大量 box-shadow / blur）→ 简化或预合成 |
-| 实播音画不同步 | audio 元素加载延迟 → 加 `preload="auto"` 或本地预加载 |
+| TTS API error | Check `DOUBAO_TTS_API_KEY` in .env |
+| A segment is noticeably longer/shorter than the script | The segment text has odd punctuation or emoji breaking TTS parsing → rewrite |
+| cue absoluteTime is off | ffmpeg has a problem concatenating sub-segments → check mp3 encoding consistency |
+| Black screen in recording | render-video.js never received the `window.__ready` signal → check NarrationStage mounts properly |
+| Recording stutters | Heavy layout in the animation (lots of box-shadow / blur) → simplify or pre-composite |
+| Live audio/video out of sync | audio element loads late → add `preload="auto"` or preload locally |
 
-## 何时不用这套 pipeline
+## When Not to Use This Pipeline
 
-- **<60s 短动画**：直接做无声动画 + 后期配音（add-music.sh + 一段单独 TTS）即可，不需要 timeline 驱动
-- **纯 BGM 视频**：用 `add-music.sh` 加预设 BGM
-- **真人录音替换 TTS**：把 `voiceover.mp3` 替换成真人录音，timeline 自己手写或用 ffprobe 测段时长 + 工具脚本生成 → 流程其余部分通用
+- **<60s short animations**: just make a silent animation + post-hoc dubbing (add-music.sh + one standalone TTS), no timeline driving needed
+- **Pure BGM video**: use `add-music.sh` with a preset BGM
+- **Human voiceover replacing TTS**: replace `voiceover.mp3` with the human recording; handwrite the timeline yourself or use ffprobe to measure segment durations + a helper script → the rest of the flow works the same
 
 ---
 
-**最后一次提醒**：写代码前回到铁律。**别做带配音的 PowerPoint**。
+**One last reminder**: before writing code, return to the ironclad rules. **Don't make a PowerPoint with voiceover.**

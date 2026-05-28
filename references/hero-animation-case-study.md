@@ -1,86 +1,86 @@
-# Gallery Ripple + Multi-Focus · 场景编排哲学
+# Gallery Ripple + Multi-Focus · Scene Choreography Philosophy
 
-> 从 huashu-design hero 动画 v9（25 秒，8 场景）里提炼出的**一种可复用的视觉编排结构**。
-> 不是动画制作流水线，是**什么场景下这种编排是"对的"**。
-> 实战参考：[demos/hero-animation-v9.mp4](../demos/hero-animation-v9.mp4) · [https://www.huasheng.ai/huashu-design-hero/](https://www.huasheng.ai/huashu-design-hero/)
+> A reusable visual choreography structure distilled from the Huashu Design hero animation v9 (25s, 8 scenes).
+> Not an animation production pipeline — this is about **when this choreography is "right"**.
+> Real reference: [demos/hero-animation-v9.mp4](../demos/hero-animation-v9.mp4) · [https://www.huasheng.ai/huashu-design-hero/](https://www.huasheng.ai/huashu-design-hero/)
 
-## 一句话先行
+## One-line lead
 
-> **当你有 20+ 同质视觉素材、场景需要"表达规模感和深度"时，优先考虑 Gallery Ripple + Multi-Focus 这套编排，而不是堆砌排版。**
+> **When you have 20+ visually homogeneous assets and the scene needs to express "scale and depth", reach for Gallery Ripple + Multi-Focus instead of stacking typography.**
 
-通用 SaaS feature 动画、产品发布会、skill 推广、系列作品集展示——只要素材数量够、风格一致，这套结构几乎都能出效果。
+Generic SaaS feature animations, product launches, skill promos, portfolio reels — as long as the asset count is high enough and the style is consistent, this structure almost always works.
 
 ---
 
-## 这个手法究竟在表达什么
+## What this technique actually expresses
 
-不是"秀素材"——是通过**两个节奏变化**讲一个叙事：
+It isn't "showing off assets" — it tells a story through **two rhythm shifts**:
 
-**第一拍 · Ripple 展开（~1.5s）**：从中心向四周扩散出 48 张卡片，观众被"量"震住——「哦，这东西有这么多产出」。
+**Beat one · Ripple expansion (~1.5s)**: 48 cards radiate outward from the center; the audience is struck by the *quantity* — "oh, this thing has produced that much".
 
-**第二拍 · Multi-Focus（~8s，4 次循环）**：镜头在慢速 pan 的同时，4 次把背景 dim + desaturate，把某一张卡单独放大到屏幕中央——观众从"量的冲击"切换到"质的凝视"，每次 1.7s 节奏稳定。
+**Beat two · Multi-Focus (~8s, 4 cycles)**: while the camera slow-pans, 4 times the background is dimmed + desaturated and a single card is enlarged to screen center — the audience switches from "the shock of quantity" to "the gaze of quality", each beat steady at 1.7s.
 
-**核心叙事结构**：**规模（Ripple） → 凝视（Focus × 4） → 淡出（Walloff）**。这三拍组合起来表达的是「Breadth × Depth」——不只是能做很多，每一个还都值得停下来看。
+**Core narrative structure**: **Scale (Ripple) → Gaze (Focus × 4) → Fade-out (Walloff)**. The three beats combined express "Breadth × Depth" — not just that you can do a lot, but that every single one is worth pausing on.
 
-对比一下反例：
+Contrast with counterexamples:
 
-| 做法 | 观众感知 |
+| Approach | Audience perception |
 |------|---------|
-| 48 张卡静态排列（没有 Ripple）| 好看但无叙事，像一张 grid screenshot |
-| 一张一张快切（没有 Gallery context）| 像 slideshow，失去"规模感" |
-| 只有 Ripple 没有 Focus | 震住了但没让人记住任何具体一张 |
-| **Ripple + Focus × 4（本配方）** | **先震撼于量，再凝视于质，最后平静淡出——完整情绪弧线** |
+| 48 cards arranged statically (no Ripple) | Pretty but no narrative — looks like a grid screenshot |
+| Cards cut one by one (no Gallery context) | Feels like a slideshow, the "scale" is lost |
+| Ripple but no Focus | They're shocked but won't remember any specific card |
+| **Ripple + Focus × 4 (this recipe)** | **Shocked by quantity, then gaze at quality, then fade calmly — a complete emotional arc** |
 
 ---
 
-## 前置条件（必须全部满足）
+## Preconditions (all four required)
 
-这套编排**不是万能的**，下面 4 条缺一不可：
+This choreography **isn't universal**. All four conditions below must hold:
 
-1. **素材规模 ≥ 20 张，最好 30+**
-   少于 20 张 Ripple 会显得"空"——48 格里每格都在动才有密度感。v9 用了 48 格 × 32 张图（循环填充）。
+1. **Asset count ≥ 20, ideally 30+**
+   Fewer than 20 and the Ripple looks "thin" — you need every cell of 48 to be moving for the density to register. v9 uses 48 cells × 32 images (cycled).
 
-2. **素材视觉风格一致**
-   全是 16:9 slide 预览 / 全是 app 截图 / 全是封面设计——长宽比、色调、版式得像是"一套"。混搭会让 Gallery 看起来像剪贴板。
+2. **Visually consistent assets**
+   All 16:9 slide previews / all app screenshots / all cover designs — aspect ratio, palette and layout have to look like "a set". Mixing makes the Gallery feel like a clipboard.
 
-3. **素材单独放大后仍有可读信息**
-   Focus 是把某张卡放大到 960px 宽，如果原图放大后糊了或信息稀薄，Focus 这一拍就废了。反向验证：能不能从 48 张里挑出 4 张作为"最有代表性"的？挑不出来就说明素材质量不齐。
+3. **Each asset still has readable information when enlarged**
+   Focus blows a card up to 960px wide. If the source goes blurry or feels information-thin at that size, the Focus beat is wasted. Reverse test: can you pick 4 out of 48 as "most representative"? If you can't, the asset quality isn't even.
 
-4. **场景本身是 landscape 或 square，不是竖屏**
-   Gallery 的 3D 倾斜（`rotateX(14deg) rotateY(-10deg)`）需要横向延伸感，竖屏会让倾斜效果看起来窄且别扭。
+4. **Scene is landscape or square, not portrait**
+   The Gallery's 3D tilt (`rotateX(14deg) rotateY(-10deg)`) needs lateral extension; portrait makes the tilt look narrow and awkward.
 
-**缺条件的后备路径**：
+**Fallbacks when a condition is missing**:
 
-| 缺什么 | 退化为什么 |
+| Missing | Degrade to |
 |-------|-----------|
-| 素材 < 20 张 | 改用「3-5 张并排静态展示 + 逐个 focus」 |
-| 风格不一致 | 改用「封面 + 3 章节大图」的 keynote-style |
-| 信息稀薄 | 改用「data-driven dashboard」或「金句 + 大字」 |
-| 竖屏场景 | 改用「vertical scroll + sticky cards」 |
+| Fewer than 20 assets | Switch to "3–5 side-by-side static display + focus each in turn" |
+| Inconsistent style | Switch to "cover + 3 chapter hero images" keynote-style |
+| Thin information | Switch to "data-driven dashboard" or "headline + big type" |
+| Portrait scene | Switch to "vertical scroll + sticky cards" |
 
 ---
 
-## 技术配方（v9 实战参数）
+## Technical recipe (v9 production parameters)
 
-### 4-Layer 结构
+### 4-Layer structure
 
 ```
 viewport (1920×1080, perspective: 2400px)
-  └─ canvas (4320×2520, 超大 overflow) → 3D tilt + pan
+  └─ canvas (4320×2520, large overflow) → 3D tilt + pan
       └─ 8×6 grid = 48 cards (gap 40px, padding 60px)
           └─ img (16:9, border-radius 9px)
       └─ focus-overlay (absolute center, z-index 40)
           └─ img (matches selected slide)
 ```
 
-**关键**：canvas 比 viewport 大 2.25 倍，这样 pan 才有"窥视更大世界"的感觉。
+**Key**: the canvas is 2.25× the viewport — this is what makes the pan feel like "peeking into a larger world".
 
-### Ripple 展开（距离延迟算法）
+### Ripple expansion (distance-delay algorithm)
 
 ```js
-// 每张卡的入场时间 = 距中心的距离 × 0.8s 延迟
+// Each card's entry time = distance-from-center × 0.8s delay
 const col = i % 8, row = Math.floor(i / 8);
-const dc = col - 3.5, dr = row - 2.5;       // 到中心的 offset
+const dc = col - 3.5, dr = row - 2.5;       // offset to center
 const dist = Math.hypot(dc, dr);
 const maxDist = Math.hypot(3.5, 2.5);
 const delay = (dist / maxDist) * 0.8;       // 0 → 0.8s
@@ -88,15 +88,15 @@ const localT = Math.max(0, (t - rippleStart - delay) / 0.7);
 const opacity = expoOut(Math.min(1, localT));
 ```
 
-**核心参数**：
-- 总时长 1.7s（`T.s3_ripple: [8.3, 10.0]`）
-- 最大延迟 0.8s（中心最早出，角落最晚）
-- 每张卡入场时长 0.7s
-- Easing: `expoOut`（爆发感，不是平滑）
+**Core parameters**:
+- Total duration 1.7s (`T.s3_ripple: [8.3, 10.0]`)
+- Max delay 0.8s (center first, corners last)
+- Per-card entry duration 0.7s
+- Easing: `expoOut` (explosive, not smooth)
 
-**同时做的事**：canvas scale 从 1.25 → 0.94（zoom out to reveal）—— 配合出现的同步推远感。
+**Simultaneously**: canvas scales from 1.25 → 0.94 (zoom out to reveal) — synced "pulling-back" feeling that matches the appearance.
 
-### Multi-Focus（4 次节奏）
+### Multi-Focus (4 beats)
 
 ```js
 T.focuses = [
@@ -107,14 +107,14 @@ T.focuses = [
 ];
 ```
 
-**节奏规律**：每个 focus 1.7s，间隔 0.6s 喘息。总计 8s（11.0–19.6s）。
+**Rhythm**: each focus is 1.7s with a 0.6s breath between. 8s total (11.0–19.6s).
 
-**每次 focus 内部**：
-- In ramp: 0.4s（`expoOut`）
-- Hold: 中间 0.9s（`focusIntensity = 1`）
-- Out ramp: 0.4s（`easeOut`）
+**Inside each focus**:
+- In ramp: 0.4s (`expoOut`)
+- Hold: middle 0.9s (`focusIntensity = 1`)
+- Out ramp: 0.4s (`easeOut`)
 
-**背景变化（这是关键）**：
+**Background change (this is the key)**:
 
 ```js
 if (focusIntensity > 0) {
@@ -125,13 +125,13 @@ if (focusIntensity > 0) {
 }
 ```
 
-**不只是 opacity——同时 desaturate + darken**。这让前景 overlay 的色彩"跳出来"，而不是只是"变亮一点"。
+**Not just opacity — also desaturate + darken at the same time**. This lets the foreground overlay's colors "pop", instead of just "getting a bit brighter".
 
-**Focus overlay 尺寸动画**：
-- 从 400×225（入场）→ 960×540（hold 态）
-- 外围有 3 层 shadow + 3px accent 色 outline ring，呈现"被框住的感觉"
+**Focus overlay size animation**:
+- From 400×225 (entry) → 960×540 (hold state)
+- 3 layers of shadow + a 3px accent-colored outline ring around it, giving the "framed" feeling
 
-### Pan（持续感让静止不无聊）
+### Pan (continuous motion so the still doesn't get boring)
 
 ```js
 const panT = Math.max(0, t - 8.6);
@@ -139,112 +139,112 @@ const panX = Math.sin(panT * 0.12) * 220 - panT * 8;
 const panY = Math.cos(panT * 0.09) * 120 - panT * 5;
 ```
 
-- 正弦波 + 线性 drift 双层运动——不是纯循环，每个时刻位置都不同
-- X/Y 频率不同（0.12 vs 0.09）避免视觉上看出"规律循环"
-- clamp 在 ±900/500px 防止漂出
+- Sine wave + linear drift, two layers of motion — not a pure loop; the position is different at every moment
+- X/Y frequencies differ (0.12 vs 0.09) so the audience can't pick out a "regular cycle"
+- Clamped at ±900/500px to prevent drifting off-canvas
 
-**为什么不用纯线性 pan**：纯线性观众会"预测"下一秒在哪；正弦+drift 让每一秒都是新的，3D 倾斜下产生"微晕船感"（好的那种），注意力被拉住。
+**Why not pure linear pan**: with a pure linear pan the audience can "predict" the next second; sine+drift makes every second new, and under the 3D tilt it produces a "slight seasickness" (the good kind) that keeps attention locked.
 
 ---
 
-## 5 个可复用模式（从 v6→v9 迭代中蒸馏）
+## 5 reusable patterns (distilled from the v6→v9 iteration)
 
-### 1. **expoOut 作为主 easing，不是 cubicOut**
+### 1. **expoOut as the primary easing, not cubicOut**
 
-`easeOut = 1 - (1-t)³`（平滑）vs `expoOut = 1 - 2^(-10t)`（爆发后迅速收敛）。
+`easeOut = 1 - (1-t)³` (smooth) vs `expoOut = 1 - 2^(-10t)` (burst then quick settle).
 
-**选择理由**：expoOut 的前 30% 很快达到 90%，更像物理阻尼，符合"重的东西落地"的直觉。特别适合：
-- 卡片入场（重量感）
-- Ripple 扩散（冲击波）
-- Brand 浮起（落定感）
+**Why pick it**: expoOut hits 90% of the way in the first 30% — more like physical damping, matching the intuition of "something heavy landing". Especially good for:
+- Card entries (sense of weight)
+- Ripple expansion (shockwave)
+- Brand float-up (landing-in-place)
 
-**什么时候仍用 cubicOut**：focus out ramp、对称的微动效。
+**When cubicOut still wins**: focus out ramps, symmetric micro-motion.
 
-### 2. **纸感底色 + 赤陶橙 accent（Anthropic 血统）**
+### 2. **Paper-tone ground + terracotta orange accent (Anthropic lineage)**
 
 ```css
---bg: #F7F4EE;        /* 暖纸 */
---ink: #1D1D1F;       /* 几乎黑 */
---accent: #D97757;    /* 赤陶橙 */
---hairline: #E4DED2;  /* 暖线条 */
+--bg: #F7F4EE;        /* warm paper */
+--ink: #1D1D1F;       /* near black */
+--accent: #D97757;    /* terracotta orange */
+--hairline: #E4DED2;  /* warm hairline */
 ```
 
-**为什么**：温暖底色在 GIF 压缩后依然有"呼吸感"，不像纯白会显得"屏幕感"。赤陶橙作为唯一 accent 贯穿 terminal prompt、dir-card 选中、cursor、brand hyphen、focus ring——所有视觉锚点都被这一个色串起来。
+**Why**: warm bases still feel like they "breathe" after GIF compression, unlike pure white which reads as "screen". Terracotta orange as the single accent runs through terminal prompts, dir-card selection, the cursor, brand hyphen, focus ring — every visual anchor is strung together by this one color.
 
-**v5 教训**：加了 noise overlay 以模拟"纸纹"，结果 GIF 帧压缩全废（每帧都不同）。v6 改为"只用底色 + 暖 shadow"，纸感保留 90%，GIF 体积缩小 60%。
+**Lesson from v5**: added a noise overlay to simulate "paper grain", which torched GIF frame compression (every frame different). v6 switched to "base color + warm shadow only" — paper feel preserved at 90% and GIF size dropped 60%.
 
-### 3. **两档 Shadow 模拟深度，不用真 3D**
+### 3. **Two-tier shadow simulates depth, no true 3D**
 
 ```css
 .gallery-card.depth-near { box-shadow: 0 32px 80px -22px rgba(60,40,20,0.22), ... }
 .gallery-card.depth-far  { box-shadow: 0 14px 40px -16px rgba(60,40,20,0.10), ... }
 ```
 
-用 `sin(i × 1.7) + cos(i × 0.73)` 确定性算法给每张卡分配 near/mid/far 三档 shadow——**视觉上有"三维堆叠"感，但每帧 transform 完全不变，GPU 消耗 0**。
+A deterministic `sin(i × 1.7) + cos(i × 0.73)` assigns each card one of three near/mid/far shadow tiers — **visually feels like "3D stacking", but no transform changes per frame, so GPU cost is zero**.
 
-**真 3D 的代价**：每个 card 单独 `translateZ`，GPU 每帧都在算 48 个 transform + shadow blur。v4 试过，Playwright 录制 25fps 都吃力。v6 的两档 shadow 肉眼效果差距 <5%，但成本差 10 倍。
+**Cost of real 3D**: every card needs its own `translateZ`, and the GPU computes 48 transforms + shadow blurs per frame. v4 tried this; Playwright struggled at 25fps. v6's two-tier shadow looks <5% different to the eye but costs 10× less.
 
-### 4. **字重变化（font-variation-settings）比字号变化更电影感**
+### 4. **Font weight variation (font-variation-settings) feels more cinematic than scale**
 
 ```js
 const wght = 100 + (700 - 100) * morphP;  // 100 → 700 over 0.9s
 wordmark.style.fontVariationSettings = `"wght" ${wght.toFixed(0)}`;
 ```
 
-Brand wordmark 从 Thin → Bold 用 0.9s 渐变，配合 letter-spacing 微调（-0.045 → -0.048em）。
+The brand wordmark morphs from Thin → Bold over 0.9s, paired with a letter-spacing nudge (-0.045 → -0.048em).
 
-**为什么比放大缩小好**：
-- 放大缩小观众看过太多，预期固化
-- 字重变化是"内在的充实感"，像气球被吹满，而不是"被推近"
-- variable fonts 是 2020+ 才普及的特性，观众下意识感觉"现代"
+**Why it beats scale animation**:
+- The audience has seen scale animations too many times; expectation is locked in
+- Weight variation reads as "internal filling-out", like a balloon inflating, not "being pushed forward"
+- Variable fonts only became common post-2020, so audiences subconsciously read it as "modern"
 
-**限制**：必须用支持 variable font 的字体（Inter/Roboto Flex/Recursive 等）。普通静态字体只能拟态（切换几个固定 weight 有跳变）。
+**Constraint**: needs a variable-font typeface (Inter / Roboto Flex / Recursive etc.). Static fonts can only fake it (cycling several fixed weights produces a jump).
 
-### 5. **Corner Brand 低强度持续签名**
+### 5. **Corner Brand — low-intensity persistent signature**
 
-Gallery 阶段左上角有个 `HUASHU · DESIGN` 小标识，16% opacity 色值，12px 字号，宽字距。
+During the Gallery phase, the top-left corner shows a small `HUASHU · DESIGN` mark — 16% opacity, 12px, wide letter-spacing.
 
-**为什么加这个**：
-- Ripple 爆发后观众容易"失焦"不记得在看什么，左上角轻标示帮助 anchor
-- 比全屏大 logo 更高级——做品牌的人知道，品牌签名不需要喊
-- 在 GIF 被截屏分享时仍留下归属信号
+**Why add it**:
+- After the Ripple burst the audience can "lose focus" and forget what they're watching; a small top-left mark anchors them
+- More upscale than a full-screen logo — people who do branding know that a brand signature doesn't need to shout
+- If the GIF is screenshot and shared, an attribution signal still remains
 
-**规则**：只在中段（画面 busy）出现，开场关闭（不遮 terminal），结尾关闭（brand reveal 是主角）。
-
----
-
-## 反例：什么时候不要用这套编排
-
-**❌ 产品演示（要展示功能的）**：Gallery 让每一张都一闪而过，观众记不住任何一个功能。改用「单屏 focus + tooltip 标注」。
-
-**❌ 数据驱动内容**：观众要读数字，Gallery 的快速节奏不给时间读。改用「数据图表 + 逐项 reveal」。
-
-**❌ 故事叙事**：Gallery 是"并列"结构，故事需要"因果"。改用 keynote 章节切换。
-
-**❌ 素材只有 3-5 张**：Ripple 密度不够，看起来像"补丁"。改用「静态排列 + 逐张高亮」。
-
-**❌ 竖屏（9:16）**：3D tilt 需要横向延伸，竖屏会让倾斜感觉"歪"而不是"展开"。
+**Rule**: only appears in the middle (busy frames); off during the opening (don't cover terminal); off during the close (brand reveal is the lead).
 
 ---
 
-## 如何判断自己的任务适用这套编排
+## Counter-cases: when NOT to use this choreography
 
-三步快速检查：
+**Bad fit — product demos (showing features)**: Gallery flashes every card past; the audience won't remember any one feature. Use "single-screen focus + tooltip annotations" instead.
 
-**Step 1 · 素材数量**：数一下你有多少同类视觉素材。< 15 → 停；15-25 → 凑；25+ → 直接用。
+**Bad fit — data-driven content**: audience needs to read numbers; Gallery's quick rhythm doesn't give them time. Use "data charts + item-by-item reveal".
 
-**Step 2 · 一致性测试**：把 4 张随机素材并排放，是否像「一套」？不像 → 先统一风格再做，或改方案。
+**Bad fit — story narrative**: Gallery is "parallel" structure; story needs "causal". Use keynote chapter transitions.
 
-**Step 3 · 叙事匹配**：你要表达的是「Breadth × Depth」（量 × 质）吗？还是「流程」「功能」「故事」？不是前者就别硬套。
+**Bad fit — only 3–5 assets**: Ripple density isn't there; it looks like "patching". Use "static layout + highlight each in turn".
 
-三步都 yes，直接 fork v6 HTML，改 `SLIDE_FILES` 数组和时间轴就能复用。调色板改 `--bg / --accent / --ink`，整体换皮不换骨。
+**Bad fit — portrait (9:16)**: 3D tilt needs lateral extension; portrait makes the tilt look "crooked" rather than "unfolding".
 
 ---
 
-## 相关 Reference
+## How to judge whether your task fits this choreography
 
-- 完整技术流程：[references/animations.md](animations.md) · [references/animation-best-practices.md](animation-best-practices.md)
-- 动画导出流水线：[references/video-export.md](video-export.md)
-- 音频配置（BGM + SFX 双轨）：[references/audio-design-rules.md](audio-design-rules.md)
-- Apple 画廊风格的横向参考：[references/apple-gallery-showcase.md](apple-gallery-showcase.md)
-- 源 HTML（v6 + 音频集成版）：`www.huasheng.ai/huashu-design-hero/index.html`
+Three-step quick check:
+
+**Step 1 · Asset count**: count your homogeneous visual assets. <15 → stop; 15–25 → marginal; 25+ → go.
+
+**Step 2 · Consistency test**: put 4 random assets side by side — do they look like "a set"? If not, unify the style first, or switch approach.
+
+**Step 3 · Narrative match**: are you expressing "Breadth × Depth" (quantity × quality)? Or "process / function / story"? If not the first, don't force it.
+
+Three yeses, just fork the v6 HTML, swap the `SLIDE_FILES` array and the timeline — that's all you need. Change `--bg / --accent / --ink` to reskin without changing the bones.
+
+---
+
+## Related References
+
+- Full technical pipeline: [references/animations.md](animations.md) · [references/animation-best-practices.md](animation-best-practices.md)
+- Animation export pipeline: [references/video-export.md](video-export.md)
+- Audio config (BGM + SFX twin-track): [references/audio-design-rules.md](audio-design-rules.md)
+- Apple-gallery-style lateral reference: [references/apple-gallery-showcase.md](apple-gallery-showcase.md)
+- Source HTML (v6 + audio-integrated): `www.huasheng.ai/huashu-design-hero/index.html`

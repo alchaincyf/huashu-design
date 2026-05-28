@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
-# render-narration.sh · 一条龙：HTML 解说动画 → 最终 MP4（带人声）
+# render-narration.sh · End-to-end: narrated HTML animation → final MP4 (with voiceover)
 #
-# 流水线：
-#   1. render-video.js  录无声 MP4（按 timeline.totalDuration）
-#   2. mix-voiceover.sh 混入 voiceover.mp3（可选 BGM）
-#   3. 输出 <basename>-narrated.mp4
+# Pipeline:
+#   1. render-video.js  records a silent MP4 (length = timeline.totalDuration)
+#   2. mix-voiceover.sh mixes in voiceover.mp3 (optional BGM)
+#   3. Output: <basename>-narrated.mp4
 #
 # Usage:
 #   bash render-narration.sh <html> --timeline=<path> [options]
 #
 # Required:
-#   <html>                解说动画的 HTML（应内嵌 NarrationStage + recording 模式 rAF 自驱）
-#   --timeline=<path>     timeline.json 路径（自动读 totalDuration 和 voiceover.mp3 路径）
+#   <html>                The narrated animation HTML (should embed NarrationStage + recording-mode rAF self-driver)
+#   --timeline=<path>     Path to timeline.json (totalDuration and voiceover.mp3 path are read from it)
 #
 # Optional:
-#   --bgm-mood=<name>     BGM 预设（educational / tech / tutorial / ...）
-#   --bgm=<path>          自定义 BGM 文件
-#   --bgm-volume=<0-1>    BGM 静态音量，默认 0.18
-#   --no-ducking          关 sidechain ducking
-#   --keep-silent         保留中间产物（无声 MP4），便于 debug
-#   --out=<path>          输出路径，默认 <html-basename>-narrated.mp4
-#   --width=<px>          视频宽度（默认 1920）
-#   --height=<px>         视频高度（默认 1080）
+#   --bgm-mood=<name>     BGM preset (educational / tech / tutorial / ...)
+#   --bgm=<path>          Custom BGM file
+#   --bgm-volume=<0-1>    BGM static volume, default 0.18
+#   --no-ducking          Disable sidechain ducking
+#   --keep-silent         Keep the intermediate silent MP4 for debugging
+#   --out=<path>          Output path, default <html-basename>-narrated.mp4
+#   --width=<px>          Video width (default 1920)
+#   --height=<px>         Video height (default 1080)
 #
 # Examples:
 #   bash render-narration.sh demo.html --timeline=_narration/timeline.json
@@ -54,7 +54,7 @@ for arg in "$@"; do
     --out=*)         OUT="${arg#*=}" ;;
     --width=*)       WIDTH="${arg#*=}" ;;
     --height=*)      HEIGHT="${arg#*=}" ;;
-    -*)              echo "未知参数：$arg" >&2; exit 1 ;;
+    -*)              echo "Unknown argument: $arg" >&2; exit 1 ;;
     *)               HTML="$arg" ;;
   esac
 done
@@ -64,22 +64,22 @@ if [ -z "$HTML" ] || [ ! -f "$HTML" ]; then
   exit 1
 fi
 if [ -z "$TIMELINE" ] || [ ! -f "$TIMELINE" ]; then
-  echo "✗ 缺 --timeline=<path>（timeline.json 由 narrate-pipeline.mjs 生成）" >&2
+  echo "✗ Missing --timeline=<path> (timeline.json is produced by narrate-pipeline.mjs)" >&2
   exit 1
 fi
 
-# ── 从 timeline.json 读 totalDuration 和 voiceover 路径 ──
+# ── Read totalDuration and voiceover path from timeline.json ──
 TIMELINE_DIR="$(cd "$(dirname "$TIMELINE")" && pwd)"
 TOTAL_DURATION=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$TIMELINE','utf8')).totalDuration)")
 VOICEOVER_REL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('$TIMELINE','utf8')).voiceover || 'voiceover.mp3')")
 VOICEOVER="$TIMELINE_DIR/$VOICEOVER_REL"
 
 if [ ! -f "$VOICEOVER" ]; then
-  echo "✗ voiceover.mp3 不存在: $VOICEOVER" >&2
+  echo "✗ voiceover.mp3 not found: $VOICEOVER" >&2
   exit 1
 fi
 
-# 录制时长 = 总时长 + 1s 安全缓冲
+# Recording length = total duration + 1s safety buffer
 RECORD_DURATION=$(node -e "console.log(Math.ceil($TOTAL_DURATION + 1))")
 
 HTML_ABS="$(cd "$(dirname "$HTML")" && pwd)/$(basename "$HTML")"
@@ -95,29 +95,29 @@ echo "═══ render-narration ═══════════════�
 echo "  HTML:        $HTML_ABS"
 echo "  Timeline:    $TIMELINE"
 echo "  Voiceover:   $VOICEOVER"
-echo "  Total dur:   ${TOTAL_DURATION}s (录 ${RECORD_DURATION}s)"
-echo "  尺寸:        ${WIDTH}×${HEIGHT}"
+echo "  Total dur:   ${TOTAL_DURATION}s (recording ${RECORD_DURATION}s)"
+echo "  Size:        ${WIDTH}×${HEIGHT}"
 [ -n "$BGM_MOOD" ] && echo "  BGM mood:    $BGM_MOOD"
 [ -n "$BGM" ] && echo "  BGM:         $BGM"
-echo "  最终输出:    $OUT"
+echo "  Final out:   $OUT"
 echo "════════════════════════════════════════"
 
-# ── Step 1: 录无声 MP4 ──────────────────────
+# ── Step 1: record silent MP4 ──────────────
 echo ""
-echo "▸ Step 1/2 · 录制 HTML 动画 (无声)"
+echo "▸ Step 1/2 · Recording HTML animation (silent)"
 NODE_PATH=$(npm root -g) node "$SCRIPT_DIR/render-video.js" "$HTML_ABS" \
   --duration="$RECORD_DURATION" \
   --width="$WIDTH" \
   --height="$HEIGHT"
 
 if [ ! -f "$SILENT_MP4" ]; then
-  echo "✗ 无声 MP4 没生成: $SILENT_MP4" >&2
+  echo "✗ Silent MP4 was not produced: $SILENT_MP4" >&2
   exit 1
 fi
 
-# ── Step 2: 混入人声 ──────────────────────
+# ── Step 2: mix in the voice ──────────────
 echo ""
-echo "▸ Step 2/2 · 混入人声"
+echo "▸ Step 2/2 · Mixing in voiceover"
 MIX_ARGS=("$SILENT_MP4" "--voiceover=$VOICEOVER" "--out=$OUT")
 [ -n "$BGM_MOOD" ] && MIX_ARGS+=("--bgm-mood=$BGM_MOOD")
 [ -n "$BGM" ]      && MIX_ARGS+=("--bgm=$BGM")
@@ -126,11 +126,11 @@ MIX_ARGS=("$SILENT_MP4" "--voiceover=$VOICEOVER" "--out=$OUT")
 
 bash "$SCRIPT_DIR/mix-voiceover.sh" "${MIX_ARGS[@]}"
 
-# 清理中间产物
+# Clean up intermediate artifact
 if [ -z "$KEEP_SILENT" ]; then
   rm -f "$SILENT_MP4"
 fi
 
 echo ""
-echo "✓ 完成: $OUT"
-[ -n "$KEEP_SILENT" ] && echo "  (中间产物保留: $SILENT_MP4)"
+echo "✓ Done: $OUT"
+[ -n "$KEEP_SILENT" ] && echo "  (intermediate kept: $SILENT_MP4)"

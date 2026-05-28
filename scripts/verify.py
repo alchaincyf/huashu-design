@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-verify.py — Playwright封装，用于验证claude-design产出的HTML
+verify.py — Playwright wrapper for verifying HTML produced by huashu-design
 
 Usage:
-    python verify.py path/to/design.html                    # 基础：打开+截图+抓控制台错误
-    python verify.py design.html --viewports 1920x1080,375x667  # 多viewport
-    python verify.py deck.html --slides 10                  # 幻灯片逐页截（前10张）
-    python verify.py design.html --output ./screenshots/   # 输出目录
-    python verify.py design.html --show                    # 非headless，打开真实浏览器
+    python verify.py path/to/design.html                    # basic: open + screenshot + capture console errors
+    python verify.py design.html --viewports 1920x1080,375x667  # multiple viewports
+    python verify.py deck.html --slides 10                  # slide mode: screenshot the first N slides
+    python verify.py design.html --output ./screenshots/   # output directory
+    python verify.py design.html --show                    # non-headless — open a real browser
 
-依赖：
+Dependencies:
     pip install playwright
     playwright install chromium
 """
@@ -30,13 +30,13 @@ def verify_html(html_path, viewports=None, slides=0, output_dir=None, show=False
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
-        print("ERROR: playwright未安装。")
-        print("运行: pip install playwright && playwright install chromium")
+        print("ERROR: playwright is not installed.")
+        print("Run: pip install playwright && playwright install chromium")
         sys.exit(1)
 
     html_path = Path(html_path).resolve()
     if not html_path.exists():
-        print(f"ERROR: 文件不存在: {html_path}")
+        print(f"ERROR: file not found: {html_path}")
         sys.exit(1)
 
     if output_dir is None:
@@ -63,7 +63,7 @@ def verify_html(html_path, viewports=None, slides=0, output_dir=None, show=False
             page.on("console", lambda msg: console_errors.append(f"[{msg.type}] {msg.text}") if msg.type in ("error", "warning") else None)
             page.on("pageerror", lambda err: page_errors.append(str(err)))
 
-            print(f"\n→ 打开 {file_url} @ {viewport['width']}x{viewport['height']}")
+            print(f"\n→ Opening {file_url} @ {viewport['width']}x{viewport['height']}")
             page.goto(file_url, wait_until='networkidle')
             page.wait_for_timeout(wait)
 
@@ -80,14 +80,14 @@ def verify_html(html_path, viewports=None, slides=0, output_dir=None, show=False
                 suffix = f"-{viewport['width']}x{viewport['height']}" if len(viewports) > 1 else ""
                 screenshot_path = output_dir / f"{stem}{suffix}.png"
                 page.screenshot(path=str(screenshot_path), full_page=False)
-                print(f"  ✓ 截图 → {screenshot_path.name}")
+                print(f"  ✓ Screenshot → {screenshot_path.name}")
 
                 full_path = output_dir / f"{stem}{suffix}-full.png"
                 page.screenshot(path=str(full_path), full_page=True)
-                print(f"  ✓ 完整页 → {full_path.name}")
+                print(f"  ✓ Full page → {full_path.name}")
 
             if show:
-                print("  (浏览器窗口保持打开，按Enter关闭...)")
+                print("  (browser window stays open — press Enter to close)")
                 input()
 
             context.close()
@@ -95,7 +95,7 @@ def verify_html(html_path, viewports=None, slides=0, output_dir=None, show=False
         browser.close()
 
     print("\n" + "=" * 50)
-    print("验证报告")
+    print("Verification report")
     print("=" * 50)
 
     if page_errors:
@@ -103,18 +103,18 @@ def verify_html(html_path, viewports=None, slides=0, output_dir=None, show=False
         for e in page_errors:
             print(f"  - {e}")
     else:
-        print("\n✅ 无JavaScript错误")
+        print("\n✅ No JavaScript errors")
 
     if console_errors:
         print(f"\n⚠️  Console Errors/Warnings ({len(console_errors)}):")
         for e in console_errors[:20]:
             print(f"  - {e}")
         if len(console_errors) > 20:
-            print(f"  ... 还有{len(console_errors) - 20}条")
+            print(f"  ... and {len(console_errors) - 20} more")
     else:
-        print("✅ Console干净")
+        print("✅ Console clean")
 
-    print(f"\n📸 截图保存至: {output_dir}")
+    print(f"\n📸 Screenshots saved to: {output_dir}")
 
     return 0 if not page_errors else 1
 
@@ -126,15 +126,15 @@ def main():
     )
     parser.add_argument("html_path", help="HTML file path")
     parser.add_argument("--viewports", default="1440x900",
-                        help="逗号分隔的viewport列表，格式 WxH（默认 1440x900）")
+                        help="comma-separated viewport list in WxH form (default 1440x900)")
     parser.add_argument("--slides", type=int, default=0,
-                        help="幻灯片模式：截取前N张（需要HTML支持ArrowRight翻页）")
+                        help="slide mode: screenshot the first N slides (HTML must support ArrowRight paging)")
     parser.add_argument("--output", default=None,
-                        help="输出目录（默认HTML所在目录的screenshots/）")
+                        help="output directory (default: screenshots/ next to the HTML)")
     parser.add_argument("--show", action="store_true",
-                        help="非headless，打开真实浏览器窗口")
+                        help="non-headless — open a real browser window")
     parser.add_argument("--wait", type=int, default=2000,
-                        help="打开页面后等待的毫秒数（默认2000）")
+                        help="milliseconds to wait after opening the page (default 2000)")
 
     args = parser.parse_args()
 
