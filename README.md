@@ -24,7 +24,7 @@ Not "decent for AI" quality — it looks like a real design team made it. Give t
 **Every animation in this README was made by huashu-design itself.** No Figma, no After Effects — just a sentence + skill run. Next product launch needs a promo video? You can make it too.
 
 ```
-npx skills add alchaincyf/huashu-design
+npx skills add BrunoVini/huashu-design
 ```
 
 > 📣 **Now MIT-licensed.** As of 2026-05-14 this skill is fully open-source under the [MIT License](LICENSE) — free for personal **and** commercial use, no authorization required. ([what changed](#license))
@@ -52,7 +52,7 @@ npx skills add alchaincyf/huashu-design
 ## Install
 
 ```bash
-npx skills add alchaincyf/huashu-design
+npx skills add BrunoVini/huashu-design
 ```
 
 Then just talk to Claude Code:
@@ -71,8 +71,8 @@ No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Cod
 ## Star History
 
 <p align="center">
-  <a href="https://star-history.com/#alchaincyf/huashu-design&Date">
-    <img src="https://api.star-history.com/svg?repos=alchaincyf/huashu-design&type=Date" alt="huashu-design Star History" width="80%">
+  <a href="https://star-history.com/#BrunoVini/huashu-design&Date">
+    <img src="https://api.star-history.com/svg?repos=BrunoVini/huashu-design&type=Date" alt="huashu-design Star History" width="80%">
   </a>
 </p>
 
