@@ -1,189 +1,189 @@
-# Verification：输出验证流程
+# Verification: Output Verification Workflow
 
-一些 design-agent 原生环境（如 Claude.ai Artifacts）有内置的 `fork_verifier_agent` 起 subagent 用 iframe 截图检查。大部分 agent 环境（Claude Code / Codex / Cursor / Trae / 等）里没有这个内置能力——用 Playwright 手动做就能覆盖相同的验证场景。
+Some design-agent native environments (like Claude.ai Artifacts) have a built-in `fork_verifier_agent` that spawns a subagent to screenshot through an iframe. Most agent environments (Claude Code / Codex / Cursor / Trae / etc.) don't have this built in — doing it manually with Playwright covers the same verification scenarios.
 
-## 验证清单
+## Verification Checklist
 
-每次产出HTML后，按这个清单做一遍：
+After every HTML output, walk through this list:
 
-### 1. 浏览器渲染检查（必做）
+### 1. Browser render check (mandatory)
 
-最基础：**HTML能不能打开**？在macOS上：
+Most basic: **does the HTML even open**? On macOS:
 
 ```bash
 open -a "Google Chrome" "/path/to/your/design.html"
 ```
 
-或者用Playwright截图（下一节）。
+Or screenshot with Playwright (next section).
 
-### 2. 控制台错误检查
+### 2. Console error check
 
-HTML文件里最常见的问题是JS报错导致白屏。用Playwright跑一遍：
+The most common HTML file problem is a JS error producing a white screen. Run Playwright once:
 
 ```bash
 python ~/.claude/skills/claude-design/scripts/verify.py path/to/design.html
 ```
 
-这个脚本会：
-1. 用headless chromium打开HTML
-2. 截图保存到项目目录
-3. 抓取控制台错误
-4. 报告status
+This script:
+1. Opens the HTML in headless Chromium
+2. Saves a screenshot to the project directory
+3. Captures console errors
+4. Reports status
 
-详见`scripts/verify.py`。
+See `scripts/verify.py` for details.
 
-### 3. 多视口检查
+### 3. Multi-viewport check
 
-如果是响应式设计，抓多个viewport：
+For responsive designs, capture multiple viewports:
 
 ```bash
 python verify.py design.html --viewports 1920x1080,1440x900,768x1024,375x667
 ```
 
-### 4. 交互检查
+### 4. Interaction check
 
-Tweaks、动画、按钮切换——默认的静态截图看不到。**建议让用户自己开浏览器点一遍**，或者用Playwright录屏：
+Tweaks, animations, button toggles — static screenshots can't see these. **Recommended: have the user open the browser and click through themselves**, or record video with Playwright:
 
 ```python
 page.video.record('interaction.mp4')
 ```
 
-### 5. 幻灯片逐页检查
+### 5. Per-slide check for slide decks
 
-Deck类HTML，一张张截：
+Deck-style HTML, capture each:
 
 ```bash
-python verify.py deck.html --slides 10  # 截前10张
+python verify.py deck.html --slides 10  # capture first 10
 ```
 
-生成 `deck-slide-01.png`、`deck-slide-02.png`... 方便快速浏览。
+Produces `deck-slide-01.png`, `deck-slide-02.png`... for quick browsing.
 
 ## Playwright Setup
 
-首次使用需要：
+First-time setup:
 
 ```bash
-# 如果还没装
+# If not installed
 npm install -g playwright
 npx playwright install chromium
 
-# 或者Python版
+# Or Python version
 pip install playwright
 playwright install chromium
 ```
 
-如果用户已经全局安装 Playwright，直接用即可。
+If the user already has Playwright installed globally, use it directly.
 
-## 截图最佳实践
+## Screenshot Best Practices
 
-### 截完整页面
+### Full page
 
 ```python
 page.screenshot(path='full.png', full_page=True)
 ```
 
-### 截viewport
+### Viewport only
 
 ```python
-page.screenshot(path='viewport.png')  # 默认只截可见区域
+page.screenshot(path='viewport.png')  # default: visible area only
 ```
 
-### 截特定元素
+### Specific element
 
 ```python
 element = page.query_selector('.hero-section')
 element.screenshot(path='hero.png')
 ```
 
-### 高清截图
+### Hi-res screenshot
 
 ```python
 page = browser.new_page(device_scale_factor=2)  # retina
 ```
 
-### 等动画结束再截
+### Wait for animation to finish before capturing
 
 ```python
-page.wait_for_timeout(2000)  # 等2秒让动画settle
+page.wait_for_timeout(2000)  # 2 seconds for animation to settle
 page.screenshot(...)
 ```
 
-## 把截图发给用户
+## Sending Screenshots to the User
 
-### 本地截图直接打开
+### Open the local screenshot directly
 
 ```bash
 open screenshot.png
 ```
 
-用户会在自己的 Preview/Figma/VSCode/浏览器 里看。
+The user views in their own Preview / Figma / VSCode / browser.
 
-### 上传图床分享链接
+### Upload to image host, share a link
 
-如果需要给远程协作者看（比如 Slack/飞书/微信），让用户用自己的图床工具或 MCP 上传：
+If you need to share with remote collaborators (e.g., Slack / Feishu / WeChat), have the user use their own image host tool or MCP to upload:
 
 ```bash
-python ~/Documents/写作/tools/upload_image.py screenshot.png
+python ~/Documents/writing/tools/upload_image.py screenshot.png
 ```
 
-返回ImgBB的永久链接，可以粘贴到任何地方。
+Returns an ImgBB permanent link that can be pasted anywhere.
 
-## 验证出错时
+## When Verification Fails
 
-### 页面白屏
+### Blank page
 
-控制台一定有错。先检查：
+There's definitely a console error. Check first:
 
-1. React+Babel script tag的integrity hash对不对（见`react-setup.md`）
-2. 是不是`const styles = {...}`命名冲突
-3. 跨文件的组件有没有export到`window`
-4. JSX语法错误（babel.min.js不报错，换babel.js非压缩版）
+1. React+Babel script tag integrity hashes (see `react-setup.md`)
+2. Whether `const styles = {...}` name collisions exist
+3. Whether cross-file components were exported to `window`
+4. JSX syntax errors (babel.min.js doesn't report errors — swap in the unminified babel.js)
 
-### 动画卡
+### Animation stutters
 
-- 用Chrome DevTools Performance tab录一段
-- 找layout thrashing（频繁的reflow）
-- 动效优先用`transform`和`opacity`（GPU加速）
+- Record a clip with Chrome DevTools Performance tab
+- Look for layout thrashing (frequent reflow)
+- Prefer `transform` and `opacity` for motion (GPU-accelerated)
 
-### 字体不对
+### Wrong font
 
-- 检查`@font-face`的url是否可访问
-- 检查fallback字体
-- 中文字体加载慢：先显示fallback，加载完再切换
+- Check whether the `@font-face` url is reachable
+- Check fallback fonts
+- Chinese fonts load slowly: show fallback first, switch after load
 
-### 布局错位
+### Layout broken
 
-- 检查`box-sizing: border-box`是否全局应用
-- 检查`*  margin: 0; padding: 0`reset
-- Chrome DevTools里打开gridlines看实际布局
+- Check whether `box-sizing: border-box` is applied globally
+- Check `*  margin: 0; padding: 0` reset
+- Open gridlines in Chrome DevTools to see actual layout
 
-## 验证=设计师的第二双眼
+## Verification = the Designer's Second Pair of Eyes
 
-**永远要自己过一遍**。AI写代码时经常出现：
+**Always go over it yourself**. When AI writes code, these things happen often:
 
-- 看起来对但interaction有bug
-- 静态截图好但scroll时错位
-- 宽屏好看但窄屏崩
-- Dark mode忘了测
-- Tweaks切换后某些组件没响应
+- Looks right but interaction has a bug
+- Static screenshot looks good but breaks while scrolling
+- Looks great on wide screens, collapses on narrow
+- Forgot to test dark mode
+- After toggling Tweaks, some components didn't respond
 
-**最后1分钟的验证可以省1小时的返工**。
+**The last 1 minute of verification saves 1 hour of rework**.
 
-## 常用验证脚本命令
+## Common Verification Script Commands
 
 ```bash
-# 基础：打开+截图+抓错
+# Basic: open + screenshot + capture errors
 python verify.py design.html
 
-# 多viewport
+# Multiple viewports
 python verify.py design.html --viewports 1920x1080,375x667
 
-# 多slide
+# Multiple slides
 python verify.py deck.html --slides 10
 
-# 输出到指定目录
+# Output to a specific directory
 python verify.py design.html --output ./screenshots/
 
-# headless=false，打开真实浏览器给你看
+# headless=false, show a real browser
 python verify.py design.html --show
 ```

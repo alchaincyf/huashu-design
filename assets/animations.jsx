@@ -1,17 +1,17 @@
 /**
- * animations.jsx — 时间轴动画引擎
+ * animations.jsx — timeline animation engine
  *
- * Stage + Sprite 模式，借鉴Remotion但轻量化。
+ * Stage + Sprite pattern, inspired by Remotion but kept lightweight.
  *
- * 导出（挂到 window.Animations）：
- * - Stage: 整个动画容器，提供时间+控制
- * - Sprite: 时间片段，start/end内显示，提供本地进度
- * - useTime(): 读全局时间（秒）
- * - useSprite(): 读本地进度 {t: 0→1, elapsed: seconds, duration: seconds}
+ * Exports (attached to window.Animations):
+ * - Stage: animation container, provides time + controls
+ * - Sprite: time segment, visible between start/end, provides local progress
+ * - useTime(): read the global time (seconds)
+ * - useSprite(): read local progress {t: 0→1, elapsed: seconds, duration: seconds}
  * - Easing: {linear, easeIn, easeOut, easeInOut, spring, anticipation}
  * - interpolate(t, [input0, input1], [output0, output1], easing?)
  *
- * 用法：
+ * Usage:
  *   <Stage duration={10}>
  *     <Sprite start={0} end={3}>
  *       <Title />
@@ -21,7 +21,7 @@
  *     </Sprite>
  *   </Stage>
  *
- * 在Sprite子组件里用 useSprite() 读当前片段进度。
+ * Inside a Sprite child, call useSprite() to read the current segment's progress.
  */
 
 (function() {
@@ -35,10 +35,10 @@
     easeIn: t => t * t,
     easeOut: t => 1 - (1 - t) * (1 - t),
     easeInOut: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2,
-    // expoOut: Anthropic-level 主 easing (cubic-bezier(0.16, 1, 0.3, 1))
-    // 迅速启动 + 缓慢刹车，给数字元素物理重量感
+    // expoOut: Anthropic-level primary easing (cubic-bezier(0.16, 1, 0.3, 1))
+    // Quick start + slow brake — gives digital elements a sense of physical weight.
     expoOut: t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t),
-    // overshoot: 带弹性的 toggle/按钮弹出 (cubic-bezier(0.34, 1.56, 0.64, 1))
+    // overshoot: springy toggle / button pop (cubic-bezier(0.34, 1.56, 0.64, 1))
     overshoot: t => {
       const c1 = 1.70158, c3 = c1 + 1;
       return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
@@ -280,14 +280,14 @@
               style={stageStyles.button}
               onClick={() => setPlaying(p => !p)}
             >
-              {playing ? '⏸ 暂停' : '▶ 播放'}
+              {playing ? '⏸ Pause' : '▶ Play'}
             </button>
 
             <button
               style={stageStyles.button}
               onClick={() => setTime(0)}
             >
-              ⏮ 开始
+              ⏮ Reset
             </button>
 
             <div style={stageStyles.timeDisplay}>
