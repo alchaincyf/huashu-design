@@ -1,38 +1,50 @@
 [
   {
     "id": 1,
-    "prompt": "我想做一个SaaS产品的登录页面，给我3个风格方向对比看看",
-    "expected": "触发clarifying questions问design context/brand；产出3个variation的design_canvas；不用紫渐变/emoji/Inter等AI slop；有具体理由说明每个variation的差异维度",
-    "tests": "workflow问问题 + variations逻辑 + 反AI slop清单 + design_canvas使用"
+    "prompt": "做一份 10 页的产品 pitch deck，讲一个 AI 工具创业项目",
+    "expected": "用 deck_index.html 或 deck_stage.js 起手；先问 design context / brand / 参考；声明 assumptions；视觉层级清晰；反 AI slop；可导出 PDF",
+    "tests": "task classification + design context + deck workflow + anti-AI-slop"
   },
   {
     "id": 2,
-    "prompt": "帮我做一份10页的产品pitch deck，讲一个AI工具的创业项目",
-    "expected": "用deck_stage.js起手；先口头vocalize设计系统（色彩/字型/layout节奏）等确认；Section divider/content/data/quote多种layout交替；字号≥24px；1-indexed labels",
-    "tests": "Junior Designer先汇报再做 + deck_stage使用 + 视觉节奏 + scale规范"
+    "prompt": "做一个 iOS 番茄钟 App 原型，4 个核心屏幕",
+    "expected": "用 ios_frame.jsx 不做手写 Dynamic Island；多屏平铺 + 可交互；先取真实内容图或诚实 placeholder；信息密度合理",
+    "tests": "UI mockup workflow + ios_frame binding + placeholder honesty"
   },
   {
     "id": 3,
-    "prompt": "做个30秒的HTML动画，讲神经网络怎么工作",
-    "expected": "用animations.jsx的Stage+Sprite；先写时间轴再写组件；入场easeOut出场easeIn；分phase讲故事而不是堆动画；文字停留≥3秒",
-    "tests": "animations工作流 + easing正确 + 节奏设计 + 时长控制"
+    "prompt": "做一个 SaaS 产品 landing page hero section，推荐 2 个方向",
+    "expected": "先问 design context / 品牌；没有 context 时声明 assumptions；给 2 个差异化方向（如保守/大胆）；不做无意义填充",
+    "tests": "design direction + 2-variant strategy + no filler content"
   },
   {
     "id": 4,
-    "prompt": "做一个 Habit Tracker App 原型",
-    "expected": "问用户要 overview 平铺 or flow demo（默认走 overview）；用 assets/ios_frame.jsx，不手写 Dynamic Island；Tracker 属高密度型，每屏 ≥ 3 处信息密度元素（习惯完成率、连续天数、趋势曲线、成就badge等，非装饰）；至少 5-7 屏并排（首页/新建习惯/详情/统计/设置）",
-    "tests": "overview/flow 形态路由 + ios_frame 硬绑定 + 信息密度分型（高密度型）+ 多屏并排"
+    "prompt": "做一个功能对比信息图，比较 3 个产品",
+    "expected": "先走品牌资产协议取 logo；真实对比数据优先；视觉层级清晰；诚实处理缺失数据",
+    "tests": "brand asset protocol + infographic layout + placeholder honesty"
   },
   {
     "id": 5,
-    "prompt": "做一个读书笔记 App 原型",
-    "expected": "overview 平铺为主；ios_frame.jsx；读书笔记偏内容展示类，信息密度要求不如 Tracker 极端，但笔记列表页仍需 ≥ 3 层信息（书籍、引文、标签、进度）；至少 4-6 屏（首页书架/笔记详情/标注高亮/搜索/笔记本管理）；字体优先 serif display",
-    "tests": "overview 默认 + ios_frame + 信息层次 + 内容为主的视觉节奏"
+    "prompt": "帮我对这个设计做 5 维度评审",
+    "expected": "走 critique-guide.md 的 5 维度评分；输出 Keep/Fix/Quick Wins；给出可操作修改建议",
+    "tests": "design review workflow + critique guide"
   },
   {
     "id": 6,
-    "prompt": "做一个跑步记录 App 原型",
-    "expected": "overview 平铺；ios_frame.jsx；跑步 App 属高密度型（地图、配速曲线、心率区间、每公里分段数据），每屏 ≥ 3 处产品差异化信息；至少 5 屏（今日总览/跑步中实时数据/路线地图/历史记录/月度统计）；避免撞 AI slop（不用紫渐变、不堆装饰 icon，但数据可视化 icon 允许保留）",
-    "tests": "overview + ios_frame + 高密度型数据可视化 + 地图/图表混排 + slop 边界条件"
+    "prompt": "检查这个页面有没有 AI slop",
+    "expected": "按 anti-AI-slop 规则逐项检查：紫渐变 / emoji 图标 / 圆角左 border / SVG 画人脸 / 编造数据 / filler 内容",
+    "tests": "anti-AI-slop checklist"
+  },
+  {
+    "id": 7,
+    "prompt": "做一个项目封面图，偏技术感风格",
+    "expected": "先问项目内容 / branding；给 2~3 个方向预览；不做视频/MP4/GIF；不使用假 logo 或假产品图",
+    "tests": "product visual workflow + design direction + no video claims"
+  },
+  {
+    "id": 8,
+    "prompt": "帮我设计一个产品功能介绍图，产品叫 XYZ",
+    "expected": "先 WebSearch 验证产品存在性和最新状态；走品牌资产协议取 logo/产品图；声明 placeholder 区域",
+    "tests": "事实验证 + 品牌资产协议 + placeholder honesty"
   }
 ]
