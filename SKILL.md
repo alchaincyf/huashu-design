@@ -118,6 +118,20 @@ description: 通用产品视觉表达 skill——做产品图、项目展示图�
 - 做产品图就要有主视觉焦点，不像流程文档
 - 做信息图要有视觉层级，不像 Markdown 表格截图
 
+### 2.6 Clarification over silent decisions
+
+This skill prefers structured clarification over silent design decisions.
+
+The user may tolerate many questions if they are meaningful and grouped. Do not avoid questions merely to appear efficient. The real failure mode is not asking too much; it is silently making major design decisions that should belong to the user.
+
+For ambiguous tasks:
+- Ask grouped, high-leverage questions before committing to a direction.
+- It is acceptable to ask more than three questions when the answers materially affect the result.
+- Batch questions by category: goal, audience, content, brand/assets, visual references, deliverable format.
+- Do not ask one tiny question per turn.
+- If proceeding with assumptions, label them explicitly and make the first output a low-cost preview, not a final design.
+- Never fabricate brand assets, product facts, data, visual references, or user preferences.
+
 ---
 
 ## 3. 工作流程
@@ -135,8 +149,9 @@ description: 通用产品视觉表达 skill——做产品图、项目展示图�
 
 用户说「做个好看的」「帮我设计」「做个XX没具体参考」时：
 
-1. 一次问最多 3 个关键问题（目标受众？核心信息？有无品牌/参考？）
-2. 给 2~3 个视觉方向（不强制 subagent 并行，不强制风格轮盘）：
+1. **优先批量澄清**：默认问 3-8 个高价值问题，按类别分组（目标/受众/内容/品牌/视觉参考/交付格式）。任务复杂时可以问更多，但必须分组清楚。问题多不是问题，无依据替用户做关键决策才是问题。
+2. 如果用户要求直接开始，才使用 assumptions + low-cost preview，并在第一个输出中写清楚所有假设。
+3. 给 2~3 个视觉方向（不强制 subagent 并行，不强制风格轮盘）：
 
    - **A. Conservative / clean product** — 稳重、产品导向、适合正式展示
    - **B. Technical / system-oriented** — 偏科技感、数据/架构可视化
