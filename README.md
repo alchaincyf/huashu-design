@@ -19,22 +19,26 @@
 **装给任何需要产品视觉表达能力的 agent** — Hermes、Lurk、OpenClaw、Claude Code、Cursor、Codex 等都适用。
 
 ```bash
-npx skills add alchaincyf/huashu-design
+# After merge to master
+npx skills add CCandle/product-design
+
+# Development branch (if supported by your installer)
+npx skills add CCandle/product-design --ref refactor/product-visual-design-trim
 ```
 
 ---
 
 ## 能做什么
 
-| 能力 | 交付物 | 典型耗时 |
-|------|--------|----------|
-| 产品展示图 | HTML 页面、封面图、hero section | 5-10 min |
-| 演讲幻灯片 / HTML deck | 浏览器演示 + 可导出 PDF/PPTX | 10-20 min |
-| UI mockup（App/Web） | 设备框 html · 可交互演示 | 10-15 min |
-| 商业化视觉页面 | landing section、功能对比页、产品介绍页 | 10-15 min |
-| 信息图 / 可视化排版 | CSS Grid 精准排版 · 可导出 | 8-12 min |
-| 设计方向探索 | 2~3 个视觉方向对比 · 轻量 preview | 5-8 min |
-| 设计评审 | 5 维度评分 + Keep/Fix/Quick Wins | 3-5 min |
+| 能力 | 交付物 |
+|------|--------|
+| 产品展示图 | HTML 页面、封面图、hero section |
+| 演讲幻灯片 / HTML deck | 浏览器演示 + 可导出 PDF/PPTX |
+| UI mockup（App/Web） | 设备框 html · 可交互演示 |
+| 商业化视觉页面 | landing section、功能对比页、产品介绍页 |
+| 信息图 / 可视化排版 | CSS Grid 精准排版 · 可导出 |
+| 设计方向探索 | 2~3 个视觉方向对比 · 轻量 preview |
+| 设计评审 | 5 维度评分 + Keep/Fix/Quick Wins |
 
 ### 典型 prompt
 
@@ -109,7 +113,8 @@ product-visual-design/
 ├── references/              # 按任务深入读的子文档
 ├── scripts/                 # PPT/PDF 导出、截图验证
 └── archive/
-    └── legacy-demos/        # 旧版 demo（视觉参考，不作为当前能力）
+    ├── legacy-demos/        # 旧版 demo（视觉参考，不作为当前能力）
+    └── legacy-references/   # 旧版 references（不参与当前 skill 路由）
 ```
 
 ---

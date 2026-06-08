@@ -44,7 +44,7 @@
   {
     "id": 8,
     "prompt": "帮我设计一个产品功能介绍图，产品叫 XYZ",
-    "expected": "先 WebSearch 验证产品存在性和最新状态；走品牌资产协议取 logo/产品图；声明 placeholder 区域",
+    "expected": "使用当前 agent 可用的 web/search 工具验证产品存在性和最新状态；走品牌资产协议取 logo/产品图；声明 placeholder 区域",
     "tests": "事实验证 + 品牌资产协议 + placeholder honesty"
   }
 ]

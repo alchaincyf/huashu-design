@@ -19,22 +19,26 @@ An agent skill for product visual expression. Say one sentence to your agent —
 Works with any agent that supports markdown-based skills — Hermes, Lurk, OpenClaw, Claude Code, Cursor, Codex, and more.
 
 ```bash
-npx skills add alchaincyf/huashu-design
+# After merge to master
+npx skills add CCandle/product-design
+
+# Development branch (if supported by your installer)
+npx skills add CCandle/product-design --ref refactor/product-visual-design-trim
 ```
 
 ---
 
 ## Capabilities
 
-| Capability | Deliverable | Typical time |
-|------------|-------------|-------------|
-| Product visuals | HTML page, cover image, hero section | 5-10 min |
-| Slide decks / HTML deck | Browser presentation + PDF/PPTX export | 10-20 min |
-| UI mockup (App/Web) | Device-framed HTML, clickable prototype | 10-15 min |
-| Commercial pages | Landing section, feature comparison, product intro | 10-15 min |
-| Infographic / layout | CSS Grid precision layouts, printable | 8-12 min |
-| Design direction exploration | 2-3 visual direction variants | 5-8 min |
-| Design review | 5-dimension scoring + Keep/Fix/Quick Wins | 3-5 min |
+| Capability | Deliverable |
+|------------|-------------|
+| Product visuals | HTML page, cover image, hero section |
+| Slide decks / HTML deck | Browser presentation + PDF/PPTX export |
+| UI mockup (App/Web) | Device-framed HTML, clickable prototype |
+| Commercial pages | Landing section, feature comparison, product intro |
+| Infographic / layout | CSS Grid precision layouts, printable |
+| Design direction exploration | 2-3 visual direction variants |
+| Design review | 5-dimension scoring + Keep/Fix/Quick Wins |
 
 ### Example prompts
 
@@ -91,7 +95,8 @@ product-visual-design/
 ├── references/              # Task-specific deep references
 ├── scripts/                 # PDF/PPTX export, screenshot verification
 └── archive/
-    └── legacy-demos/        # Archived demos (visual reference only)
+    ├── legacy-demos/        # Archived demos (visual reference only)
+    └── legacy-references/   # Old video-heavy references, not active skill scope
 ```
 
 ---

@@ -50,7 +50,7 @@ npx playwright screenshot https://example.com screenshot.png --viewport-size=192
 
 ### Step 1：问用户
 
-任务开始时的必问清单（来自`workflow.md`）：
+任务开始时的必问清单：
 
 ```markdown
 1. 你有现成的design system/UI kit/组件库吗？在哪？
