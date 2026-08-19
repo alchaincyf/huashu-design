@@ -83,8 +83,8 @@ No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Cod
 ## Star History
 
 <p align="center">
-  <a href="https://star-history.com/#alchaincyf/huashu-design&Date">
-    <img src="https://api.star-history.com/svg?repos=alchaincyf/huashu-design&type=Date" alt="huashu-design Star History" width="80%">
+  <a href="https://star-history.dera.page/#alchaincyf/huashu-design&Date">
+    <img src="https://star-history.dera.page/svg?repos=alchaincyf/huashu-design&type=Date" alt="huashu-design Star History" width="80%">
   </a>
 </p>
 
