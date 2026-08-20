@@ -67,6 +67,30 @@ npx skills add alchaincyf/huashu-design
 > git clone https://github.com/alchaincyf/huashu-design.git ~/.claude/skills/huashu-design
 > ```
 
+### Plugin marketplaces (Claude / Grok / Codex / Pi)
+
+`npx skills add` stays the default. These hosts can also install from the repo as a plugin marketplace:
+
+```bash
+# Claude Code
+claude plugin marketplace add alchaincyf/huashu-design
+claude plugin install huashu-design@huashu-design --scope user
+
+# Grok
+grok plugin marketplace add alchaincyf/huashu-design
+grok plugin install huashu-design --trust
+grok plugin enable huashu-design
+
+# Codex
+codex plugin marketplace add alchaincyf/huashu-design
+codex plugin add huashu-design@huashu-design
+
+# Pi
+pi install git:github.com/alchaincyf/huashu-design
+```
+
+The Skill source of truth remains root `SKILL.md` + `assets/` + `references/` + `scripts/`. `plugins/huashu-design/skills/huashu-design/` is a **regular-file copy** (not a symlink farm): Codex copies `skills/` and drops links. After editing the Skill, run `bash scripts/build-plugin-leaf.sh`.
+
 Then just talk to Claude Code:
 
 ```

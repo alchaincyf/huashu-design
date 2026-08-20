@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Meridian — Business Intelligence for Modern Teams</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #FFFFFF;
+    color: #000000;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    height: 72px;
+    border-bottom: 1px solid #000;
+  }
+  .nav-logo {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-logo svg { width: 24px; height: 24px; }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    color: #000;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #E63946; }
+  .nav-signin {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    color: #000;
+    padding: 8px 20px;
+    border: 2px solid #000;
+    transition: all 0.2s;
+  }
+  .nav-signin:hover { background: #000; color: #fff; }
+
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: calc(900px - 72px);
+  }
+
+  /* LEFT PANEL */
+  .hero-left {
+    padding: 64px 80px 48px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+  .hero-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #E63946;
+    margin-bottom: 24px;
+  }
+  .hero-headline {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+    max-width: 520px;
+  }
+  .hero-headline span { color: #E63946; }
+  .hero-subtitle {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #444;
+    max-width: 440px;
+    margin-bottom: 36px;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .btn-primary {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 16px 36px;
+    background: #E63946;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: #c4303c; }
+  .btn-secondary {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 16px 36px;
+    background: transparent;
+    color: #000;
+    border: 2px solid #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: #000; color: #fff; }
+  .btn-secondary svg { width: 16px; height: 16px; }
+
+  /* BIG NUMBER */
+  .big-number {
+    position: absolute;
+    bottom: 64px;
+    left: 80px;
+    display: flex;
+    align-items: baseline;
+    gap: 40px;
+  }
+  .big-number-main {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 140px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -6px;
+    color: #E63946;
+  }
+  .big-number-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+    max-width: 100px;
+    line-height: 1.5;
+  }
+  .big-number-divider {
+    width: 1px;
+    height: 48px;
+    background: #ccc;
+  }
+  .metric-small {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .metric-small-value {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+  .metric-small-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #888;
+  }
+
+  /* RIGHT PANEL — DASHBOARD */
+  .hero-right {
+    background: #000;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+  }
+
+  /* Dashboard grid */
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .dash-title {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #666;
+  }
+  .dash-live {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #E63946;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .dash-live-dot {
+    width: 6px;
+    height: 6px;
+    background: #E63946;
+    border-radius: 50%;
+  }
+
+  /* KPI Row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .kpi-card {
+    background: #111;
+    border: 1px solid #222;
+    padding: 20px;
+  }
+  .kpi-label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+  .kpi-change {
+    font-size: 12px;
+    font-weight: 500;
+    color: #E63946;
+    margin-top: 4px;
+  }
+  .kpi-change.positive { color: #fff; opacity: 0.7; }
+
+  /* Chart area */
+  .chart-area {
+    flex: 1;
+    background: #111;
+    border: 1px solid #222;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .chart-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .chart-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #555;
+  }
+  .chart-tabs {
+    display: flex;
+    gap: 2px;
+  }
+  .chart-tab {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #444;
+    padding: 4px 12px;
+    background: transparent;
+    border: 1px solid #333;
+  }
+  .chart-tab.active {
+    color: #fff;
+    background: #E63946;
+    border-color: #E63946;
+  }
+  .chart-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    flex: 1;
+    padding-top: 12px;
+  }
+  .chart-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-bar {
+    width: 100%;
+    background: #222;
+    position: relative;
+  }
+  .chart-bar.accent { background: #E63946; }
+  .chart-bar-label {
+    font-size: 9px;
+    color: #444;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  /* Bottom row */
+  .dash-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .data-table {
+    background: #111;
+    border: 1px solid #222;
+    padding: 16px;
+  }
+  .data-table-title {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+  .data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .data-row:last-child { border-bottom: none; }
+  .data-row-label {
+    font-size: 12px;
+    color: #888;
+  }
+  .data-row-value {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .data-row-value.red { color: #E63946; }
+
+  /* TRUST BAR */
+  .trust-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid #e0e0e0;
+    padding: 0 80px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    background: #fff;
+  }
+  .trust-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #aaa;
+    white-space: nowrap;
+  }
+  .trust-logos {
+    display: flex;
+    gap: 48px;
+    align-items: center;
+  }
+  .trust-logo {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #bbb;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+      <line x1="12" y1="22" x2="12" y2="15.5"/>
+      <polyline points="22 8.5 12 15.5 2 8.5"/>
+    </svg>
+    Meridian
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Product</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Docs</a></li>
+    <li><a href="#">Blog</a></li>
+  </ul>
+  <a href="#" class="nav-signin">Sign In</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+
+  <!-- LEFT -->
+  <div class="hero-left">
+    <div class="hero-label">Business Intelligence for Modern Teams</div>
+    <h1 class="hero-headline">Turn data into <span>decisions,</span> not dashboards</h1>
+    <p class="hero-subtitle">AI-powered analytics that tells you what matters, when it matters. Stop drowning in charts and start acting on real insights.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary">Start Free Trial</button>
+      <button class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Watch Demo
+      </button>
+    </div>
+    <div class="big-number">
+      <div class="big-number-main">3x</div>
+      <div class="big-number-label">Faster Insights</div>
+      <div class="big-number-divider"></div>
+      <div class="metric-small">
+        <div class="metric-small-value">50%</div>
+        <div class="metric-small-label">Less Meeting Time</div>
+      </div>
+      <div class="big-number-divider"></div>
+      <div class="metric-small">
+        <div class="metric-small-value">99.9%</div>
+        <div class="metric-small-label">Uptime</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — DASHBOARD MOCKUP -->
+  <div class="hero-right">
+    <div class="dash-header">
+      <div class="dash-title">Analytics Overview</div>
+      <div class="dash-live"><div class="dash-live-dot"></div> Live</div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Revenue</div>
+        <div class="kpi-value">$2.4M</div>
+        <div class="kpi-change positive">+12.3%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Active Users</div>
+        <div class="kpi-value">84.2K</div>
+        <div class="kpi-change positive">+8.7%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Churn Rate</div>
+        <div class="kpi-value">1.2%</div>
+        <div class="kpi-change red">-0.3pp</div>
+      </div>
+    </div>
+
+    <div class="chart-area">
+      <div class="chart-top">
+        <div class="chart-label">Monthly Performance</div>
+        <div class="chart-tabs">
+          <div class="chart-tab">7D</div>
+          <div class="chart-tab active">30D</div>
+          <div class="chart-tab">90D</div>
+        </div>
+      </div>
+      <div class="chart-bars">
+        <div class="chart-bar-group"><div class="chart-bar" style="height:60px"></div><div class="chart-bar-label">Jan</div></div>
+        <div class="chart-bar-group"><div class="chart-bar" style="height:80px"></div><div class="chart-bar-label">Feb</div></div>
+        <div class="chart-bar-group"><div class="chart-bar" style="height:55px"></div><div class="chart-bar-label">Mar</div></div>
+        <div class="chart-bar-group"><div class="chart-bar accent" style="height:110px"></div><div class="chart-bar-label">Apr</div></div>
+        <div class="chart-bar-group"><div class="chart-bar" style="height:95px"></div><div class="chart-bar-label">May</div></div>
+        <div class="chart-bar-group"><div class="chart-bar accent" style="height:130px"></div><div class="chart-bar-label">Jun</div></div>
+        <div class="chart-bar-group"><div class="chart-bar" style="height:105px"></div><div class="chart-bar-label">Jul</div></div>
+        <div class="chart-bar-group"><div class="chart-bar accent" style="height:145px"></div><div class="chart-bar-label">Aug</div></div>
+        <div class="chart-bar-group"><div class="chart-bar" style="height:120px"></div><div class="chart-bar-label">Sep</div></div>
+        <div class="chart-bar-group"><div class="chart-bar" style="height:100px"></div><div class="chart-bar-label">Oct</div></div>
+      </div>
+    </div>
+
+    <div class="dash-bottom">
+      <div class="data-table">
+        <div class="data-table-title">Top Segments</div>
+        <div class="data-row"><span class="data-row-label">Enterprise</span><span class="data-row-value">$1.1M</span></div>
+        <div class="data-row"><span class="data-row-label">Mid-Market</span><span class="data-row-value">$820K</span></div>
+        <div class="data-row"><span class="data-row-label">SMB</span><span class="data-row-value">$480K</span></div>
+      </div>
+      <div class="data-table">
+        <div class="data-table-title">AI Alerts Today</div>
+        <div class="data-row"><span class="data-row-label">Revenue spike detected</span><span class="data-row-value red">High</span></div>
+        <div class="data-row"><span class="data-row-label">Churn risk: Acme Corp</span><span class="data-row-value red">Med</span></div>
+        <div class="data-row"><span class="data-row-label">Expansion signal: Bolt</span><span class="data-row-value" style="color:#888">Low</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TRUST BAR (absolutely positioned at bottom-left) -->
+<div class="trust-bar" style="position:fixed; bottom:0; left:0; width:720px; z-index:10;">
+  <span class="trust-label">Trusted by</span>
+  <div class="trust-logos">
+    <span class="trust-logo">Stripe</span>
+    <span class="trust-logo">Notion</span>
+    <span class="trust-logo">Linear</span>
+    <span class="trust-logo">Vercel</span>
+    <span class="trust-logo">Figma</span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+  });
+</script>
+</body>
+</html>

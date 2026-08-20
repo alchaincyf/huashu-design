@@ -1,0 +1,25 @@
+{
+  "name": "huashu-design",
+  "description": "HTML-native design skill — prototypes, decks, motion, infographics, 5-dimension critique",
+  "owner": {
+    "name": "花叔 (Huashu)",
+    "url": "https://github.com/alchaincyf"
+  },
+  "plugins": [
+    {
+      "name": "huashu-design",
+      "description": "Say one sentence — ship a clickable prototype, editable deck, motion piece, or print-grade infographic.",
+      "version": "0.1.0",
+      "author": {
+        "name": "花叔 (Huashu)",
+        "url": "https://github.com/alchaincyf"
+      },
+      "category": "productivity",
+      "tags": ["design", "slides", "prototype", "animation", "html"],
+      "source": {
+        "type": "local",
+        "path": "./plugins/huashu-design"
+      }
+    }
+  ]
+}

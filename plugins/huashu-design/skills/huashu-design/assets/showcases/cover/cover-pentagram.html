@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Agent Parallel — Pentagram Style Cover</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 510px;
+    overflow: hidden;
+    margin: 0;
+    background: #FFFFFF;
+    font-family: 'Helvetica Neue', 'Arial', sans-serif;
+    position: relative;
+  }
+
+  /* Grid rules — Swiss grid visible structure */
+  .rule-h {
+    position: absolute;
+    left: 64px;
+    right: 64px;
+    height: 1px;
+    background: #000;
+    opacity: 0.06;
+  }
+
+  .rule-v {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: #000;
+    opacity: 0.04;
+  }
+
+  /* Giant typographic element — the "8" bleeds off right edge */
+  .type-anchor {
+    position: absolute;
+    right: -60px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 900;
+    font-size: 640px;
+    line-height: 0.82;
+    color: #000;
+    opacity: 0.07;
+    z-index: 0;
+    user-select: none;
+  }
+
+  /* Red geometric dot grid — 8 dots representing 8 agents */
+  .dot-grid {
+    position: absolute;
+    right: 340px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    grid-template-columns: repeat(4, 24px);
+    grid-template-rows: repeat(2, 24px);
+    gap: 16px;
+    z-index: 1;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #000;
+    opacity: 0.12;
+    align-self: center;
+    justify-self: center;
+  }
+
+  .dot.active {
+    background: #E63946;
+    opacity: 0.8;
+    width: 10px;
+    height: 10px;
+  }
+
+  /* Primary content zone — left-aligned on Swiss grid */
+  .content {
+    position: absolute;
+    left: 64px;
+    top: 56px;
+    z-index: 2;
+  }
+
+  .label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #E63946;
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 900;
+    font-size: 120px;
+    line-height: 0.9;
+    color: #000;
+    letter-spacing: -5px;
+  }
+
+  .title .accent {
+    color: #E63946;
+  }
+
+  /* Bottom information bar */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: #000;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 64px;
+  }
+
+  .bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .bottom-stat {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0.6;
+  }
+
+  .bottom-stat strong {
+    color: #E63946;
+    opacity: 1;
+    font-size: 16px;
+    margin-right: 6px;
+  }
+
+  .bottom-right {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    opacity: 0.4;
+  }
+
+  /* Subtitle */
+  .subtitle {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.5px;
+    margin-top: 20px;
+  }
+
+  /* Horizontal red rule through center */
+  .center-rule {
+    position: absolute;
+    left: 64px;
+    width: 240px;
+    height: 3px;
+    background: #E63946;
+    top: 306px;
+    z-index: 2;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Grid structure -->
+  <div class="rule-h" style="top: 56px;"></div>
+  <div class="rule-v" style="left: 64px;"></div>
+  <div class="rule-v" style="left: 600px;"></div>
+  <div class="rule-v" style="right: 64px;"></div>
+
+  <!-- Typographic anchor — bleeds right -->
+  <div class="type-anchor">8</div>
+
+  <!-- 8-dot grid representing agents -->
+  <div class="dot-grid">
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot active"></div>
+    <div class="dot"></div>
+    <div class="dot active"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="label">Claude Code Architecture</div>
+    <div class="title">Agent<br><span class="accent">Parallel</span></div>
+    <div class="subtitle">8 autonomous agents running in unified workflow</div>
+  </div>
+
+  <!-- Red horizontal rule -->
+  <div class="center-rule"></div>
+
+  <!-- Black bottom bar with data -->
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <div class="bottom-stat"><strong>8</strong>Agents</div>
+      <div class="bottom-stat"><strong>3.2x</strong>Faster</div>
+      <div class="bottom-stat"><strong>1</strong>Workflow</div>
+    </div>
+    <div class="bottom-right">Pentagram Design System</div>
+  </div>
+
+</body>
+</html>

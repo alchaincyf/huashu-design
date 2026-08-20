@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Inkwell — AI Writing Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    background: #FFFFFF;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #111111;
+    position: relative;
+  }
+
+  /* Grid overlay for Swiss design feel */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(90deg, transparent, transparent 119px, rgba(0,0,0,0.03) 119px, rgba(0,0,0,0.03) 120px),
+      repeating-linear-gradient(0deg, transparent, transparent 59px, rgba(0,0,0,0.02) 59px, rgba(0,0,0,0.02) 60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100%;
+    padding: 0;
+  }
+
+  /* LEFT PANEL */
+  .left-panel {
+    padding: 60px 60px 48px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 2px solid #111;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+
+  .logo span {
+    color: #E63946;
+  }
+
+  .nav {
+    display: flex;
+    gap: 28px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .nav a {
+    color: #111;
+    text-decoration: none;
+  }
+
+  .hero-content {
+    margin-top: -20px;
+  }
+
+  .headline {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 86px;
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -4px;
+    margin-bottom: 28px;
+  }
+
+  .headline em {
+    font-style: italic;
+    color: #E63946;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    color: #555;
+    line-height: 1.5;
+    max-width: 420px;
+    margin-bottom: 36px;
+  }
+
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 36px;
+    background: #E63946;
+    color: #fff;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .social-proof {
+    font-size: 13px;
+    color: #888;
+    letter-spacing: 0.3px;
+  }
+
+  .social-proof strong {
+    color: #111;
+    font-weight: 600;
+  }
+
+  /* FEATURES — strict 3 col */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 2px solid #111;
+  }
+
+  .feature-item {
+    padding: 20px 0;
+    border-right: 1px solid #ddd;
+  }
+
+  .feature-item:last-child {
+    border-right: none;
+  }
+
+  .feature-item:first-child {
+    padding-right: 16px;
+  }
+
+  .feature-item:nth-child(2) {
+    padding: 20px 16px;
+  }
+
+  .feature-item:last-child {
+    padding-left: 16px;
+  }
+
+  .feature-number {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #E63946;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .feature-title {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .feature-desc {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.5;
+  }
+
+  /* RIGHT PANEL — Editor mockup as wireframe */
+  .right-panel {
+    background: #F7F7F7;
+    padding: 48px 60px 48px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .editor-mockup {
+    width: 100%;
+    max-width: 580px;
+    height: 680px;
+    background: #fff;
+    border: 2px solid #111;
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    position: relative;
+  }
+
+  /* Grid reference lines on mockup */
+  .editor-mockup::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,0,0,0.03) 39px, rgba(0,0,0,0.03) 40px);
+    pointer-events: none;
+  }
+
+  .editor-main {
+    padding: 28px 24px;
+    border-right: 2px solid #111;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .editor-toolbar {
+    display: flex;
+    gap: 6px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+
+  .toolbar-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid #ccc;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toolbar-btn.active {
+    background: #111;
+    border-color: #111;
+    color: #fff;
+  }
+
+  .editor-title-line {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+    color: #111;
+  }
+
+  .editor-text-block {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 14px;
+  }
+
+  .editor-text-block .highlight {
+    background: rgba(230, 57, 70, 0.12);
+    border-bottom: 2px solid #E63946;
+    padding: 0 2px;
+  }
+
+  .editor-h2 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: 6px;
+    color: #111;
+  }
+
+  .editor-list {
+    font-size: 13px;
+    line-height: 2;
+    color: #555;
+    padding-left: 18px;
+  }
+
+  .editor-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 16px;
+    background: #E63946;
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* AI SIDEBAR */
+  .ai-sidebar {
+    padding: 20px 16px;
+    background: #FAFAFA;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .sidebar-header {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #E63946;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #111;
+  }
+
+  .sidebar-card {
+    padding: 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+  }
+
+  .sidebar-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #999;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-card-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111;
+    line-height: 1.4;
+  }
+
+  .style-meter {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+  }
+
+  .meter-bar {
+    height: 4px;
+    flex: 1;
+    background: #E0E0E0;
+  }
+
+  .meter-bar.filled {
+    background: #E63946;
+  }
+
+  .sidebar-suggestion {
+    padding: 10px 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .sidebar-suggestion strong {
+    color: #111;
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-action {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border: none;
+    justify-content: center;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid #ccc;
+    color: #666;
+    letter-spacing: 0.3px;
+  }
+
+  /* Corner mark */
+  .right-panel::after {
+    content: 'INKWELL V1.0';
+    position: absolute;
+    bottom: 20px;
+    right: 24px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #bbb;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="top-bar">
+      <div class="logo">INK<span>WELL</span></div>
+      <nav class="nav">
+        <a href="#">Features</a>
+        <a href="#">Pricing</a>
+        <a href="#">Blog</a>
+      </nav>
+    </div>
+
+    <div class="hero-content">
+      <h1 class="headline">Write<br>better,<br>faster,<br>with <em>your</em><br>own voice.</h1>
+      <p class="subtitle">AI that learns your style, not replaces it. Craft content for WeChat, Xiaohongshu, and video scripts — all in your authentic tone.</p>
+      <div class="cta-row">
+        <a href="#" class="cta-button">
+          Start Writing
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <span class="social-proof">Trusted by <strong>10,000+</strong> creators</span>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-number">01</div>
+        <div class="feature-title">Style Learning</div>
+        <div class="feature-desc">Adapts to your unique voice through continuous analysis of your writing patterns.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-number">02</div>
+        <div class="feature-title">Multi-Platform</div>
+        <div class="feature-desc">WeChat articles, Xiaohongshu posts, video scripts. One tool, every format.</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-number">03</div>
+        <div class="feature-title">Human-Touch</div>
+        <div class="feature-desc">Proofreading that preserves warmth and removes robotic phrasing.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL — Editor Mockup -->
+  <div class="right-panel">
+    <div class="editor-mockup">
+      <div class="editor-main">
+        <div class="editor-toolbar">
+          <div class="toolbar-btn active"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></div>
+          <div class="toolbar-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></div>
+          <div class="toolbar-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="12" x2="3" y2="12"/><line x1="17" y1="18" x2="3" y2="18"/></svg></div>
+          <div class="toolbar-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        </div>
+
+        <div class="editor-title-line">The Future of Content Creation</div>
+        <div class="editor-text-block">
+          Every creator faces the same tension: the desire to produce more content versus the need to maintain quality and authenticity. <span class="highlight">AI doesn't have to mean losing your voice</span> — it can mean amplifying it.
+        </div>
+        <div class="editor-h2">Why Authenticity Matters</div>
+        <div class="editor-text-block">
+          Readers can tell. They feel the difference between words that carry genuine experience and words assembled by algorithm. The goal isn't to write <em>more</em> — it's to write more of what only you can write.<span class="editor-cursor"></span>
+        </div>
+        <div class="editor-h2">Key Principles</div>
+        <ol class="editor-list">
+          <li>Write from personal experience first</li>
+          <li>Use AI for refinement, not replacement</li>
+          <li>Adapt tone for each platform</li>
+        </ol>
+      </div>
+
+      <div class="ai-sidebar">
+        <div class="sidebar-header">AI Assistant</div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card-label">Style Match</div>
+          <div class="sidebar-card-value">92% Voice Fidelity</div>
+          <div class="style-meter">
+            <div class="meter-bar filled"></div>
+            <div class="meter-bar filled"></div>
+            <div class="meter-bar filled"></div>
+            <div class="meter-bar filled"></div>
+            <div class="meter-bar"></div>
+          </div>
+        </div>
+
+        <div class="sidebar-card">
+          <div class="sidebar-card-label">Target</div>
+          <div class="sidebar-card-value">WeChat Article</div>
+          <div class="tag-row">
+            <span class="tag">WeChat</span>
+            <span class="tag">XHS</span>
+            <span class="tag">Script</span>
+          </div>
+        </div>
+
+        <div class="sidebar-suggestion">
+          <strong>Suggestion</strong>
+          Consider opening with a specific anecdote to strengthen the personal connection.
+        </div>
+
+        <div class="sidebar-suggestion">
+          <strong>Tone Check</strong>
+          Paragraph 2 reads slightly formal. Soften with a conversational phrase.
+        </div>
+
+        <button class="sidebar-action">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Refine Selection
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

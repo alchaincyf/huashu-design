@@ -1,0 +1,7 @@
+interface:
+  display_name: "Huashu Design"
+  short_description: "HTML-native prototypes, decks, motion, and infographics"
+  default_prompt: "Use $huashu-design. First show 3 visual directions as real HTML drafts, wait for me to pick one, then execute. Do not skip the three-direction gate."
+
+policy:
+  allow_implicit_invocation: true
