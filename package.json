@@ -1,4 +1,21 @@
 {
+  "name": "huashu-design",
+  "private": true,
+  "description": "HTML-native design skill from 花叔 (Huashu).",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["pi-package", "agent-skill", "design"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alchaincyf/huashu-design.git"
+  },
+  "homepage": "https://github.com/alchaincyf/huashu-design#readme",
+  "scripts": {
+    "test": "node --test test/plugin-marketplace.test.mjs"
+  },
+  "pi": {
+    "skills": ["."]
+  },
   "dependencies": {
     "pdf-lib": "^1.17.1",
     "playwright": "^1.59.1",

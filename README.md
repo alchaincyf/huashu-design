@@ -101,7 +101,7 @@ codex plugin add huashu-design@huashu-design
 pi install git:github.com/alchaincyf/huashu-design
 ```
 
-Skill 本体仍是仓库根目录的 `SKILL.md` + `assets/` + `references/` + `scripts/`。`plugins/huashu-design/skills/huashu-design/` 是 **文件拷贝**（不是 symlink）：Codex 复制 `skills/` 时会丢掉链接。改 skill 后跑 `bash scripts/build-plugin-leaf.sh`。
+Skill 本体仍是仓库根目录的 `SKILL.md` + `assets/` + `references/` + `scripts/`。`plugins/huashu-design/skills/huashu-design/` 是 **git 跟踪文件的拷贝**（不是 symlink，不打包未跟踪文件）：Codex 复制 `skills/` 时会丢掉链接。改 skill 后跑 `node scripts/build-plugin-leaf.mjs`，发版前 `node scripts/check-plugin-release.mjs --write`。
 
 然后在 Claude Code / Codex / Cursor 等任意支持 skills 的 agent 里直接说话：
 

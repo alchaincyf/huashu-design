@@ -89,7 +89,7 @@ codex plugin add huashu-design@huashu-design
 pi install git:github.com/alchaincyf/huashu-design
 ```
 
-The Skill source of truth remains root `SKILL.md` + `assets/` + `references/` + `scripts/`. `plugins/huashu-design/skills/huashu-design/` is a **regular-file copy** (not a symlink farm): Codex copies `skills/` and drops links. After editing the Skill, run `bash scripts/build-plugin-leaf.sh`.
+The Skill source of truth remains root `SKILL.md` + `assets/` + `references/` + `scripts/`. `plugins/huashu-design/skills/huashu-design/` is a **tracked-file copy** (not a symlink farm; untracked files are excluded): Codex copies `skills/` and drops links. After editing the Skill, run `node scripts/build-plugin-leaf.mjs`; before a plugin release, run `node scripts/check-plugin-release.mjs --write`.
 
 Then just talk to Claude Code:
 
