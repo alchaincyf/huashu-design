@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Alex Chen — Indie Developer & AI Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    background: #F5F0EB;
+    font-family: 'Inter', sans-serif;
+    color: #3D3D3A;
+    position: relative;
+  }
+
+  /* PAPER TEXTURE */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.008) 2px,
+        rgba(0,0,0,0.008) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.005) 2px,
+        rgba(0,0,0,0.005) 4px
+      );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    z-index: 10;
+  }
+  nav .logo {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #3D3D3A;
+    letter-spacing: 0.02em;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+  nav ul li a {
+    font-weight: 400;
+    font-size: 13px;
+    color: #8A8A84;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.3s;
+  }
+  nav ul li a:hover { color: #3D3D3A; }
+  nav ul li.active a { color: #3D3D3A; }
+
+  /* Hairline below nav */
+  nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 1px;
+    background: #C8C2B6;
+  }
+
+  /* MAIN LAYOUT - ASYMMETRIC */
+  .hero {
+    position: absolute;
+    top: 72px;
+    left: 0;
+    width: 1440px;
+    height: 828px;
+    display: grid;
+    grid-template-columns: 120px 1fr 400px 120px;
+    grid-template-rows: 1fr;
+    align-items: center;
+    z-index: 2;
+  }
+
+  /* LEFT MARGIN ELEMENT */
+  .margin-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 80px;
+    height: 100%;
+  }
+  .margin-left .vertical-text {
+    writing-mode: vertical-rl;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: #B8B2A6;
+    font-weight: 300;
+  }
+
+  /* CENTER CONTENT */
+  .hero-center {
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero-center .section-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #6B8F71;
+    font-weight: 500;
+    margin-bottom: 32px;
+    opacity: 0.8;
+  }
+
+  .hero-center h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 300;
+    font-size: 56px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: #2D3436;
+  }
+  .hero-center h1 .serif-accent {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 600;
+    font-style: normal;
+    color: #2D3436;
+  }
+
+  /* HAIRLINE DIVIDER */
+  .hairline {
+    width: 48px;
+    height: 1px;
+    background: #C8C2B6;
+    margin: 36px 0;
+  }
+
+  .hero-center .tagline {
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #8A8A84;
+    max-width: 420px;
+  }
+
+  /* STATS - HORIZONTAL */
+  .stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 48px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat .stat-value {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 600;
+    font-size: 28px;
+    color: #2D3436;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+  .stat .stat-desc {
+    font-size: 11px;
+    color: #B8B2A6;
+    margin-top: 8px;
+    letter-spacing: 0.04em;
+    font-weight: 400;
+  }
+
+  /* CTA */
+  .hero-cta {
+    margin-top: 48px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .cta-link {
+    font-weight: 500;
+    font-size: 13px;
+    color: #3D3D3A;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 0;
+    border-bottom: 1px solid #C8C2B6;
+    transition: all 0.3s;
+  }
+  .cta-link:hover { border-color: #6B8F71; color: #6B8F71; }
+  .cta-link svg { width: 14px; height: 14px; }
+
+  .cta-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #C8C2B6;
+  }
+
+  .cta-subtle {
+    font-weight: 300;
+    font-size: 13px;
+    color: #B8B2A6;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .cta-subtle:hover { color: #3D3D3A; }
+
+  /* RIGHT PANEL */
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    position: relative;
+  }
+
+  /* PORTRAIT */
+  .portrait-container {
+    position: relative;
+  }
+  .portrait {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: #EAE5DD;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(200, 194, 182, 0.4);
+  }
+  .portrait::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 96px;
+    height: 110px;
+    background: #D5CEC4;
+    border-radius: 48px 48px 0 0;
+  }
+  .portrait-ring {
+    position: absolute;
+    top: -16px; left: -16px;
+    width: 212px;
+    height: 212px;
+    border-radius: 50%;
+    border: 1px solid rgba(107, 143, 113, 0.2);
+  }
+
+  /* BIO CARD */
+  .bio-card {
+    margin-top: 36px;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 12px;
+    padding: 24px 28px;
+    width: 260px;
+    backdrop-filter: blur(8px);
+  }
+  .bio-card .bio-name {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #3D3D3A;
+  }
+  .bio-card .bio-role {
+    font-size: 12px;
+    color: #B8B2A6;
+    margin-top: 4px;
+    font-weight: 300;
+  }
+  .bio-card .bio-hairline {
+    width: 32px;
+    height: 1px;
+    background: #C8C2B6;
+    margin: 16px 0;
+  }
+  .bio-card .bio-desc {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #8A8A84;
+    font-weight: 300;
+  }
+
+  /* RIGHT MARGIN */
+  .margin-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 80px;
+    height: 100%;
+  }
+  .margin-right .year {
+    writing-mode: vertical-rl;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: #C8C2B6;
+    font-weight: 300;
+  }
+
+  /* DECORATIVE: FLOATING LEAF/ORGANIC SHAPE */
+  .organic-shape {
+    position: absolute;
+    top: 140px;
+    right: 280px;
+    width: 60px;
+    height: 80px;
+    z-index: 3;
+    opacity: 0.08;
+  }
+  .organic-shape svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* BOTTOM AREA */
+  .bottom-zen {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    z-index: 5;
+  }
+  .bottom-zen .zen-line {
+    width: 48px;
+    height: 1px;
+    background: #C8C2B6;
+  }
+  .bottom-zen .zen-text {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: #C8C2B6;
+    font-weight: 300;
+  }
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Alex Chen</div>
+    <ul>
+      <li class="active"><a href="#work">Work</a></li>
+      <li><a href="#content">Content</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- DECORATIVE: Subtle spec annotation -->
+  <svg style="position:absolute;top:100px;right:340px;z-index:3;opacity:0.15;" width="60" height="60" viewBox="0 0 60 60" fill="none">
+    <circle cx="30" cy="30" r="28" stroke="#6B8F71" stroke-width="0.5"/>
+    <circle cx="30" cy="30" r="18" stroke="#6B8F71" stroke-width="0.5" stroke-dasharray="2,4"/>
+    <line x1="30" y1="0" x2="30" y2="60" stroke="#6B8F71" stroke-width="0.3"/>
+    <line x1="0" y1="30" x2="60" y2="30" stroke="#6B8F71" stroke-width="0.3"/>
+  </svg>
+
+  <!-- HERO -->
+  <div class="hero">
+    <!-- LEFT MARGIN -->
+    <div class="margin-left">
+      <div class="vertical-text">PORTFOLIO</div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="hero-center">
+      <div class="section-label">Indie Developer & AI Creator</div>
+      <h1>Building tools<br>at the intersection<br>of <span class="serif-accent">AI</span> and <span class="serif-accent">creativity</span></h1>
+      <div class="hairline"></div>
+      <p class="tagline">I design, build, and write about the things that emerge when technology meets human imagination.</p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">300K+</div>
+          <div class="stat-desc">followers</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">No. 1</div>
+          <div class="stat-desc">App Store</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">100+</div>
+          <div class="stat-desc">articles published</div>
+        </div>
+      </div>
+
+      <div class="hero-cta">
+        <a href="#work" class="cta-link">
+          Explore Work
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+        <div class="cta-dot"></div>
+        <a href="#content" class="cta-subtle">Read Writing</a>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="hero-right">
+      <div class="portrait-container">
+        <div class="portrait"></div>
+        <div class="portrait-ring"></div>
+      </div>
+      <div class="bio-card">
+        <div class="bio-name">Alex Chen</div>
+        <div class="bio-role">Developer / Writer / Creator</div>
+        <div class="bio-hairline"></div>
+        <div class="bio-desc">Shipping AI-powered products as an independent maker. Writing about the craft of building.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT MARGIN -->
+    <div class="margin-right">
+      <div class="year">2026</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM ZEN -->
+  <div class="bottom-zen">
+    <div class="zen-line"></div>
+    <div class="zen-text">Design as inquiry</div>
+    <div class="zen-line"></div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Inkwell — AI Writing Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    background: #F5F0EB;
+    font-family: 'Inter', sans-serif;
+    color: #3D3D3D;
+  }
+
+  .page {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* NAV */
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 64px;
+  }
+
+  .logo {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #5C5347;
+    letter-spacing: 1px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+  }
+
+  .nav-right a {
+    font-size: 13px;
+    font-weight: 400;
+    color: #8A8278;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+
+  .nav-cta {
+    padding: 10px 24px;
+    background: transparent;
+    color: #2D3436;
+    border: 1px solid rgba(45, 52, 54, 0.2);
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+
+  /* MAIN CONTENT */
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 64px;
+    gap: 36px;
+  }
+
+  /* HERO ROW */
+  .hero-row {
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    gap: 56px;
+    align-items: start;
+    padding-top: 16px;
+  }
+
+  .hero-text {
+    padding-top: 20px;
+  }
+
+  .headline {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 44px;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.5px;
+    color: #3D3D3D;
+    margin-bottom: 20px;
+  }
+
+  .headline .accent {
+    color: #6B8F71;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.8;
+    color: #8A8278;
+    max-width: 420px;
+    margin-bottom: 28px;
+  }
+
+  .cta-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: #2D3436;
+    color: #F5F0EB;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    border: none;
+    border-radius: 32px;
+    cursor: pointer;
+  }
+
+  .social-proof {
+    font-size: 12px;
+    font-weight: 400;
+    color: #B5AD9E;
+    letter-spacing: 0.3px;
+  }
+
+  /* EDITOR MOCKUP — organic rounded */
+  .editor-container {
+    position: relative;
+  }
+
+  .editor-card {
+    width: 100%;
+    max-width: 720px;
+    height: 460px;
+    background: #FDFCF9;
+    border-radius: 24px;
+    box-shadow:
+      0 2px 8px rgba(92,83,71,0.04),
+      0 8px 24px rgba(92,83,71,0.06),
+      0 24px 48px rgba(92,83,71,0.03);
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    overflow: hidden;
+  }
+
+  .editor-body {
+    padding: 28px 28px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .editor-toolbar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #EDE8DF;
+  }
+
+  .e-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #C4BDB2;
+    cursor: pointer;
+  }
+
+  .e-btn.active {
+    background: #EDE8DF;
+    color: #5C5347;
+  }
+
+  .e-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #3D3D3D;
+    margin-bottom: 14px;
+  }
+
+  .e-text {
+    font-size: 13.5px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: #6B6560;
+    margin-bottom: 12px;
+  }
+
+  .e-text .enhanced {
+    background: rgba(107,143,113,0.2);
+    border-radius: 4px;
+    padding: 1px 4px;
+  }
+
+  .e-h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #3D3D3D;
+    margin-bottom: 10px;
+    margin-top: 2px;
+  }
+
+  .e-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .e-list li {
+    font-size: 13px;
+    font-weight: 300;
+    color: #8A8278;
+    line-height: 1.9;
+    padding-left: 18px;
+    position: relative;
+  }
+
+  .e-list li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid #6B8F71;
+  }
+
+  .typing-cursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 14px;
+    background: #6B8F71;
+    animation: softblink 1.5s ease-in-out infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+
+  @keyframes softblink {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.15; }
+  }
+
+  /* AI Sidebar */
+  .ai-panel {
+    background: #F8F5EF;
+    border-left: 1px solid #EDE8DF;
+    padding: 22px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #EDE8DF;
+  }
+
+  .panel-header svg {
+    color: #6B8F71;
+  }
+
+  .panel-header span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #5C5347;
+    letter-spacing: 0.5px;
+  }
+
+  .panel-card {
+    background: #FDFCF9;
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid #EDE8DF;
+  }
+
+  .panel-card-label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #B5AD9E;
+    margin-bottom: 6px;
+  }
+
+  .panel-card-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: #3D3D3D;
+  }
+
+  .voice-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .vb-track {
+    flex: 1;
+    height: 4px;
+    background: #EDE8DF;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .vb-fill {
+    width: 92%;
+    height: 100%;
+    background: linear-gradient(90deg, #6B8F71, #C4D1BC);
+    border-radius: 4px;
+  }
+
+  .vb-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6B8F71;
+  }
+
+  .platform-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .pill {
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    background: #EDE8DF;
+    color: #8A8278;
+  }
+
+  .pill.active {
+    background: rgba(107,143,113,0.25);
+    color: #5C5347;
+  }
+
+  .panel-note {
+    font-size: 11.5px;
+    font-weight: 300;
+    color: #8A8278;
+    line-height: 1.6;
+    padding: 12px;
+    background: #FDFCF9;
+    border-radius: 14px;
+    border: 1px solid #EDE8DF;
+  }
+
+  .panel-note .note-label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #B5AD9E;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* FLOW DIAGRAM */
+  .flow-section {
+    padding: 0 0 0 0;
+  }
+
+  .flow-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 20px 0;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 28px;
+    background: #FDFCF9;
+    border-radius: 18px;
+    border: 1px solid #EDE8DF;
+    box-shadow: 0 2px 8px rgba(92,83,71,0.03);
+  }
+
+  .flow-step-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .flow-step-icon.ideas {
+    background: rgba(107,143,113,0.2);
+    color: #6B8F71;
+  }
+
+  .flow-step-icon.ai {
+    background: rgba(212,187,156,0.25);
+    color: #C4A87A;
+  }
+
+  .flow-step-icon.voice {
+    background: rgba(92,83,71,0.1);
+    color: #5C5347;
+  }
+
+  .flow-step-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flow-step-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #3D3D3D;
+    margin-bottom: 2px;
+  }
+
+  .flow-step-desc {
+    font-size: 11px;
+    font-weight: 300;
+    color: #B5AD9E;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    color: #C4BDB2;
+  }
+
+  .flow-arrow svg {
+    opacity: 0.6;
+  }
+
+  /* FEATURES ROW */
+  .features-strip {
+    display: flex;
+    justify-content: center;
+    gap: 56px;
+    padding: 12px 0 20px 0;
+  }
+
+  .feat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .feat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(107,143,113,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6B8F71;
+    flex-shrink: 0;
+  }
+
+  .feat-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .feat-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #3D3D3D;
+    margin-bottom: 1px;
+  }
+
+  .feat-sub {
+    font-size: 11px;
+    font-weight: 300;
+    color: #B5AD9E;
+  }
+
+  .divider-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #D5CFC5;
+    align-self: center;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- NAV -->
+  <nav class="nav-bar">
+    <div class="logo">Inkwell</div>
+    <div class="nav-right">
+      <a href="#">Philosophy</a>
+      <a href="#">Features</a>
+      <a href="#">Stories</a>
+      <a href="#" class="nav-cta">Start Writing</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <!-- HERO -->
+    <div class="hero-row">
+      <div class="hero-text">
+        <h1 class="headline">Write better, faster,<br>with <span class="accent">your own</span> voice</h1>
+        <p class="subtitle">AI that learns your style, not replaces it. A mindful writing companion for WeChat, Xiaohongshu, and video scripts that honours your creative instincts.</p>
+        <div class="cta-area">
+          <a href="#" class="cta-button">
+            Start Writing
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <span class="social-proof">Trusted by 10,000+ creators</span>
+        </div>
+      </div>
+
+      <!-- EDITOR CARD -->
+      <div class="editor-container">
+        <div class="editor-card">
+          <div class="editor-body">
+            <div class="editor-toolbar">
+              <button class="e-btn active"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button>
+              <button class="e-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+              <button class="e-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="6" x2="3" y2="6"/><line x1="15" y1="12" x2="3" y2="12"/><line x1="17" y1="18" x2="3" y2="18"/></svg></button>
+              <button class="e-btn"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+            </div>
+
+            <div class="e-title">On the Patience of Growing Things</div>
+            <div class="e-text">
+              There is a kind of writing that happens slowly, like roots in winter soil. <span class="enhanced">You cannot rush a sentence into meaning any more than you can rush a seed into bloom</span>. The best words arrive when you stop chasing them.
+            </div>
+            <div class="e-h2">Listening to the Draft</div>
+            <div class="e-text">
+              Every draft speaks, if you give it room. The first version is never wrong — it is simply unfinished. What AI can offer is not replacement, but reflection: a gentle mirror held up to your own intentions.<span class="typing-cursor"></span>
+            </div>
+            <ul class="e-list">
+              <li>Trust the messy first draft</li>
+              <li>Let AI reveal patterns you missed</li>
+              <li>Preserve what makes it yours</li>
+            </ul>
+          </div>
+
+          <div class="ai-panel">
+            <div class="panel-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span>Inkwell AI</span>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-card-label">Voice Match</div>
+              <div class="panel-card-value">Your Style</div>
+              <div class="voice-bar">
+                <div class="vb-track"><div class="vb-fill"></div></div>
+                <div class="vb-label">92%</div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-card-label">Platform</div>
+              <div class="panel-card-value">WeChat</div>
+              <div class="platform-pills">
+                <span class="pill active">WeChat</span>
+                <span class="pill">XHS</span>
+                <span class="pill">Script</span>
+              </div>
+            </div>
+
+            <div class="panel-note">
+              <span class="note-label">Observation</span>
+              The seed metaphor in paragraph one is lovely. Consider echoing it in the closing line for a sense of return.
+            </div>
+
+            <div class="panel-note">
+              <span class="note-label">Tone</span>
+              Gentle, contemplative. This reads naturally as you.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLOW DIAGRAM -->
+    <div class="flow-section">
+      <div class="flow-bar">
+        <div class="flow-step">
+          <div class="flow-step-icon ideas">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 12 18.469c-1.006 0-1.938-.429-2.577-1.177l-.56-.56z"/></svg>
+          </div>
+          <div class="flow-step-text">
+            <div class="flow-step-label">Your Ideas</div>
+            <div class="flow-step-desc">Raw thoughts and drafts</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">
+          <svg width="32" height="16" viewBox="0 0 32 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="2" y1="8" x2="28" y2="8"/><polyline points="24 4 28 8 24 12"/></svg>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-icon ai">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="flow-step-text">
+            <div class="flow-step-label">AI Enhancement</div>
+            <div class="flow-step-desc">Refine, not rewrite</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">
+          <svg width="32" height="16" viewBox="0 0 32 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="2" y1="8" x2="28" y2="8"/><polyline points="24 4 28 8 24 12"/></svg>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-step-icon voice">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <div class="flow-step-text">
+            <div class="flow-step-label">Your Voice</div>
+            <div class="flow-step-desc">Unmistakably you</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES STRIP -->
+    <div class="features-strip">
+      <div class="feat">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="feat-text">
+          <div class="feat-name">Style Learning</div>
+          <div class="feat-sub">Evolves with your writing</div>
+        </div>
+      </div>
+
+      <div class="divider-dot"></div>
+
+      <div class="feat">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="feat-text">
+          <div class="feat-name">Multi-Platform</div>
+          <div class="feat-sub">WeChat, XHS, video scripts</div>
+        </div>
+      </div>
+
+      <div class="divider-dot"></div>
+
+      <div class="feat">
+        <div class="feat-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="feat-text">
+          <div class="feat-name">Human-Touch Proofreading</div>
+          <div class="feat-sub">Warmth-preserving refinement</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

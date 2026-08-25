@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>AI Memory System Optimization — Pentagram Style</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    margin: 0;
+    background: #FFFFFF;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #111;
+  }
+
+  .container {
+    width: 100%;
+    height: 100%;
+    padding: 64px 72px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 6px solid #111;
+    padding-bottom: 24px;
+    margin-bottom: 0;
+  }
+
+  .header-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #E63946;
+    margin-bottom: 12px;
+  }
+
+  .header-title {
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: #111;
+  }
+
+  .header-subtitle {
+    font-size: 15px;
+    font-weight: 400;
+    color: #999;
+    margin-top: 8px;
+  }
+
+  /* Hero Numbers Section */
+  .hero-section {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    padding: 48px 0 20px 0;
+    border-bottom: 2px solid #111;
+    gap: 0;
+  }
+
+  .hero-num {
+    font-weight: 900;
+    font-size: 200px;
+    line-height: 0.85;
+    letter-spacing: -8px;
+    color: #111;
+  }
+
+  .hero-unit {
+    font-size: 36px;
+    font-weight: 500;
+    color: #111;
+    margin-left: 4px;
+    align-self: flex-end;
+    margin-bottom: 18px;
+  }
+
+  .hero-arrow-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 28px;
+    align-self: center;
+  }
+
+  .hero-arrow-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #E63946;
+    margin-bottom: 6px;
+  }
+
+  .hero-num-accent {
+    font-weight: 900;
+    font-size: 200px;
+    line-height: 0.85;
+    letter-spacing: -8px;
+    color: #E63946;
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 6px solid #111;
+  }
+
+  .hero-meta-item {
+    font-size: 12px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 1px;
+  }
+
+  .hero-meta-item strong {
+    color: #111;
+    font-weight: 900;
+  }
+
+  /* Sections */
+  .section {
+    padding: 32px 0 0 0;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .section-num {
+    font-size: 48px;
+    font-weight: 900;
+    color: #E63946;
+    line-height: 1;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #111;
+    line-height: 1;
+  }
+
+  .section-divider {
+    width: 100%;
+    height: 2px;
+    background: #111;
+    margin-bottom: 20px;
+  }
+
+  /* Data Bars */
+  .data-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .data-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .data-bar-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    width: 100px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .data-bar-track {
+    flex: 1;
+    height: 32px;
+    background: #F0F0F0;
+    position: relative;
+  }
+
+  .data-bar-fill {
+    height: 100%;
+    background: #111;
+  }
+
+  .data-bar-fill.accent {
+    background: #E63946;
+  }
+
+  .data-bar-value {
+    font-size: 14px;
+    font-weight: 900;
+    color: #111;
+    width: 60px;
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  /* Category Grid */
+  .category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: #111;
+    border: 2px solid #111;
+  }
+
+  .category-cell {
+    background: #fff;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .category-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 2px;
+  }
+
+  .category-name-zh {
+    font-size: 22px;
+    font-weight: 900;
+    color: #111;
+    line-height: 1.2;
+  }
+
+  .category-name-en {
+    font-size: 11px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .category-desc {
+    font-size: 12px;
+    font-weight: 400;
+    color: #666;
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+
+  .category-cell.accent {
+    background: #E63946;
+  }
+
+  .category-cell.accent .category-num,
+  .category-cell.accent .category-name-zh,
+  .category-cell.accent .category-name-en,
+  .category-cell.accent .category-desc {
+    color: #fff;
+  }
+
+  /* Section 03: Design Principles */
+  .principles {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .principle-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid #E8E8E8;
+  }
+
+  .principle-row:last-child {
+    border-bottom: none;
+  }
+
+  .principle-num {
+    font-size: 32px;
+    font-weight: 900;
+    color: #E63946;
+    width: 64px;
+    flex-shrink: 0;
+    padding: 16px 0;
+    line-height: 1;
+  }
+
+  .principle-content {
+    padding: 16px 0 16px 16px;
+    border-left: 1px solid #E8E8E8;
+    flex: 1;
+  }
+
+  .principle-name {
+    font-size: 16px;
+    font-weight: 900;
+    color: #111;
+    margin-bottom: 4px;
+  }
+
+  .principle-desc {
+    font-size: 13px;
+    font-weight: 400;
+    color: #888;
+    line-height: 1.5;
+  }
+
+  /* Section 04: Results */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .result-card {
+    padding: 32px 24px;
+    border-right: 1px solid #E8E8E8;
+  }
+
+  .result-card:last-child {
+    border-right: none;
+  }
+
+  .result-number {
+    font-size: 64px;
+    font-weight: 900;
+    color: #E63946;
+    line-height: 1;
+    letter-spacing: -3px;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 8px;
+  }
+
+  /* Insight Quote */
+  .insight-section {
+    margin-top: auto;
+    border-top: 6px solid #111;
+    padding-top: 24px;
+  }
+
+  .insight-quote {
+    font-size: 24px;
+    font-weight: 500;
+    color: #111;
+    line-height: 1.4;
+    letter-spacing: -0.5px;
+    font-style: italic;
+  }
+
+  .insight-quote .highlight {
+    color: #E63946;
+    font-weight: 900;
+    font-style: normal;
+  }
+
+  .insight-result {
+    display: flex;
+    gap: 40px;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #DDD;
+  }
+
+  .insight-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .insight-dot {
+    width: 8px;
+    height: 8px;
+    background: #E63946;
+    flex-shrink: 0;
+  }
+
+  .insight-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #DDD;
+  }
+
+  .footer-text {
+    font-size: 10px;
+    font-weight: 500;
+    color: #CCC;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-label">Case Study / System Design</div>
+    <div class="header-title">AI记忆系统：CLAUDE.md<br>从臃肿到优雅的重构之路</div>
+    <div class="header-subtitle">A systematic approach to AI memory architecture optimization</div>
+  </div>
+
+  <!-- Hero Numbers -->
+  <div class="hero-section">
+    <span class="hero-num">93</span>
+    <span class="hero-unit">KB</span>
+    <div class="hero-arrow-container">
+      <span class="hero-arrow-label">reduced to</span>
+      <svg width="64" height="24" viewBox="0 0 64 24">
+        <line x1="0" y1="12" x2="52" y2="12" stroke="#E63946" stroke-width="3"/>
+        <polygon points="52,4 64,12 52,20" fill="#E63946"/>
+      </svg>
+    </div>
+    <span class="hero-num-accent">22</span>
+    <span class="hero-unit" style="color:#E63946">KB</span>
+  </div>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><strong>76%</strong> reduction</div>
+    <div class="hero-meta-item"><strong>2400+</strong> lines before</div>
+    <div class="hero-meta-item"><strong>1</strong> file to <strong>structured</strong> system</div>
+    <div class="hero-meta-item"><strong>0</strong> information loss</div>
+  </div>
+
+  <!-- Section 01: Before vs After -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">Before vs After</span>
+    </div>
+    <div class="section-divider"></div>
+    <div class="data-bars">
+      <div class="data-bar-row">
+        <span class="data-bar-label">Before</span>
+        <div class="data-bar-track">
+          <div class="data-bar-fill" style="width: 100%;"></div>
+        </div>
+        <span class="data-bar-value">93 KB</span>
+      </div>
+      <div class="data-bar-row">
+        <span class="data-bar-label">After</span>
+        <div class="data-bar-track">
+          <div class="data-bar-fill accent" style="width: 23.7%;"></div>
+        </div>
+        <span class="data-bar-value">22 KB</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 02: Memory Architecture -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Memory Architecture</span>
+    </div>
+    <div class="section-divider"></div>
+    <div class="category-grid">
+      <div class="category-cell accent">
+        <span class="category-num">I</span>
+        <span class="category-name-zh">核心身份</span>
+        <span class="category-name-en">Core Identity</span>
+        <span class="category-desc">Who you are, fundamental traits, immutable facts</span>
+      </div>
+      <div class="category-cell">
+        <span class="category-num">II</span>
+        <span class="category-name-zh">偏好设置</span>
+        <span class="category-name-en">Preferences</span>
+        <span class="category-desc">Style, tools, workflow habits, accumulated over time</span>
+      </div>
+      <div class="category-cell">
+        <span class="category-num">III</span>
+        <span class="category-name-zh">项目状态</span>
+        <span class="category-name-en">Project State</span>
+        <span class="category-desc">Current tasks, deadlines, priorities, progress tracking</span>
+      </div>
+      <div class="category-cell">
+        <span class="category-num">IV</span>
+        <span class="category-name-zh">日志流水</span>
+        <span class="category-name-en">Daily Logs</span>
+        <span class="category-desc">Session-level records, searchable history, never auto-loaded</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 03: Design Principles -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">Design Principles</span>
+    </div>
+    <div class="section-divider"></div>
+    <div class="principles">
+      <div class="principle-row">
+        <div class="principle-num">A</div>
+        <div class="principle-content">
+          <div class="principle-name">Route, Don't Dump</div>
+          <div class="principle-desc">Router file dispatches to workspace-specific rules. Never load everything at once.</div>
+        </div>
+      </div>
+      <div class="principle-row">
+        <div class="principle-num">B</div>
+        <div class="principle-content">
+          <div class="principle-name">Structured Hierarchy</div>
+          <div class="principle-desc">Identity > Preferences > Projects > Logs. Each layer loads on demand.</div>
+        </div>
+      </div>
+      <div class="principle-row">
+        <div class="principle-num">C</div>
+        <div class="principle-content">
+          <div class="principle-name">Write Rules, Not Records</div>
+          <div class="principle-desc">Store reusable patterns, not one-time instructions. Keep memory under 100 lines.</div>
+        </div>
+      </div>
+      <div class="principle-row">
+        <div class="principle-num">D</div>
+        <div class="principle-content">
+          <div class="principle-name">Silent Operations</div>
+          <div class="principle-desc">Memory read/write happens silently. Never interrupt the user's task flow.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 04: Results -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">Results</span>
+    </div>
+    <div class="section-divider"></div>
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="result-number">76%</div>
+        <div class="result-label">Size Reduction</div>
+      </div>
+      <div class="result-card">
+        <div class="result-number">2.3x</div>
+        <div class="result-label">Faster Loading</div>
+      </div>
+      <div class="result-card">
+        <div class="result-number">0</div>
+        <div class="result-label">Data Loss</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Insight -->
+  <div class="insight-section">
+    <div class="insight-quote">
+      "Like <span class="highlight">Marie Kondo</span> for AI memory
+      — keep only what sparks joy."
+    </div>
+    <div class="insight-result">
+      <div class="insight-item">
+        <div class="insight-dot"></div>
+        <span class="insight-text">Faster context loading</span>
+      </div>
+      <div class="insight-item">
+        <div class="insight-dot"></div>
+        <span class="insight-text">More relevant responses</span>
+      </div>
+      <div class="insight-item">
+        <div class="insight-dot"></div>
+        <span class="insight-text">Zero information loss</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="footer-text">Pentagram Style</span>
+    <span class="footer-text">CLAUDE.md Optimization</span>
+    <span class="footer-text">2026</span>
+  </div>
+
+</div>
+</body>
+</html>

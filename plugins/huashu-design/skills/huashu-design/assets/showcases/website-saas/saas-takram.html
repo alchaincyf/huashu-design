@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Meridian — Business Intelligence for Modern Teams</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #F5F0EB;
+    color: #3a3a3a;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    height: 72px;
+  }
+  .nav-logo {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: #3a3a3a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #6B8F71;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-logo-mark svg { width: 14px; height: 14px; color: #F5F0EB; }
+  .nav-center {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-center a {
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #888;
+    transition: color 0.2s;
+  }
+  .nav-center a:hover { color: #3a3a3a; }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .nav-signin {
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #888;
+  }
+  .nav-cta {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 22px;
+    background: #2D3436;
+    color: #F5F0EB;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #3D4547; }
+
+  /* HERO */
+  .hero {
+    padding: 20px 80px 0 80px;
+    height: calc(900px - 72px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP SECTION: text + dashboard side by side */
+  .hero-top {
+    display: grid;
+    grid-template-columns: 500px 1fr;
+    gap: 60px;
+    flex: 1;
+  }
+
+  /* LEFT TEXT */
+  .hero-text {
+    padding-top: 32px;
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6B8F71;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+  .hero-headline {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 44px;
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+    color: #2a2a2a;
+    margin-bottom: 16px;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: #7A8F71;
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #999;
+    margin-bottom: 32px;
+    max-width: 400px;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .btn-primary {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 14px 28px;
+    background: rgba(107, 143, 113, 0.12);
+    color: #6B8F71;
+    border: 1px solid rgba(107, 143, 113, 0.3);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: rgba(107, 143, 113, 0.18); }
+  .btn-secondary {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 14px 28px;
+    background: transparent;
+    color: #888;
+    border: 1px solid #d5cfc5;
+    border-radius: 100px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: #aaa; color: #555; }
+  .btn-secondary svg { width: 14px; height: 14px; }
+
+  /* FLOW DIAGRAM */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(107, 143, 113, 0.1);
+    border: 1px solid rgba(107, 143, 113, 0.25);
+    border-radius: 100px;
+    padding: 8px 18px;
+  }
+  .flow-step-icon {
+    width: 24px;
+    height: 24px;
+    background: #6B8F71;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .flow-step-icon svg { width: 12px; height: 12px; color: #fff; }
+  .flow-step span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+  }
+  .flow-arrow {
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+  }
+  .flow-arrow svg { width: 16px; height: 16px; }
+
+  /* METRICS ROW */
+  .metrics-row {
+    display: flex;
+    gap: 40px;
+  }
+  .metric-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 24px;
+    min-width: 130px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .metric-card-value {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #2a2a2a;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .metric-card-value span { color: #6B8F71; }
+  .metric-card-label {
+    font-size: 11px;
+    font-weight: 400;
+    color: #bbb;
+  }
+
+  /* RIGHT — DASHBOARD */
+  .hero-dashboard {
+    padding-top: 8px;
+  }
+  .dashboard-frame {
+    background: #FFFFFF;
+    border-radius: 24px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.02),
+      0 4px 12px rgba(0,0,0,0.03),
+      0 16px 48px rgba(0,0,0,0.05);
+    padding: 24px;
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Dash header */
+  .dash-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .dash-head-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #3a3a3a;
+  }
+  .dash-head-tag {
+    font-size: 11px;
+    font-weight: 400;
+    color: #6B8F71;
+    background: rgba(107, 143, 113, 0.1);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  /* KPI row */
+  .dash-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .dash-kpi {
+    background: #FAFAF6;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+  }
+  .dash-kpi-value {
+    font-size: 22px;
+    font-weight: 500;
+    color: #2a2a2a;
+    margin-bottom: 2px;
+  }
+  .dash-kpi-label {
+    font-size: 10px;
+    font-weight: 400;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .dash-kpi-change {
+    font-size: 11px;
+    font-weight: 500;
+    color: #6B8F71;
+    margin-top: 4px;
+  }
+
+  /* Chart area */
+  .dash-chart {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+  }
+  .chart-main {
+    background: #FAFAF6;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .chart-main-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+  .chart-main-svg {
+    flex: 1;
+  }
+
+  /* Side panel */
+  .chart-side {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .insight-bubble {
+    background: #FAFAF6;
+    border-radius: 16px;
+    padding: 14px 16px;
+    flex: 1;
+  }
+  .insight-bubble-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .insight-bubble-icon {
+    width: 20px;
+    height: 20px;
+    background: rgba(107, 143, 113, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .insight-bubble-icon svg { width: 10px; height: 10px; color: #7A8F71; }
+  .insight-bubble-tag {
+    font-size: 10px;
+    font-weight: 500;
+    color: #6B8F71;
+  }
+  .insight-bubble-text {
+    font-size: 11px;
+    font-weight: 400;
+    color: #888;
+    line-height: 1.5;
+  }
+
+  /* TRUST BAR */
+  .trust-bar {
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    border-top: 1px solid #e8e2d8;
+  }
+  .trust-label {
+    font-size: 11px;
+    font-weight: 400;
+    color: #ccc;
+    white-space: nowrap;
+  }
+  .trust-logos {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+  .trust-logo {
+    font-size: 14px;
+    font-weight: 400;
+    color: #ccc;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+      </svg>
+    </div>
+    Meridian
+  </div>
+  <ul class="nav-center">
+    <li><a href="#">Product</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Docs</a></li>
+    <li><a href="#">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="nav-signin">Sign In</a>
+    <button class="nav-cta">Start Free Trial</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-top">
+
+    <!-- LEFT TEXT -->
+    <div class="hero-text">
+      <div class="hero-label">Business Intelligence for Modern Teams</div>
+      <h1 class="hero-headline">Turn data into <em>decisions,</em> not dashboards</h1>
+      <p class="hero-subtitle">AI-powered analytics that tells you what matters, when it matters. Clarity over complexity.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary">Start Free Trial</button>
+        <button class="btn-secondary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Watch Demo
+        </button>
+      </div>
+
+      <!-- Flow diagram -->
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <span>Raw Data</span>
+        </div>
+        <div class="flow-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <span>AI Analysis</span>
+        </div>
+        <div class="flow-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span>Actionable Insight</span>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <div class="metric-card-value">3<span>x</span></div>
+          <div class="metric-card-label">Faster insights</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card-value">50<span>%</span></div>
+          <div class="metric-card-label">Less meeting time</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-card-value">99.9<span>%</span></div>
+          <div class="metric-card-label">Uptime</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — DASHBOARD -->
+    <div class="hero-dashboard">
+      <div class="dashboard-frame">
+        <div class="dash-head">
+          <div class="dash-head-title">Analytics Overview</div>
+          <div class="dash-head-tag">AI-Enhanced</div>
+        </div>
+
+        <div class="dash-kpis">
+          <div class="dash-kpi">
+            <div class="dash-kpi-value">$2.4M</div>
+            <div class="dash-kpi-label">Revenue</div>
+            <div class="dash-kpi-change">+12.3%</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-value">84.2K</div>
+            <div class="dash-kpi-label">Active Users</div>
+            <div class="dash-kpi-change">+8.7%</div>
+          </div>
+          <div class="dash-kpi">
+            <div class="dash-kpi-value">1.2%</div>
+            <div class="dash-kpi-label">Churn Rate</div>
+            <div class="dash-kpi-change">-0.3pp</div>
+          </div>
+        </div>
+
+        <div class="dash-chart">
+          <!-- Main chart with organic shapes -->
+          <div class="chart-main">
+            <div class="chart-main-label">Revenue Trend</div>
+            <svg class="chart-main-svg" viewBox="0 0 400 160" preserveAspectRatio="xMidYMid meet">
+              <!-- Soft grid -->
+              <line x1="0" y1="40" x2="400" y2="40" stroke="#ece7dd" stroke-width="1"/>
+              <line x1="0" y1="80" x2="400" y2="80" stroke="#ece7dd" stroke-width="1"/>
+              <line x1="0" y1="120" x2="400" y2="120" stroke="#ece7dd" stroke-width="1"/>
+
+              <!-- Rounded bars -->
+              <rect x="15" y="80" width="28" height="70" rx="8" ry="8" fill="#e2ddd4"/>
+              <rect x="58" y="65" width="28" height="85" rx="8" ry="8" fill="#e2ddd4"/>
+              <rect x="101" y="90" width="28" height="60" rx="8" ry="8" fill="#e2ddd4"/>
+              <rect x="144" y="50" width="28" height="100" rx="8" ry="8" fill="#6B8F71" opacity="0.6"/>
+              <rect x="187" y="60" width="28" height="90" rx="8" ry="8" fill="#e2ddd4"/>
+              <rect x="230" y="35" width="28" height="115" rx="8" ry="8" fill="#6B8F71" opacity="0.8"/>
+              <rect x="273" y="45" width="28" height="105" rx="8" ry="8" fill="#e2ddd4"/>
+              <rect x="316" y="25" width="28" height="125" rx="8" ry="8" fill="#6B8F71"/>
+              <rect x="359" y="40" width="28" height="110" rx="8" ry="8" fill="#e2ddd4"/>
+
+              <!-- Smooth trend line overlay -->
+              <path d="M29,75 C60,62 75,60 115,85 C140,70 155,47 172,45 C200,55 205,55 244,30 C270,40 280,40 330,20 C350,35 365,35 373,35" fill="none" stroke="#7A8F71" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+              <!-- Labels -->
+              <text x="22" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Jan</text>
+              <text x="72" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Feb</text>
+              <text x="115" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Mar</text>
+              <text x="158" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Apr</text>
+              <text x="201" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">May</text>
+              <text x="244" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Jun</text>
+              <text x="287" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Jul</text>
+              <text x="330" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Aug</text>
+              <text x="373" y="158" font-size="9" fill="#bbb" font-family="Inter" text-anchor="middle">Sep</text>
+            </svg>
+          </div>
+
+          <!-- Side insights -->
+          <div class="chart-side">
+            <div class="insight-bubble">
+              <div class="insight-bubble-header">
+                <div class="insight-bubble-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <span class="insight-bubble-tag">AI Insight</span>
+              </div>
+              <div class="insight-bubble-text">Enterprise segment grew 23% this quarter. Four new accounts are driving acceleration.</div>
+            </div>
+            <div class="insight-bubble">
+              <div class="insight-bubble-header">
+                <div class="insight-bubble-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <span class="insight-bubble-tag">Prediction</span>
+              </div>
+              <div class="insight-bubble-text">89% likelihood of hitting Q3 revenue target based on current pipeline velocity.</div>
+            </div>
+            <div class="insight-bubble">
+              <div class="insight-bubble-header">
+                <div class="insight-bubble-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <span class="insight-bubble-tag">Alert</span>
+              </div>
+              <div class="insight-bubble-text">Churn risk detected for 2 mid-market accounts. Recommend outreach this week.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <span class="trust-label">Trusted by teams at</span>
+    <div class="trust-logos">
+      <span class="trust-logo">Stripe</span>
+      <span class="trust-logo">Notion</span>
+      <span class="trust-logo">Linear</span>
+      <span class="trust-logo">Vercel</span>
+      <span class="trust-logo">Figma</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+  });
+</script>
+</body>
+</html>

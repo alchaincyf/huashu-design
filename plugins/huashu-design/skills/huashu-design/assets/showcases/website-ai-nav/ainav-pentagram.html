@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>AI Compass — Pentagram Style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #FFFFFF;
+    color: #000000;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 64px;
+    border-bottom: 2px solid #000;
+  }
+  .nav-logo {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-logo .compass-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: #000;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #E63946; }
+  .nav-submit {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-submit:hover { background: #E63946; }
+
+  /* HERO GRID */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(900px - 72px);
+  }
+
+  /* LEFT PANEL */
+  .hero-left {
+    padding: 56px 64px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 2px solid #000;
+  }
+  .hero-stat {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 180px;
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -8px;
+    color: #E63946;
+    position: relative;
+  }
+  .hero-stat span {
+    font-size: 48px;
+    letter-spacing: -2px;
+    vertical-align: top;
+    margin-left: 4px;
+  }
+  .hero-headline {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    margin-top: 24px;
+    max-width: 520px;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: #555;
+    margin-top: 16px;
+    letter-spacing: 0.2px;
+    line-height: 1.5;
+  }
+
+  /* SEARCH */
+  .search-box {
+    display: flex;
+    border: 3px solid #000;
+    margin-top: 32px;
+    max-width: 560px;
+  }
+  .search-box input {
+    flex: 1;
+    padding: 16px 20px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+    border: none;
+    outline: none;
+    background: #fff;
+  }
+  .search-box button {
+    padding: 16px 28px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+  .search-box button:hover { background: #E63946; }
+
+  /* CATEGORY TAGS */
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+  .cat-tag {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border: 2px solid #000;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .cat-tag:hover {
+    background: #000;
+    color: #fff;
+  }
+  .cat-tag.active {
+    background: #E63946;
+    border-color: #E63946;
+    color: #fff;
+  }
+
+  /* RIGHT PANEL — TOOL LIST */
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+  }
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 48px;
+    border-bottom: 2px solid #000;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #888;
+  }
+
+  .tool-item {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    align-items: center;
+    padding: 24px 48px;
+    border-bottom: 1px solid #E0E0E0;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .tool-item:hover {
+    background: #F7F7F7;
+  }
+  .tool-index {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #BBB;
+  }
+  .tool-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .tool-name-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .tool-name {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+  .tool-badge {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #E63946;
+    background: rgba(230, 57, 70, 0.08);
+    padding: 3px 8px;
+  }
+  .tool-desc {
+    font-size: 13px;
+    color: #777;
+    line-height: 1.4;
+    max-width: 400px;
+  }
+  .tool-category {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #999;
+    white-space: nowrap;
+  }
+
+  .tool-item:last-child {
+    border-bottom: none;
+  }
+
+  /* FEATURED TAG */
+  .tool-item.featured {
+    border-left: 4px solid #E63946;
+    padding-left: 44px;
+  }
+
+  .bottom-bar {
+    margin-top: auto;
+    padding: 16px 48px;
+    border-top: 2px solid #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .bottom-bar a {
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+  }
+  .bottom-bar a:hover { color: #E63946; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <svg class="compass-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88" fill="#E63946" stroke="#E63946"/>
+    </svg>
+    AI Compass
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Browse</a></li>
+    <li><a href="#">Categories</a></li>
+    <li><a href="#">New Tools</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+  <button class="nav-submit">Submit a Tool</button>
+</nav>
+
+<div class="hero">
+  <!-- LEFT -->
+  <div class="hero-left">
+    <div>
+      <div class="hero-stat">500<span>+</span></div>
+      <h1 class="hero-headline">Find the right AI tool in seconds</h1>
+      <p class="hero-sub">500+ tools, 24 categories, updated weekly. The most comprehensive curated directory for AI practitioners.</p>
+
+      <div class="search-box">
+        <input type="text" placeholder="Search tools by name, category, or use case...">
+        <button>
+          <i data-lucide="search" style="width:16px;height:16px;"></i>
+          Search
+        </button>
+      </div>
+
+      <div class="categories">
+        <span class="cat-tag active">Writing</span>
+        <span class="cat-tag">Coding</span>
+        <span class="cat-tag">Image</span>
+        <span class="cat-tag">Video</span>
+        <span class="cat-tag">Audio</span>
+        <span class="cat-tag">Productivity</span>
+        <span class="cat-tag">Research</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="hero-right">
+    <div class="list-header">
+      <span>Featured Tools</span>
+      <span>Category</span>
+    </div>
+
+    <div class="tool-item featured">
+      <span class="tool-index">01</span>
+      <div class="tool-info">
+        <div class="tool-name-row">
+          <span class="tool-name">Claude</span>
+          <span class="tool-badge">Editor's Pick</span>
+        </div>
+        <span class="tool-desc">Advanced AI assistant for writing, analysis, and coding with extended context and nuanced reasoning.</span>
+      </div>
+      <span class="tool-category">Writing</span>
+    </div>
+
+    <div class="tool-item">
+      <span class="tool-index">02</span>
+      <div class="tool-info">
+        <div class="tool-name-row">
+          <span class="tool-name">Cursor</span>
+          <span class="tool-badge">Trending</span>
+        </div>
+        <span class="tool-desc">AI-native code editor that understands your entire codebase and accelerates development workflows.</span>
+      </div>
+      <span class="tool-category">Coding</span>
+    </div>
+
+    <div class="tool-item">
+      <span class="tool-index">03</span>
+      <div class="tool-info">
+        <div class="tool-name-row">
+          <span class="tool-name">Midjourney</span>
+        </div>
+        <span class="tool-desc">Leading AI image generation platform producing stunning visuals from text descriptions.</span>
+      </div>
+      <span class="tool-category">Image</span>
+    </div>
+
+    <div class="tool-item">
+      <span class="tool-index">04</span>
+      <div class="tool-info">
+        <div class="tool-name-row">
+          <span class="tool-name">Perplexity</span>
+        </div>
+        <span class="tool-desc">AI-powered search engine with real-time citations and conversational answers.</span>
+      </div>
+      <span class="tool-category">Research</span>
+    </div>
+
+    <div class="tool-item">
+      <span class="tool-index">05</span>
+      <div class="tool-info">
+        <div class="tool-name-row">
+          <span class="tool-name">Runway</span>
+          <span class="tool-badge">New</span>
+        </div>
+        <span class="tool-desc">Gen-3 video generation and editing suite for creators and filmmakers.</span>
+      </div>
+      <span class="tool-category">Video</span>
+    </div>
+
+    <div class="bottom-bar">
+      <span>Showing 5 of 500+ tools</span>
+      <a href="#">
+        View All Tools
+        <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+</body>
+</html>

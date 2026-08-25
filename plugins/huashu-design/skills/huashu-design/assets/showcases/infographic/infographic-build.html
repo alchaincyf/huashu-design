@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080">
+<title>AI Memory System Optimization — Build Studio Style</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1080px;
+    height: 1920px;
+    overflow: hidden;
+    margin: 0;
+    background: #FAFAF8;
+    font-family: 'Inter', sans-serif;
+    color: #2A2A2A;
+  }
+
+  .container {
+    width: 100%;
+    height: 100%;
+    padding: 80px 80px 64px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Header */
+  .label {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #B0ACA4;
+    margin-bottom: 32px;
+  }
+  .title {
+    font-size: 36px;
+    font-weight: 200;
+    line-height: 1.35;
+    color: #1A1A1A;
+    letter-spacing: -0.5px;
+    max-width: 680px;
+  }
+  .title strong {
+    font-weight: 500;
+  }
+
+  /* Hero Numbers */
+  .hero {
+    margin-top: 56px;
+    display: flex;
+    align-items: flex-end;
+    gap: 48px;
+  }
+  .hero-block {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-label {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #B0ACA4;
+    margin-bottom: 8px;
+  }
+  .hero-number {
+    font-size: 112px;
+    font-weight: 200;
+    line-height: 0.9;
+    color: #1A1A1A;
+    letter-spacing: -4px;
+  }
+  .hero-number .unit {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: 0;
+    color: #B0ACA4;
+    margin-left: 4px;
+  }
+  .hero-number.gold {
+    color: #1A1A1A;
+  }
+  .hero-number.gold .unit {
+    color: #D4A574;
+    opacity: 0.7;
+  }
+  .hero-number.gold .dot-accent {
+    color: #D4A574;
+  }
+  .hero-connector {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .hero-connector svg {
+    opacity: 0.25;
+  }
+  .hero-reduction {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .reduction-badge {
+    font-size: 13px;
+    font-weight: 400;
+    color: #D4A574;
+    letter-spacing: 2px;
+  }
+
+  /* Subtle line */
+  .divider {
+    width: 48px;
+    height: 1px;
+    background: #D4A574;
+    margin: 48px 0;
+    opacity: 0.4;
+  }
+
+  /* Stats Row */
+  .stats-row {
+    display: flex;
+    gap: 0;
+  }
+  .stat-item {
+    flex: 1;
+    padding: 24px 0;
+    position: relative;
+  }
+  .stat-item::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 40px;
+    background: #E0DCDA;
+  }
+  .stat-item:last-child::after {
+    display: none;
+  }
+  .stat-value {
+    font-size: 40px;
+    font-weight: 200;
+    color: #1A1A1A;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-desc {
+    font-size: 11px;
+    font-weight: 300;
+    color: #B0ACA4;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+  }
+
+  /* Memory Cards */
+  .cards-section {
+    margin-top: 40px;
+  }
+  .cards-label {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #B0ACA4;
+    margin-bottom: 24px;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .card {
+    background: #FFFFFF;
+    padding: 32px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 4px 16px rgba(0,0,0,0.02);
+    border-radius: 2px;
+    position: relative;
+  }
+  .card-index {
+    font-size: 40px;
+    font-weight: 200;
+    color: #E8E4E0;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .card-title-zh {
+    font-size: 18px;
+    font-weight: 500;
+    color: #1A1A1A;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .card-title-en {
+    font-size: 10px;
+    font-weight: 400;
+    color: #C0BCB6;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .card-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: #999;
+    line-height: 1.7;
+  }
+  .card.featured {
+    border-left: 1.5px solid #D4A574;
+  }
+  .card.featured .card-index {
+    color: #D4A574;
+    opacity: 0.35;
+  }
+
+  /* Flow */
+  .flow-section {
+    margin-top: 40px;
+  }
+  .flow-label {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #B0ACA4;
+    margin-bottom: 32px;
+  }
+  .flow-timeline {
+    position: relative;
+    padding-left: 0;
+  }
+  .flow-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+  }
+  .flow-steps::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 36px;
+    right: 36px;
+    height: 1px;
+    background: linear-gradient(to right, #E0DCDA, #D4A574 50%, #E0DCDA);
+  }
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .flow-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FAFAF8;
+    border: 1px solid #D0CCC6;
+    flex-shrink: 0;
+  }
+  .flow-dot.active {
+    border-color: #D4A574;
+    background: #D4A574;
+  }
+  .flow-step-label {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #C0BCB6;
+  }
+  .flow-step-text {
+    font-size: 13px;
+    font-weight: 400;
+    color: #2A2A2A;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* Quote */
+  .quote-section {
+    margin-top: 0;
+    padding-top: 32px;
+    border-top: 1px solid #EEECE8;
+  }
+  .quote-line {
+    width: 32px;
+    height: 1px;
+    background: #D4A574;
+    margin-bottom: 24px;
+    opacity: 0.5;
+  }
+  .quote-text {
+    font-size: 22px;
+    font-weight: 200;
+    color: #1A1A1A;
+    line-height: 1.6;
+    letter-spacing: -0.3px;
+    max-width: 680px;
+  }
+  .quote-text em {
+    font-style: normal;
+    color: #D4A574;
+    font-weight: 400;
+  }
+
+  /* Results */
+  .results-row {
+    display: flex;
+    gap: 48px;
+    margin-top: 32px;
+  }
+  .result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .result-icon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #D4A574;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+  .result-text {
+    font-size: 13px;
+    font-weight: 400;
+    color: #999999;
+    letter-spacing: 0.3px;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-text {
+    font-size: 9px;
+    font-weight: 300;
+    color: #D0CCC6;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Label -->
+  <div class="label">System Architecture</div>
+
+  <!-- Title -->
+  <div class="title">
+    AI记忆系统<br>
+    CLAUDE.md <strong>从 93KB<br>优化到 22KB</strong>
+  </div>
+
+  <!-- Hero Numbers -->
+  <div class="hero">
+    <div class="hero-block">
+      <span class="hero-label">Before</span>
+      <span class="hero-number">93<span class="unit">KB</span></span>
+    </div>
+    <div class="hero-connector">
+      <svg width="48" height="8" viewBox="0 0 48 8">
+        <line x1="0" y1="4" x2="40" y2="4" stroke="#D4A574" stroke-width="0.75" opacity="0.5"/>
+        <line x1="36" y1="1" x2="42" y2="4" stroke="#D4A574" stroke-width="0.75" opacity="0.5"/>
+        <line x1="36" y1="7" x2="42" y2="4" stroke="#D4A574" stroke-width="0.75" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="hero-block">
+      <span class="hero-label">After</span>
+      <span class="hero-number gold">22<span class="unit">KB</span></span>
+    </div>
+    <div class="hero-reduction">
+      <span class="reduction-badge">-76%</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="divider"></div>
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-value">2400<span style="font-size:18px;color:#AAAAAA">+</span></div>
+      <div class="stat-desc">lines before<br>in single file</div>
+    </div>
+    <div class="stat-item" style="padding-left: 24px;">
+      <div class="stat-value">4</div>
+      <div class="stat-desc">structured<br>memory categories</div>
+    </div>
+    <div class="stat-item" style="padding-left: 24px;">
+      <div class="stat-value">0</div>
+      <div class="stat-desc">information<br>loss</div>
+    </div>
+  </div>
+
+  <!-- Memory Cards -->
+  <div class="cards-section">
+    <div class="cards-label">Memory Categories</div>
+    <div class="cards-grid">
+      <div class="card featured">
+        <div class="card-index">01</div>
+        <div class="card-title-zh">核心身份</div>
+        <div class="card-title-en">Core Identity</div>
+        <div class="card-desc">Immutable traits, facts, fundamental identity markers</div>
+      </div>
+      <div class="card">
+        <div class="card-index">02</div>
+        <div class="card-title-zh">偏好设置</div>
+        <div class="card-title-en">Preferences</div>
+        <div class="card-desc">Style choices, tool habits, accumulated over sessions</div>
+      </div>
+      <div class="card">
+        <div class="card-index">03</div>
+        <div class="card-title-zh">项目状态</div>
+        <div class="card-title-en">Project State</div>
+        <div class="card-desc">Active tasks, deadlines, priorities, evolving context</div>
+      </div>
+      <div class="card">
+        <div class="card-index">04</div>
+        <div class="card-title-zh">日志流水</div>
+        <div class="card-title-en">Daily Logs</div>
+        <div class="card-desc">Session records, never auto-loaded, search on demand</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flow -->
+  <div class="flow-section">
+    <div class="flow-label">Processing Flow</div>
+    <div class="flow-timeline">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-dot"></div>
+          <div class="flow-step-label">Input</div>
+          <div class="flow-step-text">User<br>Input</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot"></div>
+          <div class="flow-step-label">Route</div>
+          <div class="flow-step-text">Workspace<br>Detection</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot active"></div>
+          <div class="flow-step-label">Load</div>
+          <div class="flow-step-text">Relevant<br>Memory</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot"></div>
+          <div class="flow-step-label">Execute</div>
+          <div class="flow-step-text">Task<br>Processing</div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot"></div>
+          <div class="flow-step-label">Update</div>
+          <div class="flow-step-text">Memory<br>Write-back</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quote -->
+  <div class="quote-section">
+    <div class="quote-line"></div>
+    <div class="quote-text">
+      Like <em>Marie Kondo</em> for AI memory<br>
+      — keep only what sparks joy.
+    </div>
+    <div class="results-row">
+      <div class="result-item">
+        <div class="result-icon"></div>
+        <span class="result-text">Faster context loading</span>
+      </div>
+      <div class="result-item">
+        <div class="result-icon"></div>
+        <span class="result-text">More relevant responses</span>
+      </div>
+      <div class="result-item">
+        <div class="result-icon"></div>
+        <span class="result-text">Zero information loss</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="footer-text">Build Studio Style</span>
+    <span class="footer-text">2026</span>
+  </div>
+
+</div>
+</body>
+</html>

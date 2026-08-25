@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>AI Compass — Build Studio Style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #FAFAF8;
+    color: #1A1A1A;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 80px;
+  }
+  .nav-logo {
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1A1A1A;
+  }
+  .nav-logo svg {
+    color: #D4A574;
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: #999;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: #1A1A1A; }
+  .nav-cta {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    background: transparent;
+    color: #888;
+    border: 1px solid rgba(0,0,0,0.08);
+    padding: 8px 24px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-cta:hover {
+    border-color: #D4A574;
+    color: #D4A574;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 64px 80px 0;
+  }
+  .hero-eyebrow {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #B0ACA4;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: 52px;
+    font-weight: 200;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    max-width: 700px;
+    margin: 0 auto;
+    color: #1A1A1A;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: #D4A574;
+  }
+  .hero-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: #888;
+    margin-top: 16px;
+    letter-spacing: 0.3px;
+  }
+
+  /* SEARCH */
+  .search-wrapper {
+    max-width: 600px;
+    margin: 32px auto 0;
+    position: relative;
+  }
+  .search-bar {
+    width: 100%;
+    padding: 18px 56px 18px 24px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: #1A1A1A;
+    background: #FFFFFF;
+    border: 1px solid #E8E4DF;
+    border-radius: 2px;
+    outline: none;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+  .search-bar::placeholder { color: #BBB; }
+  .search-bar:focus {
+    box-shadow: 0 4px 30px rgba(212,165,116,0.12);
+    border-color: #D4A574;
+  }
+  .search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #D4A574;
+  }
+
+  /* CATEGORIES */
+  .categories {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .cat-pill {
+    font-size: 12px;
+    font-weight: 400;
+    color: #999;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid #E8E4DF;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
+  }
+  .cat-pill:hover {
+    border-color: #D4A574;
+    color: #1A1A1A;
+  }
+  .cat-pill.active {
+    border-color: #D4A574;
+    color: #D4A574;
+    background: rgba(212,165,116,0.06);
+  }
+
+  /* TOOL CARDS */
+  .tools-section {
+    padding: 48px 80px 0;
+  }
+  .tools-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .tools-header h2 {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+  }
+  .tools-header a {
+    font-size: 13px;
+    font-weight: 400;
+    color: #D4A574;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.3s;
+  }
+  .tools-header a:hover { opacity: 0.7; }
+
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .tool-card {
+    background: #FFFFFF;
+    border: 1px solid #EEEBE7;
+    border-radius: 2px;
+    padding: 24px;
+    cursor: pointer;
+    position: relative;
+  }
+  .tool-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .tool-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .tool-icon-box.claude { background: #F0EBE3; color: #D4A574; }
+  .tool-icon-box.cursor { background: #EEECEA; color: #999; }
+  .tool-icon-box.midjourney { background: #EEECEA; color: #999; }
+  .tool-icon-box.perplexity { background: #EEECEA; color: #999; }
+
+  .tool-card-name {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+  }
+  .tool-card-cat {
+    font-size: 11px;
+    font-weight: 400;
+    color: #BBB;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+  .tool-card-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: #888;
+    line-height: 1.55;
+  }
+  .tool-card-tag {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #D4A574;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    background: rgba(212,165,116,0.1);
+    border-radius: 2px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: #D4A574;
+    margin: 0 auto;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88" fill="currentColor" stroke="currentColor"/>
+    </svg>
+    AI Compass
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Browse</a></li>
+    <li><a href="#">Categories</a></li>
+    <li><a href="#">New This Week</a></li>
+    <li><a href="#">Newsletter</a></li>
+  </ul>
+  <button class="nav-cta">Submit Tool</button>
+</nav>
+
+<section class="hero">
+  <p class="hero-eyebrow">A Curated Directory</p>
+  <h1>Find the right AI tool <em>in seconds</em></h1>
+  <p class="hero-sub">500+ tools, 24 categories, updated weekly</p>
+
+  <div class="search-wrapper">
+    <input class="search-bar" type="text" placeholder="Search by tool name, category, or use case...">
+    <i data-lucide="search" class="search-icon" style="width:18px;height:18px;"></i>
+  </div>
+
+  <div class="categories">
+    <span class="cat-pill active">Writing</span>
+    <span class="cat-pill">Coding</span>
+    <span class="cat-pill">Image</span>
+    <span class="cat-pill">Video</span>
+    <span class="cat-pill">Audio</span>
+    <span class="cat-pill">Productivity</span>
+    <span class="cat-pill">Research</span>
+  </div>
+</section>
+
+<section class="tools-section">
+  <div class="tools-header">
+    <h2>Featured Selections</h2>
+    <a href="#">
+      View all 500+ tools
+      <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+    </a>
+  </div>
+
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <div class="tool-icon-box claude">
+          <i data-lucide="sparkles" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <div class="tool-card-name">Claude</div>
+          <div class="tool-card-cat">Writing & Analysis</div>
+        </div>
+      </div>
+      <p class="tool-card-desc">Advanced AI assistant for writing, analysis, and coding with nuanced reasoning and extended context.</p>
+      <span class="tool-card-tag">Editor's Pick</span>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <div class="tool-icon-box cursor">
+          <i data-lucide="code-2" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <div class="tool-card-name">Cursor</div>
+          <div class="tool-card-cat">Development</div>
+        </div>
+      </div>
+      <p class="tool-card-desc">AI-native code editor that understands your entire codebase and accelerates your development workflow.</p>
+      <span class="tool-card-tag">Trending</span>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <div class="tool-icon-box midjourney">
+          <i data-lucide="image" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <div class="tool-card-name">Midjourney</div>
+          <div class="tool-card-cat">Image Generation</div>
+        </div>
+      </div>
+      <p class="tool-card-desc">Leading AI image generation platform producing stunning, highly detailed visuals from text prompts.</p>
+      <span class="tool-card-tag">Popular</span>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <div class="tool-icon-box perplexity">
+          <i data-lucide="globe" style="width:20px;height:20px;"></i>
+        </div>
+        <div>
+          <div class="tool-card-name">Perplexity</div>
+          <div class="tool-card-cat">Research & Search</div>
+        </div>
+      </div>
+      <p class="tool-card-desc">AI-powered search engine delivering real-time, cited answers in a natural conversational format.</p>
+      <span class="tool-card-tag">Staff Pick</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  lucide.createIcons();
+</script>
+</body>
+</html>

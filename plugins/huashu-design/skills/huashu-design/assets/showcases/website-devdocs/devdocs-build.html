@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Nexus API Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #FAFAF8;
+    color: #2C2C2C;
+  }
+
+  /* Navigation */
+  nav {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    position: relative;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-logo-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 2px;
+    background: #E8E4DF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-logo-icon i { color: #D4A574; }
+  .nav-logo span {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: #1A1A1A;
+  }
+  .nav-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 32px;
+  }
+  .nav-center a {
+    font-size: 13px;
+    font-weight: 400;
+    color: #999;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+  .nav-center a:hover { color: #2C2C2C; }
+  .nav-center a.active { color: #2C2C2C; font-weight: 500; }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .nav-right a {
+    font-size: 13px;
+    color: #BBB;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-right a:hover { color: #2C2C2C; }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 2px;
+    background: rgba(212, 165, 116, 0.08);
+    font-size: 11px;
+    color: #B0ACA4;
+    font-weight: 400;
+  }
+  .status-pill .dot {
+    width: 6px;
+    height: 6px;
+    background: #D4A574;
+    border-radius: 50%;
+  }
+
+  /* Hero section */
+  .hero {
+    text-align: center;
+    padding: 64px 80px 48px;
+  }
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #B0ACA4;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: 56px;
+    font-weight: 200;
+    letter-spacing: -2.5px;
+    line-height: 1.1;
+    color: #1A1A1A;
+    margin-bottom: 16px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    font-weight: 500;
+  }
+  .hero p {
+    font-size: 17px;
+    font-weight: 300;
+    color: #999;
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto 36px;
+    letter-spacing: 0.1px;
+  }
+  .hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 0;
+  }
+  .hero-actions a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    font-size: 13px;
+    font-weight: 400;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.2s;
+    letter-spacing: 0.2px;
+  }
+  .btn-primary {
+    background: #1A1A1A;
+    color: #FAFAF8;
+  }
+  .btn-primary:hover { background: #333; }
+  .btn-secondary {
+    background: transparent;
+    color: #999;
+    border: 1px solid #E0DDD8;
+  }
+  .btn-secondary:hover { border-color: #CCC; color: #666; }
+
+  /* Code card */
+  .code-section {
+    display: flex;
+    justify-content: center;
+    padding: 32px 80px 48px;
+  }
+  .code-card {
+    background: #FFFFFF;
+    border-radius: 2px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+    max-width: 600px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .code-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid #F2F0EC;
+  }
+  .code-card-header .dots {
+    display: flex;
+    gap: 7px;
+  }
+  .code-card-header .dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #E8E5E0;
+  }
+  .code-card-header .filename {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #BBB;
+    font-weight: 400;
+  }
+  .code-card-header .copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #CCC;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+  }
+  .code-card-body {
+    padding: 24px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #444;
+    font-weight: 400;
+  }
+  .code-card-body .kw { color: #8B7355; font-weight: 500; }
+  .code-card-body .str { color: #D4A574; }
+  .code-card-body .cmt { color: #CCCCCC; }
+  .code-card-body .fn { color: #777; }
+  .code-card-body .num { color: #B08D57; }
+
+  /* Quick links */
+  .quick-links {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    padding: 16px 80px 48px;
+  }
+  .quick-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #BBB;
+    font-size: 13px;
+    font-weight: 400;
+    transition: color 0.2s;
+    letter-spacing: 0.2px;
+  }
+  .quick-link:hover { color: #666; }
+  .quick-link i { color: #D4A574; opacity: 0.6; }
+
+  /* Features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding: 0 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .feature-card {
+    background: #FFFFFF;
+    border-radius: 2px;
+    padding: 32px 28px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.02);
+    transition: box-shadow 0.2s;
+  }
+  .feature-card:hover {
+    box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+  }
+  .feature-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    background: #F0EBE3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .feature-icon-wrap i { color: #D4A574; }
+  .feature-card h3 {
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+    color: #1A1A1A;
+  }
+  .feature-card p {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: #AAA;
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon"><i data-lucide="zap" style="width:16px;height:16px;"></i></div>
+    <span>Nexus</span>
+  </div>
+  <div class="nav-center">
+    <a href="#" class="active">Docs</a>
+    <a href="#">API</a>
+    <a href="#">Changelog</a>
+    <a href="#">Status</a>
+    <a href="#">GitHub</a>
+  </div>
+  <div class="nav-right">
+    <div class="status-pill"><span class="dot"></span> Operational</div>
+    <a href="#"><i data-lucide="search" style="width:15px;height:15px;color:#CCC;"></i></a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">Unified AI Gateway</div>
+  <h1>One API, <em>every</em> AI model<span style="color:#D4A574;font-weight:300;">.</span></h1>
+  <p>Access GPT, Claude, Gemini, and 20+ models through a single endpoint. Intelligent routing, unified billing, zero vendor lock-in.</p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary"><i data-lucide="arrow-right" style="width:14px;height:14px;"></i> Get started</a>
+    <a href="#" class="btn-secondary">View API reference</a>
+  </div>
+</section>
+
+<!-- Code Card -->
+<section class="code-section">
+  <div class="code-card">
+    <div class="code-card-header">
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span class="filename">quickstart.py</span>
+      <button class="copy-btn"><i data-lucide="copy" style="width:12px;height:12px;"></i> Copy</button>
+    </div>
+    <div class="code-card-body">
+<span class="kw">from</span> nexus <span class="kw">import</span> Client<br><br>
+client = Client(api_key=<span class="str">"your-key"</span>)<br>
+response = client.chat(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model=<span class="str">"auto"</span>,&nbsp;&nbsp;<span class="cmt"># intelligently routes</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Hello!"</span>}]<br>
+)
+    </div>
+  </div>
+</section>
+
+<!-- Quick Links -->
+<div class="quick-links">
+  <a href="#" class="quick-link"><i data-lucide="rocket" style="width:14px;height:14px;"></i> Getting Started</a>
+  <a href="#" class="quick-link"><i data-lucide="file-text" style="width:14px;height:14px;"></i> API Reference</a>
+  <a href="#" class="quick-link"><i data-lucide="layers" style="width:14px;height:14px;"></i> Models</a>
+  <a href="#" class="quick-link"><i data-lucide="credit-card" style="width:14px;height:14px;"></i> Pricing</a>
+</div>
+
+<!-- Features -->
+<section class="features">
+  <div class="feature-card">
+    <div class="feature-icon-wrap"><i data-lucide="git-branch" style="width:18px;height:18px;"></i></div>
+    <h3>Model Routing</h3>
+    <p>Automatically select the best model for each request based on task complexity, latency requirements, and cost constraints.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon-wrap"><i data-lucide="trending-down" style="width:18px;height:18px;"></i></div>
+    <h3>Cost Optimization</h3>
+    <p>Reduce AI spend by up to 60% with intelligent model selection and automatic fallback to cost-effective alternatives.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon-wrap"><i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i></div>
+    <h3>Usage Analytics</h3>
+    <p>Real-time dashboards tracking token usage, response latency, model performance, and cost breakdowns per project.</p>
+  </div>
+</section>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

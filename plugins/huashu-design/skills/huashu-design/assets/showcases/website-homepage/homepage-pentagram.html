@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Alex Chen — Indie Developer & AI Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    background: #FFFFFF;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #111111;
+    position: relative;
+  }
+
+  /* NAV */
+  nav {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    border-bottom: 1px solid #111;
+    z-index: 10;
+  }
+  nav .logo {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  nav .logo span { color: #E63946; }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 48px;
+  }
+  nav ul li a {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #111;
+    transition: color 0.2s;
+  }
+  nav ul li a:hover { color: #E63946; }
+  nav .nav-contact a {
+    background: #111;
+    color: #fff;
+    padding: 10px 28px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  nav .nav-contact a:hover { background: #E63946; }
+
+  /* MAIN GRID */
+  .hero {
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  /* LEFT PANEL */
+  .hero-left {
+    padding: 64px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .hero-left .intro-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 16px;
+  }
+  .hero-left .name {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 900;
+    font-size: 112px;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: #111;
+  }
+  .hero-left .name .accent { color: #E63946; }
+  .hero-left .tagline {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 1.6;
+    color: #555;
+    max-width: 480px;
+    margin-top: 32px;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid #111;
+    padding-top: 32px;
+  }
+  .stat-item {
+    flex: 1;
+    position: relative;
+  }
+  .stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background: #DDD;
+  }
+  .stat-item .stat-number {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 48px;
+    letter-spacing: -0.02em;
+    color: #111;
+    line-height: 1;
+  }
+  .stat-item .stat-number .red { color: #E63946; }
+  .stat-item .stat-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 8px;
+  }
+
+  /* CENTER DIVIDER */
+  .divider {
+    background: #111;
+  }
+
+  /* RIGHT PANEL */
+  .hero-right {
+    padding: 64px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: #FAFAFA;
+  }
+
+  /* PORTRAIT PLACEHOLDER */
+  .portrait-wrap {
+    position: relative;
+    width: 320px;
+    height: 320px;
+  }
+  .portrait-circle {
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: #E8E8E8;
+    position: relative;
+    overflow: hidden;
+  }
+  .portrait-circle::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 200px;
+    background: #D0D0D0;
+    border-radius: 90px 90px 0 0;
+  }
+  .portrait-frame {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    width: 344px;
+    height: 344px;
+    border: 1px solid #E63946;
+    border-radius: 50%;
+  }
+
+  /* RED INDEX MARKER */
+  .index-marker {
+    position: absolute;
+    bottom: 64px;
+    right: 80px;
+    text-align: right;
+  }
+  .index-marker .idx-num {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 120px;
+    line-height: 0.85;
+    color: #E63946;
+    opacity: 0.1;
+  }
+  .index-marker .idx-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #999;
+    margin-top: 8px;
+  }
+
+  /* DECORATIVE ELEMENTS */
+  .corner-mark {
+    position: absolute;
+    top: 64px;
+    right: 80px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #CCC;
+  }
+
+  .hero-right .role-tags {
+    margin-top: 40px;
+    display: flex;
+    gap: 12px;
+  }
+  .role-tags span {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border: 1px solid #CCC;
+    color: #666;
+    transition: all 0.2s;
+  }
+  .role-tags span:hover {
+    border-color: #E63946;
+    color: #E63946;
+  }
+
+  /* SCROLL CTA */
+  .scroll-cta {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .scroll-cta span {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #BBB;
+  }
+  .scroll-cta .arrow-down {
+    width: 1px;
+    height: 32px;
+    background: #CCC;
+    position: relative;
+  }
+  .scroll-cta .arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -3px;
+    width: 7px;
+    height: 7px;
+    border-right: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+    transform: rotate(45deg);
+  }
+</style>
+</head>
+<body>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="logo">Alex<span>.</span>Chen</div>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#content">Content</a></li>
+      <li><a href="#services">Services</a></li>
+    </ul>
+    <div class="nav-contact">
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <!-- LEFT -->
+    <div class="hero-left">
+      <div>
+        <div class="intro-label">Indie Developer / AI Creator</div>
+        <h1 class="name">Alex<br>Chen<span class="accent">.</span></h1>
+        <p class="tagline">Building tools at the intersection of AI and creativity.</p>
+      </div>
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-number">300K<span class="red">+</span></div>
+          <div class="stat-label">Followers</div>
+        </div>
+        <div class="stat-item" style="padding-left: 32px;">
+          <div class="stat-number">#1</div>
+          <div class="stat-label">App Store</div>
+        </div>
+        <div class="stat-item" style="padding-left: 32px;">
+          <div class="stat-number">100<span class="red">+</span></div>
+          <div class="stat-label">Articles</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="divider"></div>
+
+    <!-- RIGHT -->
+    <div class="hero-right">
+      <div class="corner-mark">Portfolio 2026</div>
+      <div class="portrait-wrap">
+        <div class="portrait-circle"></div>
+        <div class="portrait-frame"></div>
+      </div>
+      <div class="role-tags">
+        <span>Developer</span>
+        <span>Writer</span>
+        <span>Creator</span>
+      </div>
+      <div class="index-marker">
+        <div class="idx-num">01</div>
+        <div class="idx-label">Hero</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCROLL CTA -->
+  <div class="scroll-cta">
+    <span>Scroll</span>
+    <div class="arrow-down"></div>
+  </div>
+
+</body>
+</html>
