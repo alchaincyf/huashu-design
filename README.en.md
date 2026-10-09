@@ -316,6 +316,18 @@ Want to add your language? Fork the repo, translate `SKILL.md` + `README.md`, an
 
 ---
 
+---
+
+## Before/after example
+
+The same plain Northline weekly ops page, before and after `huashu-design` (this example uses the Editorial Brutalism · Desk Gazette direction from the style library).
+
+- Before: https://skill-fixture-before.theroost.dev?vr_gallery=1
+- After (huashu-design): https://huashu-design-after.theroost.dev?vr_gallery=1
+
+Illustrative, author-supplied example: Vibe Rooster applied the `huashu-design` skill to the same page content. It is not a benchmark or an official demo.
+
+
 ## License
 
 **Relicensed to MIT on 2026-05-14.** This skill was previously released under a Personal Use License that restricted commercial use. That restriction is now removed.

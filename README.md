@@ -355,6 +355,18 @@ Anthropic 发布 Claude Design 那天我玩到凌晨四点。几天之后发现�
 
 ---
 
+---
+
+## Before/after example
+
+同一份 Northline weekly ops 页面，应用 `huashu-design` 前后对比（本例选用风格库中的 Editorial Brutalism · Desk Gazette 方向）。
+
+- Before: https://skill-fixture-before.theroost.dev?vr_gallery=1
+- After (huashu-design): https://huashu-design-after.theroost.dev?vr_gallery=1
+
+Illustrative, author-supplied example: Vibe Rooster applied the `huashu-design` skill to the same page content. It is not a benchmark or an official demo.
+
+
 ## License
 
 **2026-05-14 起改为 MIT 协议。** 此前版本采用「个人使用免费、企业商用需授权」的 Personal Use License，对商用做了限制——现在这层限制完全解除。
