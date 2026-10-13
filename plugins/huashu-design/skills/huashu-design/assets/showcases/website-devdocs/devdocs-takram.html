@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Nexus API Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #F5F0EB;
+    color: #3A3A35;
+  }
+
+  /* Navigation */
+  nav {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 64px;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-logo-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: #6B8F71;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-logo-mark i { color: #F5F0EB; }
+  .nav-logo-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2D3436;
+    letter-spacing: -0.3px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+  }
+  .nav-links a {
+    font-size: 13px;
+    font-weight: 400;
+    color: #999;
+    text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .nav-links a:hover { color: #3A3A35; }
+  .nav-links a.active { color: #3A3A35; font-weight: 500; }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    border: 1px solid #E5DFCE;
+  }
+  .search-box span {
+    font-size: 12px;
+    color: #BBB;
+  }
+  .search-box kbd {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    background: #EDE8DC;
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: #AAA;
+    margin-left: 24px;
+  }
+
+  /* Hero Section */
+  .hero {
+    display: flex;
+    padding: 40px 64px 36px;
+    gap: 56px;
+    align-items: flex-start;
+  }
+  .hero-content {
+    flex: 1;
+    padding-top: 16px;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(107,143,113,0.15);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #6B8F71;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 44px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -1.5px;
+    color: #2D3436;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #888;
+    max-width: 440px;
+    margin-bottom: 32px;
+  }
+  .hero-buttons {
+    display: flex;
+    gap: 12px;
+  }
+  .hero-buttons a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.2s;
+  }
+  .btn-green {
+    background: rgba(107, 143, 113, 0.12);
+    color: #6B8F71;
+    border: 1px solid rgba(107, 143, 113, 0.3);
+  }
+  .btn-green:hover { background: rgba(107, 143, 113, 0.18); }
+  .btn-outline {
+    background: rgba(255,255,255,0.5);
+    color: #666;
+    border: 1px solid #DDD8CB;
+  }
+  .btn-outline:hover { background: rgba(255,255,255,0.8); }
+
+  /* Code + Diagram Area */
+  .hero-visual {
+    width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Flow diagram */
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.45);
+    border-radius: 16px;
+    border: 1px solid #E5DFCE;
+  }
+  .flow-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .flow-node-box {
+    padding: 10px 20px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    border: 1px solid #E0DACE;
+    font-size: 13px;
+    font-weight: 500;
+    color: #3A3A35;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .flow-node-box.highlight {
+    background: #6B8F71;
+    border-color: #6B8F71;
+    color: #fff;
+  }
+  .flow-node-label {
+    font-size: 10px;
+    color: #BBB;
+    letter-spacing: 0.5px;
+  }
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+  }
+  .flow-arrow-line {
+    width: 40px;
+    height: 1px;
+    background: #CCC8BA;
+    position: relative;
+  }
+  .flow-arrow-line::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -3px;
+    border: solid #CCC8BA;
+    border-width: 0 1px 1px 0;
+    padding: 3px;
+    transform: rotate(-45deg);
+  }
+  .flow-models {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .flow-model-tag {
+    padding: 6px 14px;
+    background: #FFFFFF;
+    border-radius: 8px;
+    border: 1px solid #E0DACE;
+    font-size: 11px;
+    font-weight: 400;
+    color: #888;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+  }
+
+  /* Code block */
+  .code-card {
+    background: #FAF5EC;
+    border-radius: 16px;
+    border: 1px solid #E5DFCE;
+    overflow: hidden;
+  }
+  .code-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-bottom: 1px solid #E5DFCE;
+    background: rgba(255,255,255,0.3);
+  }
+  .code-card-header .dots {
+    display: flex;
+    gap: 6px;
+  }
+  .code-card-header .dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #DDD8CB;
+  }
+  .code-card-header .fname {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #BBB;
+  }
+  .code-card-body {
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: #555;
+  }
+  .code-card-body .kw { color: #6B8F71; font-weight: 500; }
+  .code-card-body .str { color: #D4A574; }
+  .code-card-body .cmt { color: #C4C0B4; }
+
+  /* Quick Links */
+  .quick-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 8px 64px 32px;
+  }
+  .quick-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    padding: 12px 22px;
+    background: rgba(255,255,255,0.45);
+    border: 1px solid #E5DFCE;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #777;
+    transition: all 0.2s;
+  }
+  .quick-link:hover {
+    background: rgba(255,255,255,0.7);
+    color: #3A3A35;
+  }
+  .quick-link i { color: #6B8F71; }
+
+  /* Features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 0 64px;
+    position: relative;
+  }
+  .feature-card {
+    background: rgba(255,255,255,0.5);
+    border: 1px solid #E5DFCE;
+    border-radius: 16px;
+    padding: 28px 24px;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .feature-card:hover {
+    background: rgba(255,255,255,0.75);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  }
+  .feature-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(107,143,113,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .feature-icon-wrap i { color: #6B8F71; }
+  .feature-card h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #2D3436;
+  }
+  .feature-card p {
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: #AAA;
+  }
+
+  /* Connection lines between feature cards */
+  .features::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: calc(33.33% + 32px);
+    width: calc(33.33% - 64px - 20px);
+    height: 0;
+    border-top: 1px dashed #D4CEBD;
+    transform: translateX(10px);
+  }
+  .features::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: calc(33.33% + 32px);
+    width: calc(33.33% - 64px - 20px);
+    height: 0;
+    border-top: 1px dashed #D4CEBD;
+    transform: translateX(-10px);
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-mark"><i data-lucide="zap" style="width:18px;height:18px;"></i></div>
+    <span class="nav-logo-text">Nexus API</span>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active">Docs</a>
+    <a href="#">API</a>
+    <a href="#">Changelog</a>
+    <a href="#">Status</a>
+    <a href="#">GitHub</a>
+  </div>
+  <div class="nav-right">
+    <div class="search-box">
+      <i data-lucide="search" style="width:13px;height:13px;color:#CCC;"></i>
+      <span>Search documentation...</span>
+      <kbd>/</kbd>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag"><i data-lucide="sparkles" style="width:12px;height:12px;"></i> Unified AI Gateway</div>
+    <h1>One API,<br>every AI model</h1>
+    <p>Access GPT, Claude, Gemini, and 20+ models through a single endpoint. Intelligent routing, unified billing, zero vendor lock-in.</p>
+    <div class="hero-buttons">
+      <a href="#" class="btn-green"><i data-lucide="book-open" style="width:14px;height:14px;"></i> Get Started</a>
+      <a href="#" class="btn-outline">API Reference</a>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <!-- Flow diagram -->
+    <div class="flow-diagram">
+      <div class="flow-node">
+        <div class="flow-node-box">Your App</div>
+        <span class="flow-node-label">request</span>
+      </div>
+      <div class="flow-arrow"><div class="flow-arrow-line"></div></div>
+      <div class="flow-node">
+        <div class="flow-node-box highlight">Nexus</div>
+        <span class="flow-node-label">routes</span>
+      </div>
+      <div class="flow-arrow"><div class="flow-arrow-line"></div></div>
+      <div class="flow-models">
+        <div class="flow-model-tag">GPT-4o</div>
+        <div class="flow-model-tag">Claude 3.5</div>
+        <div class="flow-model-tag">Gemini Pro</div>
+      </div>
+    </div>
+
+    <!-- Code block -->
+    <div class="code-card">
+      <div class="code-card-header">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span class="fname">quickstart.py</span>
+        <i data-lucide="copy" style="width:13px;height:13px;color:#CCC;cursor:pointer;"></i>
+      </div>
+      <div class="code-card-body">
+<span class="kw">from</span> nexus <span class="kw">import</span> Client<br><br>
+client = Client(api_key=<span class="str">"your-key"</span>)<br>
+response = client.chat(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model=<span class="str">"auto"</span>,&nbsp;&nbsp;<span class="cmt"># intelligently routes</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Hello!"</span>}]<br>
+)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Links -->
+<div class="quick-links">
+  <a href="#" class="quick-link"><i data-lucide="rocket" style="width:14px;height:14px;"></i> Getting Started</a>
+  <a href="#" class="quick-link"><i data-lucide="file-text" style="width:14px;height:14px;"></i> API Reference</a>
+  <a href="#" class="quick-link"><i data-lucide="layers" style="width:14px;height:14px;"></i> Models</a>
+  <a href="#" class="quick-link"><i data-lucide="credit-card" style="width:14px;height:14px;"></i> Pricing</a>
+</div>
+
+<!-- Features -->
+<section class="features">
+  <div class="feature-card">
+    <div class="feature-icon-wrap"><i data-lucide="git-branch" style="width:18px;height:18px;"></i></div>
+    <h3>Model Routing</h3>
+    <p>Automatically select the best model for each request based on task complexity, latency, and cost constraints.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon-wrap"><i data-lucide="trending-down" style="width:18px;height:18px;"></i></div>
+    <h3>Cost Optimization</h3>
+    <p>Reduce AI spend by up to 60% with intelligent selection and automatic fallback to cost-effective alternatives.</p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon-wrap"><i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i></div>
+    <h3>Usage Analytics</h3>
+    <p>Real-time dashboards tracking token usage, latency, model performance, and cost breakdowns per project.</p>
+  </div>
+</section>
+
+<!-- Spec annotation -->
+<svg style="position:absolute;bottom:24px;right:64px;opacity:0.12;" width="120" height="40" viewBox="0 0 120 40" fill="none">
+  <line x1="0" y1="20" x2="72" y2="20" stroke="#6B8F71" stroke-width="0.5"/>
+  <circle cx="72" cy="20" r="2.5" fill="none" stroke="#6B8F71" stroke-width="0.5"/>
+  <text x="82" y="23" font-family="Inter" font-size="8" fill="#6B8F71" letter-spacing="0.5">20+ models</text>
+</svg>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

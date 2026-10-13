@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>Claude Code Agent - Build Studio Style</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 510px;
+    overflow: hidden;
+    margin: 0;
+    background: #FAFAF8;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+  }
+
+  /* Subtle top gradient wash */
+  .wash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1200px;
+    height: 510px;
+    background: radial-gradient(ellipse 800px 400px at 30% 40%, rgba(212, 165, 116, 0.06) 0%, transparent 70%);
+    z-index: 0;
+  }
+
+  /* Main layout */
+  .layout {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1200px;
+    height: 510px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .center-block {
+    text-align: center;
+    max-width: 700px;
+    margin-top: -24px; /* slight upward shift for golden ratio vertical center */
+  }
+
+  /* Floating "Agent" */
+  .floating-agent {
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+    font-size: 128px;
+    letter-spacing: -4px;
+    color: #1A1A18;
+    line-height: 1;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .floating-agent span {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Slight weight shift on first letter for visual interest */
+  .floating-agent .accent-letter {
+    font-weight: 300;
+    color: #2A2A28;
+  }
+
+  /* Gold underline accent */
+  .gold-line {
+    width: 48px;
+    height: 1px;
+    background: #D4A574;
+    margin: 0 auto 32px;
+    opacity: 0.7;
+  }
+
+  /* Subtitle — label tier: smallest text, widest spacing */
+  .subtitle {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #B0ACA4;
+    margin-bottom: 24px;
+  }
+
+  /* Description line — body tier */
+  .desc {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 13px;
+    color: #A8A4A0;
+    letter-spacing: 0.3px;
+    line-height: 2;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Minimal agent indicators — 8 thin vertical lines */
+  .agent-indicators {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    z-index: 2;
+  }
+
+  .indicator {
+    width: 1px;
+    background: #D8D4CE;
+    border-radius: 0.5px;
+  }
+
+  .indicator.gold {
+    background: #D4A574;
+    width: 1.5px;
+    opacity: 0.8;
+  }
+
+  /* Corner marks */
+  .corner-mark {
+    position: absolute;
+    z-index: 2;
+  }
+
+  .corner-mark svg {
+    display: block;
+  }
+
+  .corner-tl { top: 48px; left: 48px; }
+  .corner-br { bottom: 48px; right: 48px; transform: rotate(180deg); }
+
+  /* Side text */
+  .side-label {
+    position: absolute;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 8px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #CBC7C0;
+    z-index: 2;
+  }
+
+  .side-left {
+    left: 48px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: center center;
+  }
+
+  .side-right {
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    transform-origin: center center;
+  }
+
+  /* Removed shadow-card — Build purity demands uninterrupted whitespace */
+
+  /* Number 8 whisper */
+  .number-whisper {
+    position: absolute;
+    top: 48px;
+    right: 96px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 200;
+    font-size: 24px;
+    color: #D4A574;
+    opacity: 0.35;
+    z-index: 2;
+  }
+</style>
+</head>
+<body>
+
+  <div class="wash"></div>
+
+  <!-- Corner marks -->
+  <div class="corner-mark corner-tl">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0L0 20" stroke="#D4A574" stroke-width="0.5" opacity="0.4"/>
+      <path d="M0 0L20 0" stroke="#D4A574" stroke-width="0.5" opacity="0.4"/>
+    </svg>
+  </div>
+  <div class="corner-mark corner-br">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0L0 20" stroke="#D4A574" stroke-width="0.5" opacity="0.4"/>
+      <path d="M0 0L20 0" stroke="#D4A574" stroke-width="0.5" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <!-- Side labels -->
+  <div class="side-label side-left">Claude Code</div>
+  <div class="side-label side-right">Parallel Workflow</div>
+
+  <!-- Number whisper -->
+  <div class="number-whisper">8</div>
+
+  <!-- Main content -->
+  <div class="layout">
+    <div class="center-block">
+      <div class="subtitle">Parallel Architecture</div>
+      <div class="floating-agent"><span><span class="accent-letter">A</span>gent</span></div>
+      <div class="gold-line"></div>
+      <div class="desc">
+        Eight autonomous agents orchestrated in parallel,<br>
+        each solving a distinct piece of the whole.
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent indicators -->
+  <div class="agent-indicators">
+    <div class="indicator" style="height: 20px;"></div>
+    <div class="indicator" style="height: 28px;"></div>
+    <div class="indicator gold" style="height: 36px;"></div>
+    <div class="indicator" style="height: 22px;"></div>
+    <div class="indicator" style="height: 32px;"></div>
+    <div class="indicator gold" style="height: 40px;"></div>
+    <div class="indicator" style="height: 24px;"></div>
+    <div class="indicator" style="height: 30px;"></div>
+  </div>
+
+</body>
+</html>

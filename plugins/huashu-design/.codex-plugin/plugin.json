@@ -1,0 +1,36 @@
+{
+  "name": "huashu-design",
+  "version": "0.1.0",
+  "description": "HTML-native design: clickable prototypes, HTML/PPTX decks, motion (MP4/GIF), infographics, and 5-dimension critique. Always ships 3 visual directions first.",
+  "author": {
+    "name": "花叔 (Huashu)",
+    "url": "https://github.com/alchaincyf"
+  },
+  "homepage": "https://github.com/alchaincyf/huashu-design#readme",
+  "repository": "https://github.com/alchaincyf/huashu-design",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "design",
+    "slides",
+    "prototype",
+    "animation",
+    "html"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Huashu Design",
+    "shortDescription": "HTML-native design skill",
+    "longDescription": "Type a sentence and get a finished design: clickable App/Web prototypes, HTML + editable PPTX decks, motion (MP4/GIF), print-grade infographics, and a 5-dimension expert review. Always shows 3 visual directions first.",
+    "developerName": "花叔 (Huashu)",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "websiteURL": "https://github.com/alchaincyf/huashu-design",
+    "defaultPrompt": [
+      "Use huashu-design to make a keynote. Give me 3 style directions first.",
+      "Build a clickable iOS prototype — 4 screens.",
+      "Turn this logic into a 20-second animation and export MP4."
+    ],
+    "brandColor": "#D4480B"
+  }
+}

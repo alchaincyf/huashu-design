@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>GLM-4.7 Coding Benchmark - Takram Style</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    margin: 0;
+    background: #F5F0EB;
+    font-family: 'Inter', sans-serif;
+    color: #3A3A3A;
+    position: relative;
+  }
+
+  /* Subtle background texture */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(168, 181, 160, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 30%, rgba(200, 190, 175, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .layout {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    grid-template-rows: 1fr;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Left panel */
+  .left-panel {
+    padding: 72px 48px 60px 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid rgba(107, 143, 113, 0.15);
+  }
+
+  .left-top {}
+
+  .category-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #6B8F71;
+    margin-bottom: 32px;
+    opacity: 0.8;
+  }
+
+  .title-jp {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 42px;
+    font-weight: 400;
+    color: #2D3436;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+
+  .title-en {
+    font-size: 15px;
+    font-weight: 300;
+    color: #999999;
+    line-height: 1.7;
+    max-width: 340px;
+  }
+
+  .model-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 36px;
+    padding: 10px 18px;
+    background: rgba(107, 143, 113, 0.08);
+    border: 1px solid rgba(107, 143, 113, 0.15);
+    border-radius: 24px;
+  }
+
+  .model-badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #6B8F71;
+  }
+
+  .model-badge-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6B8F71;
+    letter-spacing: 1px;
+  }
+
+  /* Page indicator */
+  .page-indicator {
+    position: absolute;
+    bottom: 40px;
+    right: 72px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 300;
+    color: #C8C2B8;
+    letter-spacing: 1px;
+  }
+
+  /* Key insight */
+  .key-insight {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    padding: 24px 28px;
+    border: 1px solid rgba(168, 181, 160, 0.2);
+  }
+
+  .key-insight-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #A8B5A0;
+    margin-bottom: 10px;
+  }
+
+  .key-insight-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: #555555;
+    line-height: 1.8;
+  }
+
+  .left-bottom {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .credit {
+    font-size: 11px;
+    font-weight: 400;
+    color: #BBBBBB;
+    letter-spacing: 0.5px;
+  }
+
+  /* Right panel - visualization */
+  .right-panel {
+    padding: 60px 72px 60px 60px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .viz-title {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888888;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.glm { background: #6B8F71; }
+  .legend-dot.claude { background: #D4A574; }
+  .legend-dot.gpt { background: #C8C2B8; }
+
+  .legend-text {
+    font-size: 11px;
+    font-weight: 400;
+    color: #999999;
+  }
+
+  /* SVG radar chart area */
+  .radar-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .radar-svg {
+    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.04));
+  }
+
+  /* Metric cards row */
+  .metric-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .m-card {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    padding: 24px 28px;
+    border: 1px solid rgba(168, 181, 160, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .m-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 28px;
+    width: 32px;
+    height: 2px;
+    background: #6B8F71;
+    opacity: 0.4;
+    border-radius: 1px;
+  }
+
+  .m-card-name {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #999999;
+    margin-bottom: 4px;
+  }
+
+  .m-card-type {
+    font-size: 11px;
+    font-weight: 300;
+    color: #BBBBBB;
+    margin-bottom: 16px;
+  }
+
+  .m-card-value {
+    font-size: 40px;
+    font-weight: 300;
+    color: #2D3436;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .m-card-value .unit {
+    font-size: 18px;
+    color: #6B8F71;
+    font-weight: 400;
+  }
+
+  .m-card-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7D9B72;
+    background: rgba(168, 181, 160, 0.12);
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .m-card-delta svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .m-card-competitors {
+    margin-top: 14px;
+    display: flex;
+    gap: 16px;
+  }
+
+  .comp-mini {
+    font-size: 11px;
+    font-weight: 400;
+    color: #AAAAAA;
+  }
+
+  .comp-mini span {
+    font-weight: 500;
+    color: #888888;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- Left panel -->
+  <div class="left-panel">
+    <div class="left-top">
+      <div class="category-label">Benchmark Analysis</div>
+      <div class="title-jp">GLM-4.7<br>Coding 能力突破</div>
+      <div class="title-en">
+        Open-source model achieves state-of-the-art performance across all major coding benchmarks for the first time.
+      </div>
+      <div class="model-badge">
+        <div class="model-badge-dot"></div>
+        <span class="model-badge-text">GLM-4.7 Open Source</span>
+      </div>
+
+      <div class="key-insight" style="margin-top: 40px;">
+        <div class="key-insight-label">Key Finding</div>
+        <div class="key-insight-text">
+          在三项核心编程基准测试中，GLM-4.7 均超越 GPT-4o 和 Claude 3.5，成为首个达到 SOTA 水平的开源模型。
+        </div>
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="1" width="14" height="14" rx="3" stroke="#BBBBBB" stroke-width="1"/>
+        <path d="M5 8L7 10L11 6" stroke="#A8B5A0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="credit">Data: Official benchmark evaluations, 2026</span>
+    </div>
+  </div>
+
+  <!-- Right panel -->
+  <div class="right-panel">
+    <div class="viz-header">
+      <div class="viz-title">Performance Comparison <span style="font-weight:300;color:#B0AAA0;font-size:10px;margin-left:8px;">— 03 benchmarks</span></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot glm"></div><span class="legend-text">GLM-4.7</span></div>
+        <div class="legend-item"><div class="legend-dot claude"></div><span class="legend-text">Claude 3.5</span></div>
+        <div class="legend-item"><div class="legend-dot gpt"></div><span class="legend-text">GPT-4o</span></div>
+      </div>
+    </div>
+
+    <!-- Radar chart SVG — art-piece treatment -->
+    <div class="radar-area">
+      <svg class="radar-svg" width="560" height="560" viewBox="0 0 560 560">
+
+        <!-- Subtle background circle (like a lens/scope) -->
+        <circle cx="280" cy="280" r="250" fill="none" stroke="#E8E4DC" stroke-width="0.3" opacity="0.5"/>
+
+        <!-- Grid circles — hand-drawn feel with varied dash -->
+        <circle cx="280" cy="280" r="220" fill="none" stroke="#DDD9D2" stroke-width="0.6" stroke-dasharray="2,6"/>
+        <circle cx="280" cy="280" r="176" fill="none" stroke="#DDD9D2" stroke-width="0.5" stroke-dasharray="2,6"/>
+        <circle cx="280" cy="280" r="132" fill="none" stroke="#DDD9D2" stroke-width="0.4" stroke-dasharray="2,6"/>
+        <circle cx="280" cy="280" r="88" fill="none" stroke="#DDD9D2" stroke-width="0.4" stroke-dasharray="2,6"/>
+        <circle cx="280" cy="280" r="44" fill="none" stroke="#DDD9D2" stroke-width="0.3" stroke-dasharray="2,6"/>
+
+        <!-- Center point -->
+        <circle cx="280" cy="280" r="2.5" fill="#6B8F71" opacity="0.4"/>
+
+        <!-- Grid scale labels — positioned along axis -->
+        <text x="288" y="62" font-family="Inter" font-size="9" fill="#C8C2B8" font-weight="300">100</text>
+        <text x="288" y="106" font-family="Inter" font-size="9" fill="#C8C2B8" font-weight="300">80</text>
+        <text x="288" y="150" font-family="Inter" font-size="9" fill="#C8C2B8" font-weight="300">60</text>
+        <text x="288" y="194" font-family="Inter" font-size="9" fill="#C8C2B8" font-weight="300">40</text>
+
+        <!-- Axis lines — delicate -->
+        <line x1="280" y1="280" x2="280" y2="55" stroke="#D4CFC6" stroke-width="0.5"/>
+        <line x1="280" y1="280" x2="475" y2="392" stroke="#D4CFC6" stroke-width="0.5"/>
+        <line x1="280" y1="280" x2="85" y2="392" stroke="#D4CFC6" stroke-width="0.5"/>
+
+        <!-- Axis endpoint markers -->
+        <circle cx="280" cy="55" r="2" fill="none" stroke="#D4CFC6" stroke-width="0.6"/>
+        <circle cx="475" cy="392" r="2" fill="none" stroke="#D4CFC6" stroke-width="0.6"/>
+        <circle cx="85" cy="392" r="2" fill="none" stroke="#D4CFC6" stroke-width="0.6"/>
+
+        <!-- Axis labels with index -->
+        <text x="280" y="38" font-family="Inter" font-size="12" fill="#8A857D" font-weight="500" text-anchor="middle" letter-spacing="1.5">AIME 2025</text>
+        <text x="280" y="28" font-family="Inter" font-size="7" fill="#B0AAA0" text-anchor="middle" letter-spacing="0.5">Mathematical Reasoning</text>
+        <text x="492" y="408" font-family="Inter" font-size="12" fill="#8A857D" font-weight="500" text-anchor="start" letter-spacing="1.5">SWE-bench</text>
+        <text x="492" y="422" font-family="Inter" font-size="7" fill="#B0AAA0" text-anchor="start" letter-spacing="0.5">Software Engineering</text>
+        <text x="68" y="408" font-family="Inter" font-size="12" fill="#8A857D" font-weight="500" text-anchor="end" letter-spacing="1.5">&tau;&sup2;-Bench</text>
+        <text x="68" y="422" font-family="Inter" font-size="7" fill="#B0AAA0" text-anchor="end" letter-spacing="0.5">Agent Tasks</text>
+
+        <!-- GPT-4o polygon (lightest) -->
+        <polygon
+          points="280,96.1 371.8,333 143.8,358.7"
+          fill="rgba(219,219,219,0.12)" stroke="#D4CFC6" stroke-width="1" stroke-dasharray="4,3"
+        />
+
+        <!-- Claude 3.5 polygon -->
+        <polygon
+          points="280,86 381.6,338.6 129.7,366.8"
+          fill="rgba(212,165,116,0.08)" stroke="#D4A574" stroke-width="1.2"
+        />
+
+        <!-- GLM-4.7 polygon (prominent, sage green) -->
+        <polygon
+          points="280,69.5 420.6,361.2 113.5,376.2"
+          fill="rgba(107,143,113,0.1)" stroke="#6B8F71" stroke-width="2"
+        />
+
+        <!-- Data points - GLM-4.7 (larger, prominent) -->
+        <circle cx="280" cy="69.5" r="6" fill="#6B8F71" opacity="0.8"/>
+        <circle cx="280" cy="69.5" r="10" fill="none" stroke="#6B8F71" stroke-width="0.6" opacity="0.3"/>
+        <circle cx="420.6" cy="361.2" r="6" fill="#6B8F71" opacity="0.8"/>
+        <circle cx="420.6" cy="361.2" r="10" fill="none" stroke="#6B8F71" stroke-width="0.6" opacity="0.3"/>
+        <circle cx="113.5" cy="376.2" r="6" fill="#6B8F71" opacity="0.8"/>
+        <circle cx="113.5" cy="376.2" r="10" fill="none" stroke="#6B8F71" stroke-width="0.6" opacity="0.3"/>
+
+        <!-- Data points - Claude 3.5 -->
+        <circle cx="280" cy="86" r="3.5" fill="#D4A574" opacity="0.7"/>
+        <circle cx="381.6" cy="338.6" r="3.5" fill="#D4A574" opacity="0.7"/>
+        <circle cx="129.7" cy="366.8" r="3.5" fill="#D4A574" opacity="0.7"/>
+
+        <!-- Data points - GPT-4o -->
+        <circle cx="280" cy="96.1" r="2.5" fill="#C8C2B8" opacity="0.6"/>
+        <circle cx="371.8" cy="333" r="2.5" fill="#C8C2B8" opacity="0.6"/>
+        <circle cx="143.8" cy="358.7" r="2.5" fill="#C8C2B8" opacity="0.6"/>
+
+        <!-- Value labels for GLM-4.7 — annotation style -->
+        <line x1="280" y1="69.5" x2="316" y2="52" stroke="#6B8F71" stroke-width="0.5" opacity="0.4"/>
+        <text x="320" y="50" font-family="Inter" font-size="14" fill="#6B8F71" font-weight="600">95.7</text>
+
+        <line x1="420.6" y1="361.2" x2="448" y2="348" stroke="#6B8F71" stroke-width="0.5" opacity="0.4"/>
+        <text x="452" y="352" font-family="Inter" font-size="14" fill="#6B8F71" font-weight="600">73.8%</text>
+
+        <line x1="113.5" y1="376.2" x2="82" y2="392" stroke="#6B8F71" stroke-width="0.5" opacity="0.4"/>
+        <text x="78" y="390" font-family="Inter" font-size="14" fill="#6B8F71" font-weight="600" text-anchor="end">87.4</text>
+
+        <!-- Spec annotation — bottom-right -->
+        <text x="505" y="530" font-family="Inter" font-size="8" fill="#C8C2B8" font-weight="300" letter-spacing="1" text-anchor="end">Fig. 01 — Tri-axis Performance Map</text>
+      </svg>
+    </div>
+
+    <!-- Metric cards -->
+    <div class="metric-cards">
+      <div class="m-card">
+        <div class="m-card-name">AIME 2025</div>
+        <div class="m-card-type">Mathematical Reasoning</div>
+        <div class="m-card-value">95.7</div>
+        <div class="m-card-delta">
+          <svg viewBox="0 0 10 10" fill="none"><path d="M5 2L8 7H2L5 2Z" fill="#7D9B72"/></svg>
+          +7.5 vs Claude 3.5
+        </div>
+        <div class="m-card-competitors">
+          <span class="comp-mini">Claude 3.5: <span>88.2</span></span>
+          <span class="comp-mini">GPT-4o: <span>83.6</span></span>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-card-name">SWE-bench Verified</div>
+        <div class="m-card-type">Software Engineering</div>
+        <div class="m-card-value">73.8<span class="unit">%</span></div>
+        <div class="m-card-delta">
+          <svg viewBox="0 0 10 10" fill="none"><path d="M5 2L8 7H2L5 2Z" fill="#7D9B72"/></svg>
+          +20.5 vs Claude 3.5
+        </div>
+        <div class="m-card-competitors">
+          <span class="comp-mini">Claude 3.5: <span>53.3%</span></span>
+          <span class="comp-mini">GPT-4o: <span>48.2%</span></span>
+        </div>
+      </div>
+
+      <div class="m-card">
+        <div class="m-card-name">&tau;&sup2;-Bench</div>
+        <div class="m-card-type">Agent Task Completion</div>
+        <div class="m-card-value">87.4</div>
+        <div class="m-card-delta">
+          <svg viewBox="0 0 10 10" fill="none"><path d="M5 2L8 7H2L5 2Z" fill="#7D9B72"/></svg>
+          +8.5 vs Claude 3.5
+        </div>
+        <div class="m-card-competitors">
+          <span class="comp-mini">Claude 3.5: <span>78.9</span></span>
+          <span class="comp-mini">GPT-4o: <span>71.5</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="page-indicator">07 / 24</div>
+  </div>
+</div>
+</body>
+</html>

@@ -79,6 +79,30 @@ npx skills add alchaincyf/huashu-design
 > git clone https://github.com/alchaincyf/huashu-design.git ~/.claude/skills/huashu-design
 > ```
 
+### 插件市场（Claude / Grok / Codex / Pi）
+
+`npx skills add` 仍然是默认路径。下面让各 host 用它们自己的 plugin install（和 Archify / Semctx 同一套 marketplace 索引）：
+
+```bash
+# Claude Code
+claude plugin marketplace add alchaincyf/huashu-design
+claude plugin install huashu-design@huashu-design --scope user
+
+# Grok
+grok plugin marketplace add alchaincyf/huashu-design
+grok plugin install huashu-design --trust
+grok plugin enable huashu-design
+
+# Codex
+codex plugin marketplace add alchaincyf/huashu-design
+codex plugin add huashu-design@huashu-design
+
+# Pi
+pi install git:github.com/alchaincyf/huashu-design
+```
+
+Skill 本体仍是仓库根目录的 `SKILL.md` + `assets/` + `references/` + `scripts/`。`plugins/huashu-design/skills/huashu-design/` 是 **git 跟踪文件的拷贝**（不是 symlink，不打包未跟踪文件）：Codex 复制 `skills/` 时会丢掉链接。改 skill 后跑 `node scripts/build-plugin-leaf.mjs`，发版前 `node scripts/check-plugin-release.mjs --write`。
+
 然后在 Claude Code / Codex / Cursor 等任意支持 skills 的 agent 里直接说话：
 
 ```

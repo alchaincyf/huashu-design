@@ -1,0 +1,13 @@
+{
+  "name": "huashu-design",
+  "description": "HTML-native design: clickable prototypes, HTML/PPTX decks, motion (MP4/GIF), infographics, and 5-dimension critique. Always ships 3 visual directions first.",
+  "version": "0.1.0",
+  "author": {
+    "name": "花叔 (Huashu)",
+    "url": "https://github.com/alchaincyf"
+  },
+  "homepage": "https://github.com/alchaincyf/huashu-design#readme",
+  "repository": "https://github.com/alchaincyf/huashu-design",
+  "license": "MIT",
+  "keywords": ["design", "slides", "prototype", "animation", "html", "grok"]
+}

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Nexus API Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #FFFFFF;
+    color: #111111;
+    display: flex;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    height: 900px;
+    border-right: 1px solid #111;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 24px 28px;
+    border-bottom: 1px solid #111;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sidebar-logo .logo-mark {
+    width: 28px;
+    height: 28px;
+    background: #E63946;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sidebar-logo .logo-mark svg { color: #fff; }
+  .sidebar-logo span {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+  }
+  .sidebar-section {
+    padding: 20px 28px 8px;
+  }
+  .sidebar-section-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 12px;
+  }
+  .sidebar-link {
+    display: block;
+    padding: 6px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .sidebar-link:hover { color: #111; }
+  .sidebar-link.active {
+    color: #E63946;
+    font-weight: 600;
+  }
+  .sidebar-link.active::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #E63946;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .sidebar-divider {
+    height: 1px;
+    background: #E8E8E8;
+    margin: 12px 28px;
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    height: 900px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top nav */
+  .topnav {
+    height: 52px;
+    min-height: 52px;
+    border-bottom: 1px solid #111;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+  }
+  .topnav-links {
+    display: flex;
+    gap: 28px;
+  }
+  .topnav-links a {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #555;
+    transition: color 0.15s;
+  }
+  .topnav-links a:hover { color: #111; }
+  .topnav-links a.active-nav { color: #E63946; }
+  .topnav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .topnav-right .status-dot {
+    width: 7px;
+    height: 7px;
+    background: #E63946;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .topnav-right span {
+    font-size: 11px;
+    color: #888;
+    font-weight: 500;
+  }
+  .topnav-right a {
+    color: #555;
+    text-decoration: none;
+  }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 400px;
+    border-bottom: 1px solid #E8E8E8;
+  }
+  .hero-left {
+    padding: 56px 48px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero-badge {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #E63946;
+    margin-bottom: 20px;
+  }
+  .hero-left h1 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+  }
+  .hero-left p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #666;
+    max-width: 420px;
+    margin-bottom: 32px;
+  }
+  .hero-links {
+    display: flex;
+    gap: 12px;
+  }
+  .hero-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .hero-links a.primary {
+    background: #111;
+    color: #fff;
+  }
+  .hero-links a.primary:hover { background: #E63946; }
+  .hero-links a.secondary {
+    border: 1px solid #DDD;
+    color: #333;
+    background: #fff;
+  }
+  .hero-links a.secondary:hover { border-color: #111; }
+
+  /* Code block */
+  .hero-right {
+    padding: 40px 48px 40px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FAFAFA;
+    border-left: 1px solid #E8E8E8;
+  }
+  .code-block {
+    background: #FFFFFF;
+    border: 1px solid #DDD;
+    width: 100%;
+    max-width: 480px;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid #DDD;
+    background: #FAFAFA;
+  }
+  .code-header span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #999;
+    font-weight: 500;
+  }
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+  .code-dots i { width: 10px; height: 10px; }
+  .code-body {
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #111;
+  }
+  .code-body .kw { color: #111; font-weight: 500; }
+  .code-body .str { color: #E63946; }
+  .code-body .cmt { color: #AAAAAA; }
+  .code-body .fn { color: #555; }
+
+  /* Quick links bar */
+  .quick-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid #E8E8E8;
+  }
+  .quick-bar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 28px;
+    text-decoration: none;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    border-right: 1px solid #E8E8E8;
+    transition: background 0.15s;
+  }
+  .quick-bar a:last-child { border-right: none; }
+  .quick-bar a:hover { background: #FAFAFA; }
+  .quick-bar a i { color: #E63946; }
+
+  /* Features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    flex: 1;
+  }
+  .feature-card {
+    padding: 36px 32px;
+    border-right: 1px solid #E8E8E8;
+    display: flex;
+    flex-direction: column;
+  }
+  .feature-card:last-child { border-right: none; }
+  .feature-card .feature-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #E63946;
+    margin-bottom: 14px;
+  }
+  .feature-card h3 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+  .feature-card p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #777;
+  }
+  .feature-icon {
+    width: 36px;
+    height: 36px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .feature-icon i { color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark"><i data-lucide="zap" style="width:16px;height:16px;"></i></div>
+    <span>Nexus API</span>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Getting Started</div>
+    <a href="#" class="sidebar-link active">Introduction</a>
+    <a href="#" class="sidebar-link">Quick Start</a>
+    <a href="#" class="sidebar-link">Authentication</a>
+    <a href="#" class="sidebar-link">Installation</a>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Core Concepts</div>
+    <a href="#" class="sidebar-link">Model Routing</a>
+    <a href="#" class="sidebar-link">Chat Completions</a>
+    <a href="#" class="sidebar-link">Streaming</a>
+    <a href="#" class="sidebar-link">Error Handling</a>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">API Reference</div>
+    <a href="#" class="sidebar-link">POST /chat</a>
+    <a href="#" class="sidebar-link">GET /models</a>
+    <a href="#" class="sidebar-link">GET /usage</a>
+    <a href="#" class="sidebar-link">Webhooks</a>
+  </div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Resources</div>
+    <a href="#" class="sidebar-link">Models</a>
+    <a href="#" class="sidebar-link">Pricing</a>
+    <a href="#" class="sidebar-link">SDKs</a>
+    <a href="#" class="sidebar-link">Changelog</a>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <!-- Top Nav -->
+  <nav class="topnav">
+    <div class="topnav-links">
+      <a href="#" class="active-nav">Docs</a>
+      <a href="#">API</a>
+      <a href="#">Changelog</a>
+      <a href="#">Status</a>
+      <a href="#">GitHub</a>
+    </div>
+    <div class="topnav-right">
+      <span class="status-dot"></span>
+      <span>All systems operational</span>
+      <a href="#"><i data-lucide="search" style="width:16px;height:16px;color:#888;"></i></a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-badge">Unified AI Gateway</div>
+      <h1>One API,<br>every AI model</h1>
+      <p>Access GPT, Claude, Gemini, and 20+ models through a single endpoint. Intelligent routing, unified billing, zero vendor lock-in.</p>
+      <div class="hero-links">
+        <a href="#" class="primary"><i data-lucide="arrow-right" style="width:14px;height:14px;"></i> Get Started</a>
+        <a href="#" class="secondary">API Reference</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <i data-lucide="circle" style="width:10px;height:10px;color:#DDD;fill:#DDD;"></i>
+            <i data-lucide="circle" style="width:10px;height:10px;color:#DDD;fill:#DDD;"></i>
+            <i data-lucide="circle" style="width:10px;height:10px;color:#DDD;fill:#DDD;"></i>
+          </div>
+          <span>quickstart.py</span>
+        </div>
+        <div class="code-body">
+<span class="kw">from</span> nexus <span class="kw">import</span> Client<br><br>
+client = Client(api_key=<span class="str">"your-key"</span>)<br>
+response = client.chat(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model=<span class="str">"auto"</span>,&nbsp;&nbsp;<span class="cmt"># intelligently routes</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;messages=[{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"role"</span>: <span class="str">"user"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"content"</span>: <span class="str">"Hello!"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;}]<br>
+)
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Links -->
+  <div class="quick-bar">
+    <a href="#"><i data-lucide="rocket" style="width:16px;height:16px;"></i> Getting Started</a>
+    <a href="#"><i data-lucide="file-text" style="width:16px;height:16px;"></i> API Reference</a>
+    <a href="#"><i data-lucide="layers" style="width:16px;height:16px;"></i> Models</a>
+    <a href="#"><i data-lucide="credit-card" style="width:16px;height:16px;"></i> Pricing</a>
+  </div>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon"><i data-lucide="git-branch" style="width:18px;height:18px;"></i></div>
+      <div class="feature-label">Feature 01</div>
+      <h3>Model Routing</h3>
+      <p>Automatically select the best model for each request based on task complexity, latency requirements, and cost constraints.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i data-lucide="trending-down" style="width:18px;height:18px;"></i></div>
+      <div class="feature-label">Feature 02</div>
+      <h3>Cost Optimization</h3>
+      <p>Reduce AI spend by up to 60% with intelligent model selection and automatic fallback to cost-effective alternatives.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i></div>
+      <div class="feature-label">Feature 03</div>
+      <h3>Usage Analytics</h3>
+      <p>Real-time dashboards tracking token usage, response latency, model performance, and cost breakdowns per project.</p>
+    </div>
+  </section>
+</main>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>

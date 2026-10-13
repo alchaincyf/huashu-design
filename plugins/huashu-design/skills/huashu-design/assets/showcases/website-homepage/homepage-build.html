@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Alex Chen — Indie Developer & AI Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    background: #FAFAF8;
+    font-family: 'Inter', sans-serif;
+    color: #2A2A28;
+    position: relative;
+  }
+
+  /* GLASSMORPHISM NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1440px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    background: rgba(250, 250, 248, 0.72);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    z-index: 100;
+  }
+  nav .logo {
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: #2A2A28;
+  }
+  nav .logo .dot { color: #D4A574; }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+  }
+  nav ul li a {
+    font-weight: 400;
+    font-size: 13px;
+    color: #888;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.3s;
+  }
+  nav ul li a:hover { color: #2A2A28; }
+  nav .nav-cta a {
+    font-weight: 400;
+    font-size: 12px;
+    color: #2A2A28;
+    text-decoration: none;
+    padding: 8px 24px;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 2px;
+    transition: all 0.3s;
+    letter-spacing: 0.02em;
+  }
+  nav .nav-cta a:hover {
+    border-color: #D4A574;
+    color: #D4A574;
+  }
+
+  /* HERO LAYOUT */
+  .hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1440px;
+    height: 900px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 80px;
+  }
+
+  .hero-content {
+    display: flex;
+    align-items: center;
+    gap: 96px;
+    width: 100%;
+    max-width: 1200px;
+  }
+
+  /* LEFT: TEXT */
+  .hero-text {
+    flex: 1;
+  }
+  .hero-text .greeting {
+    font-weight: 400;
+    font-size: 11px;
+    color: #B0ACA4;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero-text h1 {
+    font-weight: 200;
+    font-size: 80px;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    color: #2A2A28;
+  }
+  .hero-text h1 strong {
+    font-weight: 500;
+  }
+  .hero-text h1 .gold-period {
+    color: #D4A574;
+    font-weight: 300;
+  }
+  .hero-text .tagline {
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #999;
+    margin-top: 32px;
+    max-width: 440px;
+  }
+
+  /* CTA BUTTONS */
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    margin-top: 48px;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #FAFAF8;
+    background: #2A2A28;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover { background: #3A3A38; }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #888;
+    background: transparent;
+    border: 1px solid rgba(0,0,0,0.08);
+    padding: 14px 32px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .btn-secondary:hover { border-color: #D4A574; color: #D4A574; }
+
+  /* RIGHT: CARDS + PORTRAIT */
+  .hero-visual {
+    flex: 0 0 460px;
+    position: relative;
+    height: 520px;
+  }
+
+  /* PORTRAIT */
+  .portrait {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #EDECE8;
+    position: absolute;
+    top: 0;
+    right: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .portrait::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 130px;
+    background: #D8D6D0;
+    border-radius: 55px 55px 0 0;
+  }
+
+  /* FLOATING CARDS */
+  .card {
+    position: absolute;
+    background: #FFFFFF;
+    border: 1px solid rgba(0,0,0,0.04);
+    border-radius: 2px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.03);
+  }
+
+  .card-1 {
+    top: 60px;
+    left: 0;
+    width: 220px;
+  }
+  .card-2 {
+    top: 240px;
+    left: 60px;
+    width: 240px;
+  }
+  .card-3 {
+    top: 180px;
+    right: 0;
+    width: 200px;
+  }
+
+  .card .card-number {
+    font-weight: 200;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    color: #2A2A28;
+    line-height: 1;
+  }
+  .card .card-number .gold { color: #D4A574; font-weight: 300; }
+  .card .card-label {
+    font-weight: 400;
+    font-size: 10px;
+    color: #B0ACA4;
+    margin-top: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .card .card-desc {
+    font-weight: 300;
+    font-size: 12px;
+    color: #999;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* GOLD ACCENT LINE */
+  .accent-line {
+    position: absolute;
+    bottom: 0;
+    left: 100px;
+    width: 48px;
+    height: 2px;
+    background: #D4A574;
+    border-radius: 1px;
+  }
+
+  /* Removed dot-grid — Build: zero decorative elements */
+
+  /* BOTTOM TICKER */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 1440px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    border-top: 1px solid rgba(0,0,0,0.04);
+  }
+  .bottom-bar span {
+    font-weight: 300;
+    font-size: 11px;
+    color: #BBB;
+    letter-spacing: 0.08em;
+  }
+  .bottom-bar .sep {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #D4A574;
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">alex chen<span class="dot"> .</span></div>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#content">Content</a></li>
+      <li><a href="#services">Services</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#contact">Get in Touch</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <!-- TEXT -->
+      <div class="hero-text">
+        <div class="greeting">Indie Developer & AI Creator</div>
+        <h1>Alex<br><strong>Chen</strong><span class="gold-period">.</span></h1>
+        <p class="tagline">Building tools at the intersection of AI and creativity. Shipping products, writing stories, shaping ideas.</p>
+        <div class="hero-cta">
+          <a href="#work" class="btn-primary">
+            View Work
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="#content" class="btn-secondary">Read Articles</a>
+        </div>
+      </div>
+
+      <!-- VISUAL -->
+      <div class="hero-visual">
+        <div class="portrait"></div>
+
+        <div class="card card-1">
+          <div class="card-number">300K<span class="gold">+</span></div>
+          <div class="card-label">Followers</div>
+          <div class="card-desc">Across platforms, building in public</div>
+        </div>
+
+        <div class="card card-2">
+          <div class="card-number"><span class="gold">#</span>1</div>
+          <div class="card-label">App Store</div>
+          <div class="card-desc">Top paid app, shipped as a solo developer</div>
+        </div>
+
+        <div class="card card-3">
+          <div class="card-number">100<span class="gold">+</span></div>
+          <div class="card-label">Articles</div>
+          <div class="card-desc">On AI, dev, and creative tools</div>
+        </div>
+
+        <div class="accent-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <span>Developer</span>
+    <div class="sep"></div>
+    <span>Writer</span>
+    <div class="sep"></div>
+    <span>AI Creator</span>
+    <div class="sep"></div>
+    <span>Speaker</span>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Meridian — Business Intelligence for Modern Teams</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #FAFAF8;
+    color: #1a1a1a;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 96px;
+    height: 80px;
+  }
+  .nav-logo {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1a1a1a;
+  }
+  .nav-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: #E8E4DF;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-logo-icon svg { width: 18px; height: 18px; color: #D4A574; }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #777;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #1a1a1a; }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .nav-signin {
+    font-size: 14px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #777;
+    transition: color 0.2s;
+  }
+  .nav-signin:hover { color: #1a1a1a; }
+  .nav-cta {
+    font-size: 13px;
+    font-weight: 400;
+    padding: 10px 24px;
+    background: #1a1a1a;
+    color: #FAFAF8;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #333; }
+
+  /* HERO LAYOUT */
+  .hero {
+    padding: 24px 96px 0 96px;
+    display: grid;
+    grid-template-columns: 480px 1fr;
+    gap: 64px;
+    align-items: start;
+    height: calc(900px - 80px);
+    position: relative;
+  }
+
+  /* LEFT TEXT */
+  .hero-text {
+    padding-top: 48px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    padding: 0;
+    background: transparent;
+    margin-bottom: 32px;
+  }
+  .hero-badge-dot {
+    display: none;
+  }
+  .hero-badge span {
+    font-size: 10px;
+    font-weight: 400;
+    color: #B0ACA4;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+  .hero-headline {
+    font-size: 48px;
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+    color: #1a1a1a;
+  }
+  .hero-headline em {
+    font-style: italic;
+    font-weight: 300;
+    color: #1a1a1a;
+  }
+  .hero-subtitle {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: #888;
+    margin-bottom: 48px;
+    max-width: 400px;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+  .btn-primary {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 14px 32px;
+    background: #1a1a1a;
+    color: #FAFAF8;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: #333; }
+  .btn-secondary {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 14px 32px;
+    background: transparent;
+    color: #777;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: #aaa; color: #1a1a1a; }
+  .btn-secondary svg { width: 15px; height: 15px; }
+
+  /* METRICS ROW */
+  .metrics {
+    display: flex;
+    gap: 48px;
+  }
+  .metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .metric-value {
+    font-size: 36px;
+    font-weight: 200;
+    letter-spacing: -1px;
+    color: #1a1a1a;
+  }
+  .metric-value span { color: #D4A574; }
+  .metric-label {
+    font-size: 12px;
+    font-weight: 400;
+    color: #aaa;
+    letter-spacing: 0.3px;
+  }
+
+  /* RIGHT — DASHBOARD */
+  .hero-dashboard {
+    position: relative;
+    padding-top: 16px;
+  }
+  .dashboard-card {
+    background: #FFFFFF;
+    border-radius: 2px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.02),
+      0 4px 16px rgba(0,0,0,0.04);
+    padding: 28px;
+    width: 100%;
+  }
+
+  /* Dashboard header */
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .dash-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a1a;
+  }
+  .dash-period {
+    font-size: 12px;
+    font-weight: 400;
+    color: #aaa;
+    padding: 4px 12px;
+    border: 1px solid #eee;
+    border-radius: 2px;
+  }
+
+  /* KPI strip */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #f0eeeb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .kpi-item {
+    background: #FAFAF8;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .kpi-item-value {
+    font-size: 22px;
+    font-weight: 300;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .kpi-item-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #bbb;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* Chart */
+  .chart-container {
+    margin-bottom: 24px;
+    position: relative;
+    height: 200px;
+  }
+  .chart-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Bottom section */
+  .dash-bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .insight-card {
+    background: #FAFAF8;
+    border-radius: 2px;
+    padding: 16px;
+  }
+  .insight-icon {
+    width: 28px;
+    height: 28px;
+    background: #F0EBE3;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .insight-icon svg { width: 14px; height: 14px; color: #D4A574; }
+  .insight-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+  .insight-desc {
+    font-size: 11px;
+    font-weight: 300;
+    color: #999;
+    line-height: 1.5;
+  }
+
+  /* TRUST BAR */
+  .trust-bar {
+    position: absolute;
+    bottom: 24px;
+    left: 96px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .trust-label {
+    font-size: 11px;
+    font-weight: 400;
+    color: #ccc;
+    white-space: nowrap;
+  }
+  .trust-logos {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+  }
+  .trust-logo {
+    font-size: 14px;
+    font-weight: 400;
+    color: #ccc;
+    letter-spacing: 0.3px;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"/>
+      </svg>
+    </div>
+    Meridian
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Product</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Docs</a></li>
+    <li><a href="#">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="nav-signin">Sign In</a>
+    <button class="nav-cta">Get Started</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+
+  <!-- LEFT -->
+  <div class="hero-text">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      <span>Business Intelligence for Modern Teams</span>
+    </div>
+    <h1 class="hero-headline">Turn data into <em>decisions,</em> not dashboards<span style="color:#D4A574;font-weight:300;">.</span></h1>
+    <p class="hero-subtitle">AI-powered analytics that tells you what matters, when it matters. Less noise, more clarity.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary">Start Free Trial</button>
+      <button class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Watch Demo
+      </button>
+    </div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="metric-value">3<span>x</span></div>
+        <div class="metric-label">Faster insights</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">50<span>%</span></div>
+        <div class="metric-label">Less meeting time</div>
+      </div>
+      <div class="metric">
+        <div class="metric-value">99.9<span>%</span></div>
+        <div class="metric-label">Uptime SLA</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — FLOATING DASHBOARD -->
+  <div class="hero-dashboard">
+    <div class="dashboard-card">
+      <div class="dash-header">
+        <div class="dash-title">Performance Overview</div>
+        <div class="dash-period">Last 30 days</div>
+      </div>
+
+      <div class="kpi-strip">
+        <div class="kpi-item">
+          <div class="kpi-item-value">$2.4M</div>
+          <div class="kpi-item-label">Revenue</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-item-value">84.2K</div>
+          <div class="kpi-item-label">Users</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-item-value">1.2%</div>
+          <div class="kpi-item-label">Churn</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-item-value">$142</div>
+          <div class="kpi-item-label">ARPU</div>
+        </div>
+      </div>
+
+      <!-- SVG Chart -->
+      <div class="chart-container">
+        <svg class="chart-svg" viewBox="0 0 700 200" preserveAspectRatio="none">
+          <!-- Grid lines -->
+          <line x1="0" y1="50" x2="700" y2="50" stroke="#f0eeeb" stroke-width="1"/>
+          <line x1="0" y1="100" x2="700" y2="100" stroke="#f0eeeb" stroke-width="1"/>
+          <line x1="0" y1="150" x2="700" y2="150" stroke="#f0eeeb" stroke-width="1"/>
+
+          <!-- Area fill -->
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#D4A574" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#D4A574" stop-opacity="0.01"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,160 C50,155 100,140 150,120 C200,100 250,110 300,85 C350,60 400,70 450,50 C500,30 550,45 600,35 C650,25 680,20 700,15 L700,200 L0,200 Z" fill="url(#areaGrad)"/>
+
+          <!-- Main line -->
+          <path d="M0,160 C50,155 100,140 150,120 C200,100 250,110 300,85 C350,60 400,70 450,50 C500,30 550,45 600,35 C650,25 680,20 700,15" fill="none" stroke="#D4A574" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Secondary line -->
+          <path d="M0,170 C50,165 100,158 150,150 C200,142 250,145 300,135 C350,125 400,128 450,118 C500,108 550,112 600,105 C650,98 680,95 700,90" fill="none" stroke="#e0d5c8" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+          <!-- Data point -->
+          <circle cx="600" cy="35" r="5" fill="#D4A574"/>
+          <circle cx="600" cy="35" r="8" fill="none" stroke="#D4A574" stroke-width="1" opacity="0.4"/>
+        </svg>
+      </div>
+
+      <div class="dash-bottom-row">
+        <div class="insight-card">
+          <div class="insight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <div class="insight-title">AI Insight: Revenue Acceleration</div>
+          <div class="insight-desc">Enterprise segment grew 23% this quarter, driven by 4 new accounts. Recommend increasing sales capacity.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="insight-title">Predicted: Q3 Target On Track</div>
+          <div class="insight-desc">Based on current trajectory, 89% probability of hitting $3.2M quarterly target. Pipeline looks healthy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar">
+    <span class="trust-label">Trusted by teams at</span>
+    <div class="trust-logos">
+      <span class="trust-logo">Stripe</span>
+      <span class="trust-logo">Notion</span>
+      <span class="trust-logo">Linear</span>
+      <span class="trust-logo">Vercel</span>
+      <span class="trust-logo">Figma</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+  });
+</script>
+</body>
+</html>

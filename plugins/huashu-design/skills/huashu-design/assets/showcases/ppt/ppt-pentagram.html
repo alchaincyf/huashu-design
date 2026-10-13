@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>GLM-4.7 Coding Benchmark - Pentagram Style</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    margin: 0;
+    background: #FFFFFF;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #111;
+    position: relative;
+  }
+
+  /* Top black bar */
+  .top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    z-index: 10;
+  }
+
+  .top-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  .top-label .red { color: #E63946; }
+
+  .top-right {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #E63946;
+  }
+
+  /* Grid lines */
+  .grid-line-v {
+    position: absolute;
+    top: 64px;
+    bottom: 64px;
+    width: 1px;
+    background: #000;
+    opacity: 0.05;
+  }
+
+  .grid-line-h {
+    position: absolute;
+    left: 80px;
+    right: 80px;
+    height: 1px;
+    background: #000;
+    opacity: 0.05;
+  }
+
+  /* Left column — hero number + model info */
+  .left-col {
+    position: absolute;
+    left: 80px;
+    top: 104px;
+    width: 480px;
+  }
+
+  .model-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .model-name {
+    font-size: 48px;
+    font-weight: 900;
+    color: #111;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+
+  .model-name .version { color: #E63946; }
+
+  .hero-number {
+    font-size: 200px;
+    font-weight: 900;
+    line-height: 0.85;
+    letter-spacing: -10px;
+    color: #111;
+    margin-top: 24px;
+  }
+
+  .hero-number .decimal { color: #E63946; }
+
+  .hero-context {
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  .key-message {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #666;
+    margin-top: 32px;
+    max-width: 400px;
+  }
+
+  .key-message strong {
+    color: #111;
+    font-weight: 700;
+  }
+
+  .open-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 8px 16px;
+    border: 2px solid #E63946;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #E63946;
+  }
+
+  /* Right area — 3 benchmark columns */
+  .data-area {
+    position: absolute;
+    left: 620px;
+    top: 104px;
+    right: 80px;
+    bottom: 64px;
+    display: flex;
+    gap: 0;
+  }
+
+  .bench-col {
+    flex: 1;
+    padding: 0 32px;
+    border-left: 1px solid #E8E8E8;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bench-col:first-child {
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .bench-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 4px;
+  }
+
+  .bench-type {
+    font-size: 11px;
+    font-weight: 400;
+    color: #BBB;
+    margin-bottom: 64px;
+  }
+
+  /* Hero score per column */
+  .bench-hero {
+    font-size: 80px;
+    font-weight: 900;
+    color: #E63946;
+    letter-spacing: -3px;
+    line-height: 1;
+    margin-bottom: 64px;
+  }
+
+  /* Horizontal bar chart */
+  .bar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .bar-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    width: 90px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .bar-label.highlight {
+    color: #111;
+    font-weight: 700;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 56px;
+    background: #F5F5F5;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 14px;
+  }
+
+  .bar-fill.base {
+    background: #E0E0E0;
+  }
+
+  .bar-fill.dark {
+    background: #111;
+  }
+
+  .bar-fill.winner {
+    background: #E63946;
+  }
+
+  .bar-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .bar-fill.base .bar-value {
+    color: #888;
+  }
+
+  /* Bottom bar */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 80px;
+    z-index: 10;
+  }
+
+  .bottom-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .bottom-logo {
+    font-size: 14px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .bottom-divider {
+    width: 1px;
+    height: 20px;
+    background: #444;
+  }
+
+  .bottom-note {
+    font-size: 11px;
+    font-weight: 400;
+    color: #666;
+  }
+
+  .bottom-right-text {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #E63946;
+  }
+
+  /* Delta label */
+  .delta {
+    font-size: 12px;
+    font-weight: 700;
+    color: #E63946;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 24px;
+    padding-left: 106px;
+  }
+
+  /* Bottom summary row */
+  .summary-row {
+    position: absolute;
+    bottom: 96px;
+    left: 620px;
+    right: 80px;
+    display: flex;
+    border-top: 1px solid #E8E8E8;
+    padding-top: 24px;
+  }
+
+  .summary-item {
+    flex: 1;
+    padding: 0 32px;
+  }
+
+  .summary-item:first-child {
+    padding-left: 0;
+  }
+
+  .summary-num {
+    font-size: 32px;
+    font-weight: 900;
+    color: #111;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .summary-num .red { color: #E63946; }
+
+  .summary-desc {
+    font-size: 11px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* Winner markers */
+  .winner-dot {
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #E63946;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <span class="top-label">Benchmark Report <span class="red">/</span> 2025 Coding Performance</span>
+    <span class="top-right">Open-Source SOTA</span>
+  </div>
+
+  <!-- Grid lines -->
+  <div class="grid-line-v" style="left: 80px;"></div>
+  <div class="grid-line-v" style="left: 620px;"></div>
+  <div class="grid-line-v" style="right: 80px;"></div>
+  <div class="grid-line-h" style="top: 104px;"></div>
+
+  <!-- Left column -->
+  <div class="left-col">
+    <div class="model-tag">Open-Source Model</div>
+    <div class="model-name">GLM-<span class="version">4.7</span></div>
+    <div class="hero-number">95<span class="decimal">.</span>7</div>
+    <div class="hero-context">AIME 2025 Score</div>
+    <div class="key-message">
+      <strong>First open-source model to achieve SOTA</strong> across all three major coding benchmarks, surpassing GPT-4o and Claude 3.5.
+    </div>
+    <div class="open-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="6" stroke="#E63946" stroke-width="1.5"/>
+        <circle cx="7" cy="7" r="2.5" fill="#E63946"/>
+      </svg>
+      Open Source
+    </div>
+  </div>
+
+  <!-- Data columns -->
+  <div class="data-area">
+    <!-- AIME 2025 -->
+    <div class="bench-col">
+      <div class="bench-title">AIME 2025</div>
+      <div class="bench-type">Mathematical Reasoning</div>
+      <div class="bench-hero">95.7</div>
+      <div class="bar-group">
+        <div class="bar-row">
+          <span class="bar-label highlight">GLM-4.7</span>
+          <div class="bar-track">
+            <div class="bar-fill winner" style="width: 95.7%;">
+              <span class="bar-value">95.7</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Claude 3.5</span>
+          <div class="bar-track">
+            <div class="bar-fill dark" style="width: 88.2%;">
+              <span class="bar-value">88.2</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">GPT-4o</span>
+          <div class="bar-track">
+            <div class="bar-fill base" style="width: 83.6%;">
+              <span class="bar-value">83.6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="delta">+7.5 vs closed-source best</div>
+    </div>
+
+    <!-- SWE-bench -->
+    <div class="bench-col">
+      <div class="bench-title">SWE-bench Verified</div>
+      <div class="bench-type">Software Engineering</div>
+      <div class="bench-hero">73.8</div>
+      <div class="bar-group">
+        <div class="bar-row">
+          <span class="bar-label highlight">GLM-4.7</span>
+          <div class="bar-track">
+            <div class="bar-fill winner" style="width: 73.8%;">
+              <span class="bar-value">73.8%</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Claude 3.5</span>
+          <div class="bar-track">
+            <div class="bar-fill dark" style="width: 53.3%;">
+              <span class="bar-value">53.3%</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">GPT-4o</span>
+          <div class="bar-track">
+            <div class="bar-fill base" style="width: 48.2%;">
+              <span class="bar-value">48.2%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="delta">+20.5 vs closed-source best</div>
+    </div>
+
+    <!-- Tau-bench -->
+    <div class="bench-col">
+      <div class="bench-title">&tau;&sup2;-Bench</div>
+      <div class="bench-type">Agent Task Completion</div>
+      <div class="bench-hero">87.4</div>
+      <div class="bar-group">
+        <div class="bar-row">
+          <span class="bar-label highlight">GLM-4.7</span>
+          <div class="bar-track">
+            <div class="bar-fill winner" style="width: 87.4%;">
+              <span class="bar-value">87.4</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Claude 3.5</span>
+          <div class="bar-track">
+            <div class="bar-fill dark" style="width: 78.9%;">
+              <span class="bar-value">78.9</span>
+            </div>
+          </div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">GPT-4o</span>
+          <div class="bar-track">
+            <div class="bar-fill base" style="width: 71.5%;">
+              <span class="bar-value">71.5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="delta">+8.5 vs closed-source best</div>
+    </div>
+  </div>
+
+  <!-- Summary row -->
+  <div class="summary-row">
+    <div class="summary-item">
+      <div class="summary-num"><span class="red">3</span>/3</div>
+      <div class="summary-desc">Benchmarks Won</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-num"><span class="red">#1</span></div>
+      <div class="summary-desc">Open-Source Ranking</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-num">12<span class="red">.</span>2<span style="font-size:18px;color:#999;">avg</span></div>
+      <div class="summary-desc">Points Above Runner-Up</div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <span class="bottom-logo">ZHIPU AI</span>
+      <div class="bottom-divider"></div>
+      <span class="bottom-note">Benchmark data sourced from official evaluation reports, 2025</span>
+    </div>
+    <span class="bottom-right-text">Open-Source SOTA</span>
+  </div>
+
+</body>
+</html>
