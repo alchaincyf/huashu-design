@@ -931,7 +931,9 @@ module.exports = async function html2pptx(htmlFile, pres, options) {
   try {
     const launchOptions = { env: Object.assign({}, process.env, { TMPDIR: tmpDir }) };
     if (process.platform === 'darwin') launchOptions.channel = 'chrome';
-    browser = await chromium.launch(launchOptions);
+    browser = await chromium.launch(launchOptions)
+      .catch(() => chromium.launch({ ...launchOptions, channel: undefined }))
+      .catch(() => chromium.launch({ ...launchOptions, channel: 'msedge' }));  // Mac 没装 Chrome、Windows 没下载浏览器时的兜底
     const page = await browser.newPage();
     await page.goto('file://' + absHtmlPath);
 

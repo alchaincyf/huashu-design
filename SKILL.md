@@ -185,6 +185,13 @@ python3 "$HD/scripts/learn.py" harvest <项目目录>                           
 
 降级牺牲流程，不牺牲真实资产协议、可读性底线，也不跳过三方向门。
 
+**在 DeepSeek Harness 桌面端里**（工具清单里有 `load_workspace_dependencies`）：
+- 先调用它。下文的 `python3` 换成它返回的 Python（自带 python-pptx、Pillow），`node` 换成它返回的 Node；不要 `pip install`，也不要去找系统 Python
+- 以插件装上时，`playwright`、`pptxgenjs`、`pdf-lib`、`sharp` 已随插件装好，`$HD/scripts/*.mjs` 直接能跑。浏览器先用 Playwright 自带的，没有就借用户电脑上的 Chrome / Edge；三样都没有时先问用户要不要下载（`npx playwright install chromium`，一百多 MB），同意了才装
+- 这里没有 Python 版 playwright：可编辑 PPTX 走路线 A（`export_deck_pptx.mjs`），路线 B 的 `pptx_from_rendered.py` 跑不了要说明；`verify.py` 换成 `gen_deck_thumbs.mjs` 出每页缩略图，再逐张读图看
+- `learn.py`、`design_lint.py` 默认写 `~/.huashu-design/`，在「工作区内修改」权限下会被拦：先设 `HUASHU_DESIGN_HOME=<工作区>/.huashu-design` 再跑
+- 三方向门照走，用 `ask_user_question` 让用户挑
+
 没有 fork-verifier 就用 `scripts/verify.py`；没有 Tweaks host 就用纯前端 localStorage 版（`references/tweaks-system.md`）；
 没有结构化问题 UI 就在对话里用 markdown 清单问；HTML 里要调 LLM 就用 mock 或让用户填自己的 key。
 

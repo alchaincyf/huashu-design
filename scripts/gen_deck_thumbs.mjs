@@ -36,7 +36,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const files = fs.readdirSync(slidesDir).filter(f => f.endsWith('.html')).sort();
 if (!files.length) { console.error('slides 目录里没有 .html'); process.exit(1); }
 
-const browser = await chromium.launch();
+const browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' })).catch(() => chromium.launch({ channel: 'msedge' }))  // 没下载 Playwright 浏览器时借用户已装的 Chrome / Edge;
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 let ok = 0;
 for (const f of files) {
