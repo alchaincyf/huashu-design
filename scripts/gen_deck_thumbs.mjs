@@ -9,7 +9,7 @@
  *   本脚本就是给画廊准备这批缩略图。grid 模式不需要它。
  *
  * 用法（复制到 deck 项目根目录，装依赖后运行）：
- *   npm install playwright sharp
+ *   npm install playwright sharp     （sharp 可选：没装就让浏览器直接按缩略图尺寸截 JPEG）
  *   node gen_deck_thumbs.mjs --slides slides --out thumbs [--width 1600] [--quality 86]
  *
  * 然后在 index.html 的 MANIFEST 给每项加 thumb（与 file 同名 .jpg）：
@@ -19,7 +19,6 @@
  * 提示：缩略图分辨率别太低（默认 1600px），否则画廊里卡片 hover 放大后会发虚。
  */
 import { chromium } from 'playwright';
-import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 
@@ -36,8 +35,9 @@ fs.mkdirSync(outDir, { recursive: true });
 const files = fs.readdirSync(slidesDir).filter(f => f.endsWith('.html')).sort();
 if (!files.length) { console.error('slides 目录里没有 .html'); process.exit(1); }
 
-const browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' })).catch(() => chromium.launch({ channel: 'msedge' }))  // 没下载 Playwright 浏览器时借用户已装的 Chrome / Edge;
-const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
+const browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' })).catch(() => chromium.launch({ channel: 'msedge' }));  // 没下载 Playwright 浏览器时借用户已装的 Chrome / Edge
+const sharp = await import('sharp').then(m => m.default).catch(() => null);
+const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: sharp ? 1 : width / W });
 let ok = 0;
 for (const f of files) {
   const base = f.replace(/\.html$/, '');
@@ -45,8 +45,12 @@ for (const f of files) {
   try {
     await page.goto('file://' + path.resolve(slidesDir, f), { waitUntil: 'load' });
     await page.waitForTimeout(2800);                 // 等 webfont / 图片 paint
-    const buf = await page.screenshot({ type: 'png', clip: { x: 0, y: 0, width: W, height: H } });
-    await sharp(buf).resize(width).jpeg({ quality }).toFile(out);
+    if (sharp) {
+      const buf = await page.screenshot({ type: 'png', clip: { x: 0, y: 0, width: W, height: H } });
+      await sharp(buf).resize(width).jpeg({ quality }).toFile(out);
+    } else {
+      await page.screenshot({ path: out, type: 'jpeg', quality, clip: { x: 0, y: 0, width: W, height: H } });
+    }
     ok++; console.log('[ok] ' + out);
   } catch (e) { console.error('[FAIL] ' + f + ': ' + e.message); }
 }

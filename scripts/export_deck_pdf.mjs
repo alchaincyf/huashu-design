@@ -55,7 +55,7 @@ async function main() {
   }
   console.log(`Found ${files.length} slides in ${slidesDir}`);
 
-  const browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' })).catch(() => chromium.launch({ channel: 'msedge' }))  // 没下载 Playwright 浏览器时借用户已装的 Chrome / Edge;
+  const browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' })).catch(() => chromium.launch({ channel: 'msedge' }));  // 没下载 Playwright 浏览器时借用户已装的 Chrome / Edge
   const ctx = await browser.newContext({ viewport: { width, height } });
 
   // 1) Render each HTML to its own PDF buffer

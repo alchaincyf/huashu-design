@@ -60,7 +60,7 @@ async function main() {
 
   console.log(`Rendering ${path.basename(htmlAbs)} → ${path.basename(outFile)}`);
 
-  const browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' })).catch(() => chromium.launch({ channel: 'msedge' }))  // 没下载 Playwright 浏览器时借用户已装的 Chrome / Edge;
+  const browser = await chromium.launch().catch(() => chromium.launch({ channel: 'chrome' })).catch(() => chromium.launch({ channel: 'msedge' }));  // 没下载 Playwright 浏览器时借用户已装的 Chrome / Edge
   const ctx = await browser.newContext({ viewport: { width, height } });
   const page = await ctx.newPage();
 

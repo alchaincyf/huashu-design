@@ -187,7 +187,7 @@ python3 "$HD/scripts/learn.py" harvest <项目目录>                           
 
 **在 DeepSeek Harness 桌面端里**（工具清单里有 `load_workspace_dependencies`）：
 - 先调用它。下文的 `python3` 换成它返回的 Python（自带 python-pptx、Pillow），`node` 换成它返回的 Node；不要 `pip install`，也不要去找系统 Python
-- 以插件装上时，`playwright`、`pptxgenjs`、`pdf-lib`、`sharp` 已随插件装好，`$HD/scripts/*.mjs` 直接能跑。浏览器先用 Playwright 自带的，没有就借用户电脑上的 Chrome / Edge；三样都没有时先问用户要不要下载（`npx playwright install chromium`，一百多 MB），同意了才装
+- 以插件装上时，`playwright`、`pptxgenjs`、`pdf-lib` 已随插件装好（`sharp` 没带，缩略图脚本会自动改用浏览器截小图），`$HD/scripts/*.mjs` 直接能跑。浏览器先用 Playwright 自带的，没有就借用户电脑上的 Chrome / Edge；三样都没有时先问用户要不要下载（`npx playwright install chromium`，一百多 MB），同意了才装
 - 这里没有 Python 版 playwright：可编辑 PPTX 走路线 A（`export_deck_pptx.mjs`），路线 B 的 `pptx_from_rendered.py` 跑不了要说明；`verify.py` 换成 `gen_deck_thumbs.mjs` 出每页缩略图，再逐张读图看
 - `learn.py`、`design_lint.py` 默认写 `~/.huashu-design/`，在「工作区内修改」权限下会被拦：先设 `HUASHU_DESIGN_HOME=<工作区>/.huashu-design` 再跑
 - 三方向门照走，用 `ask_user_question` 让用户挑
