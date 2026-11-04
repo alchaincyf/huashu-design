@@ -151,7 +151,7 @@ npx skills add alchaincyf/huashu-design
 dsh plugin --profile desktop add github:alchaincyf/huashu-design
 ```
 
-装完退出 DSH 再打开，插件才会加载。实测桌面端会直接用它自带的 Python 生成可编辑 PPTX；要导出 PDF 时，脚本会借用你电脑上已装的 Chrome 或 Edge。卸载：`dsh plugin --profile desktop remove huashu-design`。
+命令行装之前，桌面端要先打开过一次，并且完全退出。装完再打开 DSH，插件才会加载。实测桌面端会直接用它自带的 Python 生成可编辑 PPTX；要导出 PDF 时，脚本会借用你电脑上已装的 Chrome 或 Edge。卸载：`dsh plugin --profile desktop remove huashu-design`。
 
 然后在 Claude Code / Codex / Cursor / DeepSeek Harness 等任意支持 skills 的 agent 里直接说话：
 
