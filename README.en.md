@@ -121,6 +121,8 @@ A map of every travel photo from three years, in a Kaoru Kasai–style long scro
 npx skills add alchaincyf/huashu-design
 ```
 
+**DeepSeek Harness**: this repo is also a DSH plugin. `dsh plugin --profile desktop add github:alchaincyf/huashu-design` (use `web` for the web app), then restart DSH. Remove with `dsh plugin --profile desktop remove huashu-design`.
+
 > **Verify after install**: this skill is more than a single SKILL.md — the `references/`, `assets/`, `scripts/`, and `demos/` subdirectories hold 99 referenced recipes, scripts, and assets that the skill depends on. After installing, check the install path (e.g. `~/.claude/skills/huashu-design/`); if you only see SKILL.md and none of those subdirectories, your `skills` CLI is too old (≤1.5.15 had a bug that synced only the single file, fixed in 1.5.19). Upgrade and reinstall:
 >
 > ```bash

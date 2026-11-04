@@ -143,7 +143,17 @@ npx skills add alchaincyf/huashu-design
 > git clone https://github.com/alchaincyf/huashu-design.git ~/.claude/skills/huashu-design
 > ```
 
-然后在 Claude Code / Codex / Cursor 等任意支持 skills 的 agent 里直接说话：
+### DeepSeek Harness 插件
+
+本仓库同时是一个 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）插件。桌面端用户在「插件 → 添加插件」里填 GitHub 仓库地址，或者用命令行（桌面端的 profile 叫 `desktop`，网页版换成 `web`）：
+
+```bash
+dsh plugin --profile desktop add github:alchaincyf/huashu-design
+```
+
+装完退出 DSH 再打开，插件才会加载。实测桌面端会直接用它自带的 Python 生成可编辑 PPTX；要导出 PDF 时，脚本会借用你电脑上已装的 Chrome 或 Edge。卸载：`dsh plugin --profile desktop remove huashu-design`。
+
+然后在 Claude Code / Codex / Cursor / DeepSeek Harness 等任意支持 skills 的 agent 里直接说话：
 
 ```
 「做一份 AI 心理学的演讲 PPT，推荐 3 个风格方向让我选」
