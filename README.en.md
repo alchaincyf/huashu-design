@@ -115,6 +115,18 @@ A map of every travel photo from three years, in a Kaoru Kasai–style long scro
 
 ---
 
+## 📺 Beginner Tutorial (recorded by Huasheng (Huashu))
+
+Not sure how to start? Watch Huashu's recorded getting-started tutorial for huashu-design:
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=m-_BlUdcIvw"><img src="https://img.youtube.com/vi/m-_BlUdcIvw/maxresdefault.jpg" alt="huashu-design tutorial" width="70%"></a>
+</p>
+
+<p align="center"><sub>👉 <a href="https://www.youtube.com/watch?v=m-_BlUdcIvw">Watch the full tutorial on YouTube</a></sub></p>
+
+---
+
 ## Install
 
 ```bash
@@ -240,6 +252,38 @@ No heroic one-shot attempts: start with assumptions + placeholders + reasoning, 
 Mandatory whenever the task involves a specific brand: ask → search → download (three fallback paths) → verify + extract → write `brand-spec.md` covering **logo, product shots, UI screenshots, colors, fonts** — all required assets, not just colors.
 
 <p align="center"><img src="https://github.com/alchaincyf/huashu-design/releases/download/v2.0/w1-brand-protocol-en.gif" width="100%"></p>
+
+---
+
+## Showcase · Real-world cases from the 2.0 era
+
+### Parrot Evolution website · the three-logics advisor flow in practice (2.0)
+
+> **Live demo · [https://www.huasheng.ai/parrots/](https://www.huasheng.ai/parrots/)**
+
+One sentence — "make a website introducing parrot evolution" — zero extra requirements, and the skill ran the full 2.0 advisor flow on its own: first judged that images were content-essential → pulled public-domain natural-history illustrations (Edward Lear / John Gould parrot plates) → **three logics in parallel** (seconds roulette + award-winning sites as real-world references + Kenya Hara's "White" philosophy), each producing a version with real visuals. **Design only after the materials are in — not color-block placeholders filled in as you go.**
+
+### "Talking about skills" · PM after-party talk deck
+
+> **Live demo · [https://skill-huasheng.vercel.app](https://skill-huasheng.vercel.app)**
+
+A 13-page HTML deck, **done entirely with huashu-design**:
+
+- Black-background minimal-serif visual system (cover / about / hook / what / why / closing)
+- 2 cinematic demos with BGM + SFX, 22 seconds each (Nuwa skill workflow + Darwin skill workflow), each in a **completely independent visual language**:
+  - **Nuwa**: 3D knowledge orbit + Pentagon distillation + SKILL.md typewriter + "21 minutes" hero reveal
+  - **Darwin**: autoresearch loop spin + v1/v5 side-by-side diff + full-screen Hill-Climb curve + Ratchet gear lock
+- Each cinematic shows a **complete static workflow dashboard** by default (the audience can always see how the skill is running); press ▶ to trigger the animation, which fades back to the dashboard when it finishes
+- Embeds huasheng.ai's 25-second hero animation (iframe with a localized fallback)
+- Real data: the real 14,495-stargazer growth curve (pulled from the gh API) + DeepSeek V4's real specs (WebSearch-verified)
+- Real AI material: a 4×2 grid image generated with `huashu-gpt-image`, 8 standalone transparent PNGs cut out with `extract_grid.py`, floating on the 3D orbit
+
+**Pages worth studying**:
+- `/slides/slide-04b-nuwa-flow.html` · the two-layer architecture of static dashboard + cinematic overlay
+- `/slides/slide-06b-darwin-flow.html` · a contrast case of two completely independent visual languages
+- `/slides/slide-03b-deepseek-cover.html` · AI slop vs the real-designer point of view, side by side
+
+For the cinematic patterns in detail, see `references/cinematic-patterns.md`.
 
 ---
 
@@ -400,6 +444,14 @@ The day Anthropic launched Claude Design I played with it until 4 a.m. A few day
 So I had an agent deconstruct Claude Design itself (including the system prompts circulating in the community, the brand asset protocol, the component mechanics), distill it into a structured spec, then write it as a skill installed in my own Claude Code.
 
 Thanks to Anthropic for writing the Claude Design prompts so clearly. This kind of derivative work inspired by other products is the new form of open-source culture in the AI era.
+
+---
+
+## Products built with huashu-design
+
+The three interface skins of **[FanBox · a coding-agent cockpit](https://github.com/alchaincyf/fanbox)** were designed with huashu-design. Direct Claude Code / Codex to do the work, and see every file it touches and every line it changes.
+
+[![FanBox · Coding Agent cockpit](https://raw.githubusercontent.com/alchaincyf/fanbox/master/assets/promo-banner.jpg)](https://github.com/alchaincyf/fanbox)
 
 ---
 
