@@ -82,7 +82,7 @@ Hara 写过：「白不是颜色，是一种感受性。」（白は色彩では
 
 Vignelli 的 8 字格言：「If you can design one thing, you can design everything.」（能设计好一件东西，你就能设计好一切）
 
-我们的设计系统不允许「这一镜临时加一种字体」「这一镜临时加一个圆角值」。所有 12 个 shots 共享同一套 5 个色值、3 种字体、4 个 easing curves。
+我们的设计系统不允许「这一镜临时加一种字体」「这一镜临时加一个圆角值」。所有 13 个 shots 共享同一套 10 个色值、3 种字体、4 个 easing curves。
 
 ## 1.3 观众画像
 
@@ -142,7 +142,7 @@ Vignelli 的 8 字格言：「If you can design one thing, you can design everyt
 | 不用 Lorem ipsum | 每一段假文都用真正能读的内容（含「md is the source. Anything else is product.」这种 hook） |
 | 不用 stock photo | 整支片不出现任何真实照片（it's about typography, not lifestyle） |
 | 不画进度条 + 时间码 + 版权署名条 | 这些是 player chrome，不是 content chrome——会和外部播放器撞 |
-| 不让 md 字符在每个 scene 都长得一样 | 它要在 12 镜里有 12 种状态，但保持同一个核心字形 |
+| 不让 md 字符在每个 scene 都长得一样 | 它要在 13 镜里有 13 种状态，但保持同一个核心字形 |
 
 ## 1.6 一句话定位
 

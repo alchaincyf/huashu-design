@@ -109,6 +109,8 @@ const App = () => (
 
 **完整可运行参考**：`demos/md-html-narration/md-html-demo.html`（3 分 21 秒，7 段，21 cue，已实战验证）
 
+另一个完整示例：`demos/voiceover-demo/`（`script.md` 解说稿 + `什么是token.html`，含 [[cue:…]] 标记与 gap 设置）。
+
 ### 第二条 · 场景之间不能「硬切」
 
 | 错误模式（PowerPoint slop） | 正确模式（电影感） |
@@ -387,7 +389,7 @@ DOUBAO_ACCESS_KEY=<your_access_token>
 DOUBAO_TTS_VOICE_ID=zh_female_xiaohe_uranus_bigtts
 ```
 
-`DOUBAO_TTS_RESOURCE_ID` 默认按音色自动推断：`S_` 克隆音色使用 `seed-icl-1.0`，`uranus` 官方音色使用 `seed-tts-2.0`，其他官方音色使用 `seed-tts-1.0`。
+`DOUBAO_TTS_RESOURCE_ID` 默认按音色自动推断：`S_` 克隆音色使用 `seed-icl-2.0`，`uranus` 官方音色使用 `seed-tts-2.0`，其他官方音色使用 `seed-tts-1.0`。
 
 ## 标准工作流（10 步）
 

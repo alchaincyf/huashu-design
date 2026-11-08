@@ -397,7 +397,7 @@ CSS `transition` 走的是墙钟，不是时间轴。逐帧 seek 渲染时每帧
 
 `npm run check` 的 contrast 门按 WCAG AA 4.5:1 检查所有文字。暗色 cinematic 设计里 16-40% 透明度的水印、mono 标签、装饰性文字是**刻意的**低对比（电影感的一部分），会成片报错，且框架没有逐元素豁免机制。c3 实测 42 个 contrast error 全部是设计本意。
 
-**修法**：暗色电影风产出用 `npx hyperframes check --no-contrast`，lint/runtime/layout/motion 四门仍必须 0 error。**亮底信息型产出不要跳 contrast**——那种场景下的报错通常是真的可读性问题（可读性硬底线见 SKILL.md 窄桥 4）。
+**修法**：暗色电影风产出用 `npx hyperframes check --no-contrast`，lint/runtime/layout/motion 四门仍必须 0 error。**亮底信息型产出不要跳 contrast**——那种场景下的报错通常是真的可读性问题（可读性硬底线见 SKILL.md 窄桥 5）。
 
 ## 21. 【HyperFrames/GSAP】fromTo 的 immediateRender 幻影 —— 元素提前数秒出现
 
@@ -444,7 +444,7 @@ GSAP 的 `fromTo()` 默认 `immediateRender: true`：build timeline 时就把 fr
 - [ ] 结尾 Sprite 的 `fadeOut` 设为 0（视频末尾停清晰帧）？
 - [ ] 60fps MP4 默认用帧复制模式（兼容性），高质量插帧才加 `--minterpolate`？
 - [ ] 导出后抽第 0 帧 + 末帧验证是动画初始/最终状态？
-- [ ] 涉及具体品牌（Stripe/Anthropic/Lovart/...）：走完了「品牌资产协议」（SKILL.md 窄桥 1，五步）？有没有写 `brand-spec.md`？
+- [ ] 涉及具体品牌（Stripe/Anthropic/Lovart/...）：走完了「品牌资产协议」（SKILL.md 窄桥 2，五步）？有没有写 `brand-spec.md`？
 - [ ] 单文件交付的 HTML：`animations.jsx` 是内联的，不是 `src="..."`？（file:// 下 external .jsx 会 CORS 黑屏）
 - [ ] 跨 scene 出现的元素（chapter 标签/水印/scene 编号）没有硬编码颜色？在每个 scene 底色下都可见？
 - [ ] 要离线/真自包含：React+ReactDOM 本地内联、**app 和 `animations.jsx` 引擎都过 Babel transpile**、字体用系统字体？（见坑 #17；引擎含 JSX，漏 transpile 必报 `Unexpected token '<'`）

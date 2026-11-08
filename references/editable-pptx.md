@@ -19,7 +19,7 @@
 
 ## 画布尺寸：用 960×540pt（LAYOUT_WIDE）
 
-PPTX 单位是 **inch**（物理尺寸），不是 px。决策原则：body 的 computedStyle 尺寸要**匹配 presentation layout 的 inch 尺寸**（±0.1"，由 `html2pptx.js` 的 `validateDimensions` 强制检查）。
+PPTX 单位是 **inch**（物理尺寸），不是 px。决策原则：body 的 computedStyle 尺寸要**匹配 presentation layout 的 inch 尺寸**（±0.1"，由 `html2pptx.js` 的尺寸一致性校验强制检查）。
 
 ### 3 个候选尺寸对比
 
@@ -211,9 +211,9 @@ pptx.layout = 'LAYOUT_WIDE';  // 13.333 × 7.5 inch, 无需自定义
 
 | 错误信息 | 原因 | 修复方法 |
 |---------|------|---------|
-| `<div> 里直接写了文字「XXX」` | div 里有裸文字 | 把文字包进 `<p>` 或 `<h1>`-`<h6>` |
-| `<div> 背景不能用 CSS 渐变` | 用了 linear/radial-gradient | 改为纯色，或用 flex 子元素分段 |
-| `文字标签 <p> 上设置了 background…` | `<p>` 标签加了背景色 | 外套 `<div>` 承载背景，`<p>` 只写文字 |
+| `<div> 里直接写了文字「XXX」` | div 里有裸文字 | 把文字包进 `<p>`、`<h1>`-`<h6>` 或 `<ul>`/`<ol>` |
+| `<div> 背景不能用 CSS 渐变` | 用了 linear/radial-gradient | 换成纯色 background-color，或把渐变先导出成 PNG 再用 `<img>` / `slide.addImage()` 放上去 |
+| `文字标签 <p> 上设置了 background…` | `<p>` 标签加了背景/边框/阴影 | 外套 `<div>` 承载背景，`<p>` 只写文字 |
 | `<div> 不能用 background-image` | div 用了 background-image | 改为 `<img>` 标签 |
 | `内容纵向超出页面 Xpt` | 内容超出 540pt | 减少内容或缩小字号，或 `overflow: hidden` 截断 |
 | `页面尺寸不一致` | body 尺寸和 pres layout 对不上 | body 用 `960pt × 540pt` 配 `LAYOUT_WIDE`；或 defineLayout 自定义尺寸 |

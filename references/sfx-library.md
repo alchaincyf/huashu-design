@@ -4,7 +4,7 @@
 > 产品级 SFX 资产库，覆盖花叔动画/演示/产品 Demo 全场景。
 
 **资产位置**：`assets/sfx/<category>/<name>.mp3`
-**总数**：37 个 SFX（30 批量生成 + 7 个 v7b 保留）
+**总数**：37 个 SFX（31 批量生成 + 6 个 v7b 保留）
 **生成模型**：ElevenLabs Sound Generation API（prompt_influence 0.4）
 **音质**：44.1kHz MP3，苹果发布会级清晰度，无额外混响
 

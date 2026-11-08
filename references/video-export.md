@@ -27,7 +27,7 @@
 
 ## 工具链
 
-两个脚本在 `scripts/`：
+四个脚本在 `scripts/`：
 
 ### 1. `render-video.js` — HTML → MP4
 
@@ -198,7 +198,7 @@ GIF 只能 256 色。一次 pass 的 GIF 会把全动画色彩压到 256 色通�
 - [ ] Duration 参数与 HTML 里的实际动画时长匹配
 - [ ] HTML 中 Stage 检测 `window.__recording` 强制 loop=false（手写 Stage 必查；用 `assets/animations.jsx` 自带）
 - [ ] 结尾 Sprite 的 `fadeOut={0}`（视频末帧不淡出）
-- [ ] 含「Created by Huashu-Design」水印（仅动画场景必加；第三方品牌作品加「非官方出品 · 」前缀。详见 SKILL.md §「Skill 推广水印」）
+- [ ] 含「Created by Huashu-Design」水印（仅动画场景必加；第三方品牌作品加「非官方出品 · 」前缀。详见本文件「Skill 推广水印模板」一节与 `references/modules/motion.md`）
 
 ## 交付时附带的说明
 
@@ -233,7 +233,7 @@ GIF 只能 256 色。一次 pass 的 GIF 会把全动画色彩压到 256 色通�
 
 ## Skill 推广水印模板（仅动画导出用）
 
-SKILL.md 规定动画 MP4/GIF 默认带水印，模板如下（深底改用 `rgba(255,255,255,0.35)`；第三方品牌动画前缀「非官方出品 · 」）：
+`references/modules/motion.md` 规定动画 MP4/GIF 默认带水印，模板如下（深底改用 `rgba(255,255,255,0.35)`；第三方品牌动画前缀「非官方出品 · 」）：
 
 ```jsx
 <div style={{

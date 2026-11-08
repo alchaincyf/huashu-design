@@ -8,7 +8,7 @@
 >
 > **约束声明**：本文件只收录**运动逻辑和表达风格**，**不引入任何品牌色具体色值**。
 > 色彩决策走品牌资产协议（`references/brand-asset-protocol.md`，从品牌 spec 抽取）或三方向（`references/directions.md`）
-> （20 种哲学各自的配色方案）。本 reference 讨论的是「**怎么动**」，不是「**什么色**」。
+> （92 种风格各自的配色，见 `references/design-styles.md`）。本 reference 讨论的是「**怎么动**」，不是「**什么色**」。
 
 ---
 
@@ -165,7 +165,7 @@ Anthropic 三支片子没有一支用 `#FFFFFF` 或 `#000000` 做主底色。**�
 （或暖或冷）有"纸张 / 画布 / 桌面"的物质感，削弱机器感。
 
 **具体色值决策**走品牌资产协议（从品牌 spec 抽取）或三方向（`references/directions.md`）
-（20 种哲学各自的底色方案）。本 reference 不给具体色值——那是**品牌决策**，不是运动规则。
+（92 种风格各自的底色，见 `references/design-styles.md`）。本 reference 不给具体色值——那是**品牌决策**，不是运动规则。
 
 ### 3.2 Easing 绝不是 linear
 
@@ -240,8 +240,7 @@ Anthropic 三支片子的 Logo 出场**都不是简单 fade-in**，是**前一�
 
 **单一字体都是不对的**。衬线给「品位」，无衬线给「功能」。
 
-具体字体选择走品牌 spec（brand-spec.md 的 Display / Body / Mono 三栈）或设计方向
-顾问的 20 种哲学。本 reference 不给具体字体——那是**品牌决策**。
+具体字体选择走品牌 spec（brand-spec.md 的 Display / Body / Mono 三栈）或 `references/design-styles.md` 的 92 种风格。本 reference 不给具体字体——那是**品牌决策**。
 
 ### 3.8 焦点切换 = 背景减弱 + 前景锐化 + Flash 引导
 
@@ -496,7 +495,7 @@ stage.style.transform = `
 
 | reference | 定位 | 关系 |
 |---|---|---|
-| `animation-pitfalls.md` | 技术避坑（16 条） | 「**不要这样做**」· 本文件的反面 |
+| `animation-pitfalls.md` | 技术避坑（24 条） | 「**不要这样做**」· 本文件的反面 |
 | `animations.md` | Stage/Sprite 引擎用法 | 动画**怎么写**的基础 |
 | `audio-design-rules.md` | 双轨制音频规则 | 动画**配音频**的规则 |
 | `sfx-library.md` | 37 个 SFX 清单 | 音效**素材库** |
@@ -504,7 +503,7 @@ stage.style.transform = `
 | **本文件** | 正向运动设计语法 | 「**应该这样做**」 |
 
 **调用顺序**：
-1. 先看 SKILL.md 工作流程 Step 3 的form推导五问（决定叙事角色和视觉温度）
+1. 先过 `references/workflow.md` 标准流程第 3 步的 form 五问（SKILL.md 窄桥 1；决定叙事角色和视觉温度）
 2. 选定方向后读本文件确定**运动语言**（配方 A/B/C）
 3. 写代码时参考 `animations.md` 和 `animation-pitfalls.md`
 4. 导出视频时走 `audio-design-rules.md` + `sfx-library.md`
