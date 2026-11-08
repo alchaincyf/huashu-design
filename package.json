@@ -21,8 +21,11 @@
     "scripts/*.mjs",
     "scripts/*.js",
     "scripts/*.sh",
+    "scripts/cloud",
     "assets",
     "demos",
+    "SECURITY.md",
+    ".env.example",
     "cordis.patch.yml"
   ],
   "dsh": {

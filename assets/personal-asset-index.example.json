@@ -1,7 +1,7 @@
 {
   "_meta": {
     "description": "个人素材索引模板 — 复制此文件并填入你的真实数据",
-    "how_to_use": "1. 复制此文件到 ~/.claude/memory/personal-asset-index.json  2. 填入你的真实信息  3. design-philosophy skill 会自动读取",
+    "how_to_use": "1. 复制此文件到 ~/.claude/memory/personal-asset-index.json  2. 填入你的真实信息  3. huashu-design skill 会自动读取",
     "note": "真实数据文件不要放在 skill 目录内，避免随 skill 分发泄露隐私"
   },
 
