@@ -123,7 +123,7 @@ npx skills add alchaincyf/huashu-design
 
 **DeepSeek Harness**: this repo is also a DSH plugin. `dsh plugin --profile desktop add github:alchaincyf/huashu-design` (use `web` for the web app), then restart DSH. Remove with `dsh plugin --profile desktop remove huashu-design`.
 
-> **Verify after install**: this skill is more than a single SKILL.md — the `references/`, `assets/`, `scripts/`, and `demos/` subdirectories hold 99 referenced recipes, scripts, and assets that the skill depends on. After installing, check the install path (e.g. `~/.claude/skills/huashu-design/`); if you only see SKILL.md and none of those subdirectories, your `skills` CLI is too old (≤1.5.15 had a bug that synced only the single file, fixed in 1.5.19). Upgrade and reinstall:
+> **Verify after install**: this skill is more than a single SKILL.md — the `references/`, `assets/`, `scripts/`, and `demos/` subdirectories hold 430+ referenced recipes, scripts, and asset files that the skill depends on. After installing, check the install path (e.g. `~/.claude/skills/huashu-design/`); if you only see SKILL.md and none of those subdirectories, your `skills` CLI is too old (≤1.5.15 had a bug that synced only the single file, fixed in 1.5.19). Upgrade and reinstall:
 >
 > ```bash
 > npm i -g skills@latest        # or npx skills@latest add alchaincyf/huashu-design
@@ -141,7 +141,7 @@ Then just talk to Claude Code:
 "Make a keynote for AI psychology. Give me 3 style directions to pick from."
 "Build an iOS prototype for a Pomodoro app — 4 screens, actually clickable."
 "Turn this logic into a 60-second animation. Export MP4 and GIF."
-"Run a 5-dimension expert review on this design."
+"Run a 6-dimension expert review on this design."
 ```
 
 No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Code, Cursor, Trae, Hermes, OpenClaw, or any markdown-skill-capable agent.
@@ -169,7 +169,7 @@ No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Cod
 | Infographic / data viz | Print-quality typography · exports to PDF/PNG/SVG | 10 min |
 | Xiaohongshu carousel / cover | 3:4 image sets (≤18) · 8 paradigm templates · continuous panorama strips · one-command slicing with checks | 10–15 min |
 | Design direction advisor | Three logics × two candidates each · six thumbnails → three real designs, the other three kept as alternates | 10 min |
-| 5-dimension expert critique | Radar chart + Keep/Fix/Quick Wins · actionable punch list | 3 min |
+| 6-dimension expert critique | Concept/intent veto + 5 execution dims · radar chart + Keep/Fix/Quick Wins · actionable punch list | 3 min |
 
 ---
 
@@ -223,9 +223,9 @@ Magazine-grade typography · precise CSS Grid columns · `text-wrap: pretty` typ
 
 <p align="center"><img src="https://github.com/alchaincyf/huashu-design/releases/download/v2.0/c5-infographic-en.gif" width="100%"></p>
 
-### 5-Dimension Expert Critique
+### 6-Dimension Expert Critique
 
-Philosophical coherence · visual hierarchy · execution craft · functionality · innovation — each scored 0–10 · radar-chart visualization · outputs Keep / Fix / Quick Wins punch list.
+Concept/intent (highest weight; a score ≤5 caps the total at 6.0) + philosophical coherence · visual hierarchy · execution craft · functionality · innovation — each scored 0–10 · radar-chart visualization · outputs Keep / Fix / Quick Wins punch list.
 
 <p align="center"><img src="https://github.com/alchaincyf/huashu-design/releases/download/v2.0/c6-expert-review-en.gif" width="100%"></p>
 
@@ -351,6 +351,7 @@ huashu-design/
 ├── SKILL.md                 # Main doc (read by agent, Chinese)
 ├── README.md                # Chinese README (default)
 ├── README.en.md             # English README (this file)
+├── test-prompts.json        # Manual smoke-test prompts (8)
 ├── assets/                  # Starter Components
 │   ├── animations.jsx       # Stage + Sprite + Easing + interpolate
 │   ├── ios_frame.jsx        # iPhone 15 Pro bezel
@@ -360,7 +361,7 @@ huashu-design/
 │   ├── deck_stage.js        # HTML deck engine
 │   ├── deck_index.html      # Multi-file deck assembler
 │   ├── design_canvas.jsx    # Side-by-side variation display
-│   ├── showcases/           # 24 prebuilt samples (8 scenes × 3 styles)
+│   ├── showcases/           # 24 prebuilt samples (8 scenes × 3 styles, index in INDEX.md)
 │   ├── style-specimens/     # Specimens for all 92 styles (html source + jpg) and section overviews; the xhs/ ones double as templates
 │   └── bgm-*.mp3            # 6 scene-specific background tracks
 ├── references/              # Drill-down docs by task (Chinese)
@@ -385,7 +386,8 @@ huashu-design/
 │   ├── learn.py             # Taste experience read/write
 │   ├── ref_board.py         # Screenshot reference works into a board
 │   ├── capabilities.py      # Detect local capabilities (image gen, sibling skills, Node, ffmpeg)
-│   └── verify.py
+│   ├── verify.py
+│   └── tests/               # pytest regression (python3 -m pytest scripts/tests/ -q)
 └── demos/                   # Capability demos referenced by this README
 ```
 
