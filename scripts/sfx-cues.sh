@@ -5,7 +5,7 @@
 #
 # cue表格式（TSV，#开头为注释）：
 #   秒数<TAB>sfx相对路径（相对assets/sfx/）<TAB>音量dB
-#   例：63.0      impact/brand-stamp.mp3  -13
+#   例：63.0	impact/brand-stamp.mp3	-13
 #
 # 音量基准（轻SFX垫口播下）：whoosh类-16 / tick类-15 / impact类-12；纯动画成品可整体+4dB
 # cue密度参考 audio-design-rules.md 配方（b-roll垫底≈1个/9s，只打结构性节点）

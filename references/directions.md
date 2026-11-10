@@ -73,7 +73,15 @@ python3 "$HD/scripts/design_lint.py" ledger                     # 最近交付�
 | 胆量花在哪 | 唯一一处最大胆的地方，其余服务内容 |
 | form 来自内容的哪里 | 一句话：这个设计里哪个东西是这个题材才有的 |
 
-**4c · 画六张缩略图。** 一个 `design-demos/thumbs.html`，六格，每格是这个候选最关键的一屏（网页首屏、deck 封面、信息图开头、App 主屏），约 480×300：真字体、真配色、真骨架、真标题，细节可以省。截图后用看图能力看。缩略图很便宜，这一步就是用来多试几种风格的——一张缩略图看着不对，换来源重画这一格，不用等做完整版才发现。
+**4c · 画六张缩略图。** 一个 `design-demos/thumbs.html`，六格，每格是这个候选最关键的一屏（网页首屏、deck 封面、信息图开头、App 主屏），约 480×300：真字体、真配色、真骨架、真标题，**方向卡里写的主角素材要看得见**，细节可以省。每格的容器加上 `data-thumb="1"`…`"6"`。缩略图很便宜，这一步就是用来多试几种风格的——一张缩略图看着不对，换来源重画这一格，不用等做完整版才发现。
+
+一格里只有一个标题加一块纯色，那是占位，不是候选：从它看不出这个方向好不好，挑三张这一步就成了走过场。画完跑：
+
+```bash
+python3 "$HD/scripts/polish.py" thumbs design-demos/thumbs.html     # 把还是占位的格子挑出来；有 ✗ 就重画那几格
+```
+
+然后截图，用看图能力看。某一格怎么画都撑不住，照 `references/steady-track.md` 从那个风格的样张源码改起。
 
 **4d · 挑三张做完整版**，标准按顺序：
 
@@ -103,7 +111,13 @@ python3 "$HD/scripts/design_lint.py" ledger                     # 最近交付�
 - App 原型的多屏不要只排成一排手机，展示板构图见 `references/app-prototype.md`「展示板」
 - 缩略图存 `design-demos/thumbs.html`，三个完整版存 `design-demos/dir-1.html`、`dir-2.html`、`dir-3.html`（deck 是 `dir-1/` 等子目录），截图 `npx playwright screenshot file:///… out.png --viewport-size=1440,900`（deck 用 1920,1080）
 
-三版都做完后跑：
+三版都做完后，每版先过一轮打磨环（`references/polish-loop.md`）：
+
+```bash
+python3 "$HD/scripts/polish.py" shot design-demos/dir-1.html --mobile    # 逐屏看原尺寸截图，写下最伤的三处，改；dir-2、dir-3 同样
+```
+
+初稿是给用户选方向的，一轮就够，但这一轮不能省：首屏不成立、主角素材缺席、往下全是一样的卡片，这三类问题要在摆出来之前解决。然后跑：
 
 ```bash
 python3 "$HD/scripts/design_lint.py" check design-demos/dir-*.html       # 红灯必修；黄灯是顺手的模板装饰，删掉；外观家族只是提示

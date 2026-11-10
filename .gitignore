@@ -28,6 +28,7 @@ Thumbs.db
 
 # 开发/测试中间产物（skill 内部研发用，不分发给用户）
 **/design-demos/
+_style-research/
 
 # Demo 大视频（用 GitHub Releases 分发，不进仓库膨胀）
 demos/**/*.mp4

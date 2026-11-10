@@ -324,6 +324,7 @@ A/B 测试（v1 vs v2，各跑 6 agent）：**v2 的稳定性方差比 v1 低 5 
 
 - **经验**：`scripts/learn.py` 开工前带出你说过的品味原话（「太素了」「A 的结构加 C 的颜色」）和过去的教训，收工时把值得记的记下来；记录前会告诉你，不想记可以拒绝
 - **外观账本**：每次交付记一笔「长什么样」（底色、色板、字体、版式骨架，连同项目名和所在路径），下个项目主动避开——单个项目看都不错、放在一起却长得像，这种单调靠它管
+- **打磨环**：`scripts/polish.py` 把页面按原尺寸逐屏截图，模型看着自己的截图改一轮再交；它会报「连续几屏只有文字和框」「缩略图还是占位色块」这类事实，打磨记录空着也会提醒。轻量模型或脚本报警时走稳妥轨道（`references/steady-track.md`）：从样张改起、先写逐屏稿、每屏从形式菜单里挑
 - **设计体检**：`scripts/design_lint.py` 只量能核对的事实——图裂了、字小到读不了、对比度不够、控制台报错是红灯；全大写小标签、「A · B · C」这类顺手的模板装饰是黄灯；三版是不是换皮、和最近的项目撞没撞，`compare` 和 `ledger check` 来查。好不好看归你判断，它不打分
 - 这些记录只存在你本机的 `~/.huashu-design/`，不随 skill 分发，删掉文件夹就全部忘记
 
@@ -403,6 +404,8 @@ huashu-design/
 ├── references/              # 按任务深入读的子文档
 │   ├── animation-pitfalls.md
 │   ├── directions.md        # 三方向：六个候选 → 缩略图 → 挑三版
+│   ├── polish-loop.md       # 打磨环：逐屏截图、看图、改一轮
+│   ├── steady-track.md      # 稳妥轨道：样张起步、逐屏稿、形式菜单
 │   ├── design-styles.md     # 92 种 HTML 原生风格库（网页 20 + PPT 20 + 信息图 20 + App 12 + 中文与东亚 12 + 小红书 8）
 │   ├── modules/             # 网页 / deck / 信息图 / 小红书 / 动画 五个模块手册
 │   ├── slide-decks.md
@@ -419,6 +422,7 @@ huashu-design/
 │   ├── export_deck_pptx.mjs
 │   ├── html2pptx.js
 │   ├── design_lint.py       # 设计体检、三版撞色撞骨架、外观账本
+│   ├── polish.py            # 打磨环：逐屏截图、缩略图检查、打磨记录
 │   ├── learn.py             # 品味经验的读写
 │   ├── ref_board.py         # 把参考作品截成参考板
 │   ├── capabilities.py      # 探测本机能力（生图、兄弟 skill、Node、ffmpeg）

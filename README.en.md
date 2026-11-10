@@ -328,6 +328,7 @@ Why: we ran three rounds of blind before/after tests on fixed briefs (internal).
 
 - **Experience**: `scripts/learn.py` recalls your verbatim taste notes ("too plain", "A's layout with C's colors") and past lessons before work starts, and records what's worth keeping afterwards — it tells you when it records, and you can decline
 - **Look ledger**: every delivery logs what it looked like (background, palette, fonts, layout skeleton, plus the project name and path), so the next project steers away — the "each one fine, together all the same" kind of monotony
+- **Polish loop**: `scripts/polish.py` screenshots the page screen by screen at full size, so the model revises once against its own screenshots before handing over; it reports facts such as "several screens in a row with only text and boxes" or "thumbnail is still a placeholder block", and warns when the polish log is left empty. Lighter models, or any run where the script raises warnings, take the steady track (`references/steady-track.md`): start from a specimen, write a screen-by-screen outline first, pick each screen's form from a menu
 - **Design check**: `scripts/design_lint.py` only measures checkable facts — broken images, unreadably small text, low contrast, console errors are red; habitual template chrome (uppercase eyebrows, "A · B · C" chains) is yellow; `compare` and `ledger check` catch reskins and repeats. Whether it looks good is your call; it gives no score
 - All of this lives only on your machine in `~/.huashu-design/`, never ships with the skill; delete the folder to forget everything
 
@@ -411,6 +412,8 @@ huashu-design/
 ├── references/              # Drill-down docs by task (Chinese)
 │   ├── animation-pitfalls.md
 │   ├── directions.md        # Three directions: six candidates → thumbnails → pick three
+│   ├── polish-loop.md       # Polish loop: per-screen screenshots, look, revise once
+│   ├── steady-track.md      # Steady track: specimen start, screen outline, form menu
 │   ├── design-styles.md     # 92 HTML-native styles (web 20 + deck 20 + infographic 20 + app 12 + Chinese & East Asian 12 + Xiaohongshu 8)
 │   ├── modules/             # Web / deck / infographic / Xiaohongshu / motion module manuals
 │   ├── slide-decks.md
@@ -427,6 +430,7 @@ huashu-design/
 │   ├── export_deck_pptx.mjs
 │   ├── html2pptx.js
 │   ├── design_lint.py       # Design check, reskin/repeat detection, look ledger
+│   ├── polish.py            # Polish loop: per-screen shots, thumbnail check, polish log
 │   ├── learn.py             # Taste experience read/write
 │   ├── ref_board.py         # Screenshot reference works into a board
 │   ├── capabilities.py      # Detect local capabilities (image gen, sibling skills, Node, ffmpeg)

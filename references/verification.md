@@ -38,6 +38,8 @@
 
 ## 验证清单
 
+验证回答「坏没坏」；「好不好」靠打磨环（`references/polish-loop.md`，逐屏看原尺寸截图再改）。两件事都要做。
+
 每次产出HTML后，按这个清单做一遍：
 
 ### 1. 浏览器渲染检查（必做）
@@ -55,7 +57,7 @@ open -a "Google Chrome" "/path/to/your/design.html"
 HTML文件里最常见的问题是JS报错导致白屏。用Playwright跑一遍：
 
 ```bash
-python ~/.claude/skills/huashu-design/scripts/verify.py path/to/design.html
+python3 "$HD/scripts/verify.py" path/to/design.html   # $HD = 本 skill 的根目录
 ```
 
 这个脚本会：
@@ -71,7 +73,7 @@ python ~/.claude/skills/huashu-design/scripts/verify.py path/to/design.html
 如果是响应式设计，抓多个viewport：
 
 ```bash
-python verify.py design.html --viewports 1920x1080,1440x900,768x1024,375x667
+python3 "$HD/scripts/verify.py" design.html --viewports 1920x1080,1440x900,768x1024,375x667
 ```
 
 ### 4. 交互检查
@@ -87,7 +89,7 @@ page.video.record('interaction.mp4')
 Deck类HTML，一张张截：
 
 ```bash
-python verify.py deck.html --slides 10  # 截前10张
+python3 "$HD/scripts/verify.py" deck.html --slides 10  # 截前10张
 ```
 
 生成 `deck-slide-01.png`、`deck-slide-02.png`... 方便快速浏览。
@@ -201,19 +203,19 @@ open screenshot.png
 
 ```bash
 # 基础：打开+截图+抓错
-python verify.py design.html
+python3 "$HD/scripts/verify.py" design.html
 
 # 多viewport
-python verify.py design.html --viewports 1920x1080,375x667
+python3 "$HD/scripts/verify.py" design.html --viewports 1920x1080,375x667
 
 # 多slide
-python verify.py deck.html --slides 10
+python3 "$HD/scripts/verify.py" deck.html --slides 10
 
 # 输出到指定目录
-python verify.py design.html --output ./screenshots/
+python3 "$HD/scripts/verify.py" design.html --output ./screenshots/
 
 # headless=false，打开真实浏览器给你看
-python verify.py design.html --show
+python3 "$HD/scripts/verify.py" design.html --show
 ```
 
 ## 视频产物硬校验（verify-video.sh）
