@@ -487,7 +487,16 @@ def cmd_ledger(a):
         if not rows:
             print(ledger_summary(rows))
             return 0
-        res = [f for f in collect(a.files, a.viewport, a.min_body, a.min_label) if not f.get('fatal')]
+        collected = collect(a.files, a.viewport, a.min_body, a.min_label)
+        failed = [f for f in collected if f.get('fatal')]
+        if failed:
+            for f in failed:
+                print(f'打不开，无法完成查账：{f["path"]}：{f["fatal"]}')
+            return 2
+        res = collected
+        if not res:
+            print('没有可比较的文件', file=sys.stderr)
+            return 2
         bad = 0
         for f in res:
             fp = fingerprint(f)

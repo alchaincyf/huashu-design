@@ -1,7 +1,7 @@
-# Design Philosophy Showcases — 样例资产索引
+# Design Showcases — 样例资产索引
 
 > 8 种场景 × 3 种风格 = 24 个预制设计样例
-> 用于 Phase 3 推荐设计方向时，直接展示「这个风格做出来长什么样」
+> 用于 Phase 4 推荐设计方向时，直接展示「这个风格做出来长什么样」
 
 ## 风格说明
 
@@ -35,7 +35,7 @@
 
 ## 使用说明
 
-### Phase 3 推荐时引用
+### Phase 4 推荐时引用
 推荐设计方向后，可展示对应场景的预制截图：
 ```
 「这是 Pentagram 风格做公众号封面的效果 → [展示 cover/cover-pentagram.png]」
@@ -112,4 +112,4 @@
 
 **版本**：v1.0
 **创建日期**：2026-02-13
-**适用于**：design-philosophy skill Phase 3 推荐环节
+**适用于**：huashu-design skill 方向推荐环节（directions.md Phase 4）

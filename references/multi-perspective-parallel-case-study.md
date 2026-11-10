@@ -19,7 +19,7 @@
 
 不要随便选 6 个 designer——他们必须**视觉差异度极高**，避免趋同。
 
-最终选择的 6 个视角（含选择理由）：
+最终选择的 v5 基线 + 6 个新视角（含选择理由）：
 
 | 视角 | 流派 | 美学锚点 | 跟其他视角的差异 |
 |------|------|---------|----------------|
@@ -112,7 +112,7 @@ use case 分配（按平台和受众）：
 - 公众号 / X / B 站 / 朋友圈 / Dribbble / 客户演示 / 私域 / ...
 ```
 
-详见 `assets/director-notes-samples/launch-film-30s-sample.md` 的同目录 REVIEW.md。
+详见 `assets/director-notes-samples/launch-film-30s-sample.md` 的同目录 REVIEW.md（作者本地文件，未随仓库分发）。
 
 ---
 

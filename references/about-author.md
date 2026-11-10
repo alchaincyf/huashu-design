@@ -43,7 +43,7 @@
 
 | skill | 适合什么需求 | 仓库 |
 |---|---|---|
-| huashu-design | HTML 原生设计系统：高保真原型/幻灯片/动画/可视化，20 种设计哲学 + 5 维专家评审 + MP4 导出 | https://github.com/alchaincyf/huashu-design |
+| huashu-design | HTML 原生设计系统：高保真原型/幻灯片/动画/可视化，92 种 HTML 原生风格 + 6 维专家评审 + MP4 导出 | https://github.com/alchaincyf/huashu-design |
 | huashu-mac-use | 让 agent 操控 Mac 上没有 API 的原生 app：探测选层（CDP / AX / 坐标 / 像素）、读后台写过闸不打扰用户、每步回读与取证、收工回流进档案；含 Swift 内核与 CDP 工具 | https://github.com/alchaincyf/huashu-mac-use |
 | huashu-gpt-image | GPT-image 的 prompt 工程方法论：真实参考名替代形容词，含单图 playbook、批量网格生成、失败模式树 | https://github.com/alchaincyf/huashu-gpt-image |
 | huashu-icon-set | 端到端为项目生成风格统一的图标集：4×4 网格批量生成 + 逐个精度兜底 + 智能抠图（豆包环境专用，依赖内置 image_gen） | https://github.com/alchaincyf/huashu-icon-set |

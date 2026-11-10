@@ -80,6 +80,13 @@ if [ -z "$OUTPUT" ]; then
   OUTPUT="${base}-voiced.mp4"
 fi
 
+# 视频时长（apad 补尾静音 + 结尾淡出都用它）
+DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$INPUT") || {
+  echo "✗ 读不到视频时长（需要 ffprobe）: $INPUT" >&2
+  exit 1
+}
+FADE_ST=$(awk -v d="$DUR" 'BEGIN{printf "%.3f", d-0.5}')
+
 echo "─ mix-voiceover ──────────────"
 echo "  视频:     $INPUT"
 echo "  人声:     $VOICEOVER (vol=$VOICE_VOLUME)"
@@ -93,31 +100,35 @@ echo "────────────────────────�
 
 # ── ffmpeg filter graph ─────────────────────────────────────
 if [ -z "$BGM" ]; then
-  # 仅人声
+  # 仅人声（人声短于视频时补尾静音到视频长度）
   ffmpeg -y -i "$INPUT" -i "$VOICEOVER" \
-    -filter_complex "[1:a]volume=${VOICE_VOLUME}[a]" \
+    -filter_complex "[1:a]volume=${VOICE_VOLUME},apad=whole_dur=${DUR}[a]" \
     -map 0:v -map "[a]" \
     -c:v copy -c:a aac -b:a 192k -shortest \
     "$OUTPUT"
 elif [ "$DUCKING" = "1" ]; then
   # 人声 + BGM + sidechain ducking
+  # 注意 1：[voice] 要 asplit 成两路——sidechaincompress 和 amix 各吃一路，
+  #   一个 label 只能被消费一次，复用会直接报 Invalid argument。
+  # 注意 2：人声先 apad 到视频长度再进 amix（duration=first 以第一路为淮），
+  #   否则人声一停 BGM 就跟着被截，视频后半段变成死寂。
   ffmpeg -y -i "$INPUT" -i "$VOICEOVER" -i "$BGM" \
     -filter_complex "
-      [1:a]volume=${VOICE_VOLUME}[voice];
+      [1:a]volume=${VOICE_VOLUME},apad=whole_dur=${DUR},asplit=2[voice_sc][voice_mix];
       [2:a]volume=${BGM_VOLUME},aloop=loop=-1:size=2e9[bgm_lo];
-      [bgm_lo][voice]sidechaincompress=threshold=0.04:ratio=8:attack=5:release=300:makeup=1[bgm_ducked];
-      [voice][bgm_ducked]amix=inputs=2:duration=first:dropout_transition=0,afade=t=out:st=0:d=0.5:curve=tri[a]
+      [bgm_lo][voice_sc]sidechaincompress=threshold=0.04:ratio=8:attack=5:release=300:makeup=1[bgm_ducked];
+      [voice_mix][bgm_ducked]amix=inputs=2:duration=first:dropout_transition=0,apad=whole_dur=${DUR},afade=t=out:st=${FADE_ST}:d=0.5:curve=tri[a]
     " \
     -map 0:v -map "[a]" \
     -c:v copy -c:a aac -b:a 192k -shortest \
     "$OUTPUT"
 else
-  # 人声 + BGM 静态混合
+  # 人声 + BGM 静态混合（人声先补齐到视频长度，BGM 靠 aloop 撑满全片）
   ffmpeg -y -i "$INPUT" -i "$VOICEOVER" -i "$BGM" \
     -filter_complex "
-      [1:a]volume=${VOICE_VOLUME}[voice];
+      [1:a]volume=${VOICE_VOLUME},apad=whole_dur=${DUR}[voice];
       [2:a]volume=${BGM_VOLUME},aloop=loop=-1:size=2e9[bgm];
-      [voice][bgm]amix=inputs=2:duration=first:dropout_transition=0[a]
+      [voice][bgm]amix=inputs=2:duration=first:dropout_transition=0,apad=whole_dur=${DUR}[a]
     " \
     -map 0:v -map "[a]" \
     -c:v copy -c:a aac -b:a 192k -shortest \

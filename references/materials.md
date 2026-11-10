@@ -24,7 +24,7 @@ python3 "$HD/scripts/capabilities.py"
 
 ### T0 · 所有用户都有（默认，不依赖任何额外能力）
 
-- **真图**：`python3 "$HD/scripts/fetch_images.py" --query "英文关键词" --out 项目/assets/img --count 2 --width 1600`（Wikimedia Commons、Met / Art Institute 开放馆藏、Biodiversity Heritage Library、Unsplash、Pexels，带许可输出与失败兜底）。用户自己的产品走品牌资产协议取官方图。
+- **真图**：`python3 "$HD/scripts/fetch_images.py" --query "英文关键词" --out 项目/assets/img --count 2 --width 1600`（Wikimedia Commons，带许可输出）。用户自己的产品走品牌资产协议取官方图。
 - **具名产品的 logo**：设计里出现几个可识别的产品就取几个（svgl → simpleicons → favicon，见 `references/brand-asset-protocol.md`）。清单里有一个没取到就补，实在取不到才退诚实占位并明说。
 - **程序化材质**（单文件可用，不需要 fetch）：
   - SVG 滤镜：`feTurbulence` + `feDisplacementMap` 做纸纹、噪点、墨迹晕染、印刷错版

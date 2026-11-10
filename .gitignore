@@ -5,6 +5,8 @@
 # Video render temp (render-video.js 产物)
 .video-tmp-*/
 **/.video-tmp-*/
+.seek-tmp-*
+**/.seek-tmp-*
 
 # Personal asset index（个人真实数据，只保留 .example.json 模板）
 assets/personal-asset-index.json
@@ -24,13 +26,7 @@ node_modules/
 .vscode/
 Thumbs.db
 
-# Verification artifacts（截图、临时测试脚本）
-demos/_frames_*.png
-demos/_verify.js
-demos/_verify.mjs
-
 # 开发/测试中间产物（skill 内部研发用，不分发给用户）
-_style-research/
 **/design-demos/
 
 # Demo 大视频（用 GitHub Releases 分发，不进仓库膨胀）

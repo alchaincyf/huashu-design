@@ -131,7 +131,7 @@ npx skills add alchaincyf/huashu-design
 npx skills add alchaincyf/huashu-design
 ```
 
-> **装完先自检**：这个 skill 不只是 SKILL.md 一个文件，`references/`、`assets/`、`scripts/`、`demos/` 四个子目录里有 99 处被引用的配方、脚本、素材，缺一不可。装完看一眼安装目录（如 `~/.claude/skills/huashu-design/`），如果只有 SKILL.md、没有那几个子目录，说明你的 `skills` CLI 版本太旧（≤1.5.15 有个只同步单文件的 bug，已在 1.5.19 修复）。升级后再装一次即可：
+> **装完先自检**：这个 skill 不只是 SKILL.md 一个文件，`references/`、`assets/`、`scripts/`、`demos/` 四个子目录里有 430+ 个被引用的配方、脚本、素材文件，缺一不可。装完看一眼安装目录（如 `~/.claude/skills/huashu-design/`），如果只有 SKILL.md、没有那几个子目录，说明你的 `skills` CLI 版本太旧（≤1.5.15 有个只同步单文件的 bug，已在 1.5.19 修复）。升级后再装一次即可：
 >
 > ```bash
 > npm i -g skills@latest        # 或 npx skills@latest add alchaincyf/huashu-design
@@ -159,7 +159,7 @@ dsh plugin --profile desktop add github:alchaincyf/huashu-design
 「做一份 AI 心理学的演讲 PPT，推荐 3 个风格方向让我选」
 「做个 AI 番茄钟 iOS 原型，4 个核心屏幕要真能点击」
 「把这段逻辑做成 60 秒动画，导出 MP4 和 GIF」
-「帮我对这个设计做一个 5 维度评审」
+「帮我对这个设计做一个 6 维度评审」
 ```
 
 没有按钮、没有面板、没有 Figma 插件。
@@ -187,7 +187,7 @@ dsh plugin --profile desktop add github:alchaincyf/huashu-design
 | 信息图 / 可视化 | 印刷级排版 · 可导 PDF/PNG/SVG | 10 min |
 | 小红书图文 / 封面 | 3:4 一组图（≤18 张）· 8 种范式模板 · 长卷连续滑动 · 一条命令切图并体检 | 10–15 min |
 | 设计方向顾问 | **三套逻辑各出两个候选**（最佳设计师 + 同媒介获奖作品 + 秒数轮盘）· 六张缩略图挑三版真实视觉，另三张作备选 | 10 min |
-| 5 维度专家评审 | 雷达图 + Keep/Fix/Quick Wins · 可操作修复清单 | 3 min |
+| 6 维度专家评审 | 概念/立意一票否决 + 5 个执行维度 · 雷达图 + Keep/Fix/Quick Wins · 可操作修复清单 | 3 min |
 
 ---
 
@@ -239,9 +239,9 @@ HTML deck 浏览器演讲 · `html2pptx.js` 读 DOM 的 computedStyle 逐元素�
 
 <p align="center"><img src="https://github.com/alchaincyf/huashu-design/releases/download/v2.0/c5-infographic.gif" width="100%"></p>
 
-### 5 维度专家评审
+### 6 维度专家评审
 
-哲学一致性 · 视觉层级 · 细节执行 · 功能性 · 创新性 各 0–10 分 · 雷达图可视化 · 输出 Keep / Fix / Quick Wins 清单。
+概念/立意（权重最高，≤5 分时总评封顶）+ 哲学一致性 · 视觉层级 · 细节执行 · 功能性 · 创新性 各 0–10 分 · 雷达图可视化 · 输出 Keep / Fix / Quick Wins 清单。
 
 <p align="center"><img src="https://github.com/alchaincyf/huashu-design/releases/download/v2.0/c6-expert-review.gif" width="100%"></p>
 
@@ -387,6 +387,7 @@ huashu-design/
 ├── SKILL.md                 # 主文档（给 agent 读）
 ├── README.md                # 中文 README（默认，本文件）
 ├── README.en.md             # 英文 README
+├── test-prompts.json        # 手动冒烟提示词（8 条）
 ├── assets/                  # Starter Components
 │   ├── animations.jsx       # Stage + Sprite + Easing + interpolate
 │   ├── ios_frame.jsx        # iPhone 15 Pro bezel
@@ -396,7 +397,7 @@ huashu-design/
 │   ├── deck_stage.js        # HTML 幻灯片引擎
 │   ├── deck_index.html      # 多文件 deck 拼接器
 │   ├── design_canvas.jsx    # 并排变体展示
-│   ├── showcases/           # 24 个预制样例（8 场景 × 3 风格）
+│   ├── showcases/           # 24 个预制样例（8 场景 × 3 风格，索引见 INDEX.md）
 │   ├── style-specimens/     # 92 种风格的样张（html 源码 + jpg）与分区总览；xhs/ 的样张同时是模板
 │   └── bgm-*.mp3            # 6 首场景化背景音乐
 ├── references/              # 按任务深入读的子文档
@@ -421,8 +422,9 @@ huashu-design/
 │   ├── learn.py             # 品味经验的读写
 │   ├── ref_board.py         # 把参考作品截成参考板
 │   ├── capabilities.py      # 探测本机能力（生图、兄弟 skill、Node、ffmpeg）
-│   └── verify.py
-└── demos/                   # 9 个能力演示 (c*/w*)，中英双版 GIF/MP4/HTML + hero v10
+│   ├── verify.py
+│   └── tests/               # pytest 回归（python3 -m pytest scripts/tests/ -q）
+└── demos/                   # 9 个能力演示 (c*/w*) 中英双版 HTML（动图/视频走 Release 外链）+ hero v10（英文版）
 ```
 
 ---

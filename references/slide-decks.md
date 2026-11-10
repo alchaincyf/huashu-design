@@ -669,7 +669,7 @@ node scripts/export_deck_pptx.mjs --slides <dir> --out deck.pptx
 - 不用 CSS gradient（不可渲染）
 - div 不用 `background-image`（用 `<img>`）
 
-脚本已内置**自动预处理器**——把 "叶子 div 里的裸文本" 自动包成 `<p>`（保留 class）。这解决了最常见的违规（裸文本）。但其他违规（p 上有 border、span 上有 margin 等）仍需 HTML 源头合规。
+脚本**没有**自动预处理：裸文本 div 是最常见的违规，会直接报错跳过该页，必须在 HTML 源头就把文字包进 `<p>`/`<h1>`-`<h6>`/`<ul>`/`<ol>`。其他违规（p 上有 border、span 上有 margin 等）同样要在源头合规。
 
 **字体回落 caveat**：
 - Playwright 用 webfont 测量 text-box 尺寸；PowerPoint/Keynote 用本机字体渲染
