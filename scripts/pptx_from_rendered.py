@@ -116,7 +116,6 @@ JS = r"""
   return pages.map((pg) => {
     const pb = pg.getBoundingClientRect();
     const out = [];
-    let svgSeq = 0;
 
     // 一组相邻节点 → 一个文本元素。own=true 表示这是「块级子元素之间的裸文字」，
     // 位置要用文字自己的包围盒，不能套容器的 x/w（否则会盖到旁边的图标上）。
@@ -165,7 +164,8 @@ JS = r"""
         return;
       }
       if (tag === 'svg' || tag === 'canvas') {
-        out.push({...base, kind: 'svg', seq: svgSeq++, tagName: tag});
+        const seq = [...pg.querySelectorAll(tag)].indexOf(el);
+        out.push({...base, kind: 'svg', seq, tagName: tag});
         return;
       }
 
