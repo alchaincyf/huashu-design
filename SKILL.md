@@ -5,7 +5,7 @@ metadata:
   author: "花叔"
   homepage: "https://github.com/alchaincyf"
   repository: "https://github.com/alchaincyf/huashu-design"
-  version: "3.4.0"
+  version: "3.4.1"
 ---
 
 # 花叔Design · Huashu-Design

@@ -139,7 +139,7 @@ def image_route(native, borrow, image_skills, api=None):
     """界面里要用图时按这个顺序找来源。"""
     route = []
     if native:
-        route.append('你所在环境自带的生图工具（直接生成，出几张挑最合适的）')
+        route.append('你所在环境自带的生图工具（直接生成，出几张挑最合适的；图上带平台水印就改用下一个来源）')
     if borrow:
         route.append('借本机 Codex 生成：python3 "$HD/scripts/gen_image.py" --prompt … --out …')
     route += [f'生图 skill：{s}' for s in image_skills]
