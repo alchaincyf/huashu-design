@@ -11,6 +11,10 @@
 [![Agent-Agnostic](https://img.shields.io/badge/Agent-Agnostic-blueviolet)](https://skills.sh)
 [![Skills](https://img.shields.io/badge/skills.sh-Compatible-green)](https://skills.sh)
 
+<!-- BOOK-PROMO-START 《图解Agent Skills》京东横幅，2026-12-21下线 -->
+<a href="https://item.jd.com/14829817.html"><img src="https://raw.githubusercontent.com/alchaincyf/alchaincyf/main/assets/book-agent-skills-jd-c.jpg" alt="纸质书《图解Agent Skills：让AI记住你的工作方式》已上市，点击去京东购买" width="100%"></a>
+<!-- BOOK-PROMO-END -->
+
 <br>
 
 **在你的 agent 里打一句话，拿回一份能交付的设计。**
