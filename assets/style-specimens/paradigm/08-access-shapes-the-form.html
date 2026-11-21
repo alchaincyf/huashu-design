@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>08 可达性定形式</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:750px;overflow:hidden}*{box-sizing:border-box}
+body{background:#111111;font-family:"Inter Tight","Noto Sans SC",sans-serif;position:relative;color:#111}
+.ph{position:absolute;width:340px;height:720px;border-radius:52px;overflow:hidden;box-shadow:0 0 0 9px #000,0 0 0 11px #48494d,0 30px 70px rgba(0,0,0,.45)}
+.ph:before{content:"";position:absolute;top:11px;left:120px;width:100px;height:28px;border-radius:20px;background:#000;z-index:9}
+.sb{padding:15px 30px 0;display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.key{position:absolute;left:800px;top:120px;width:340px}
+.key h2{font:900 40px/1.1 "Noto Sans SC";margin:0 0 14px}
+.key p{font:400 17px/1.6 "Noto Sans SC";margin:0 0 12px;opacity:.86}
+.key .l{font:700 16px/1.4 "Noto Sans SC";padding:11px 0;border-top:1px solid rgba(128,128,128,.4)}
+.key .k{font-size:14px;opacity:.55;margin-top:14px}
+
+.ph{background:#FFD400;color:#000}
+.rt{margin:18px 22px 0;font-size:132px;font-weight:800;letter-spacing:-6px;line-height:.95}
+.to{margin:0 24px;font-size:26px;font-weight:800}
+.min{margin:26px 22px 0;background:#000;color:#FFD400;border-radius:28px;padding:18px 22px}
+.min b{font-size:92px;font-weight:800;letter-spacing:-3px;line-height:1}.min span{font-size:28px;font-weight:800;margin-left:6px}
+.min p{margin:4px 0 0;font-size:20px;font-weight:700;color:#fff}
+.btn{position:absolute;left:22px;right:22px;bottom:28px;height:84px;border-radius:26px;background:#000;color:#fff;font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:12px}
+.nx{margin:20px 24px 0;font-size:20px;font-weight:700;display:flex;gap:12px;align-items:center}
+.sh{width:26px;height:26px;flex:none;background:#000}.sh.c{border-radius:50%}.sh.t{clip-path:polygon(50% 0,100% 100%,0 100%)}
+.b{background:#000;color:#fff}.b .item{display:flex;align-items:center;gap:16px;padding:22px 24px;border-top:2px solid #333;font-size:26px;font-weight:800}
+.b .item small{display:block;font-size:19px;font-weight:500;color:#fff;margin-top:3px}
+.b .sh{background:#FFD400;width:34px;height:34px}
+.b h1{margin:24px 24px 16px;font-size:30px;font-weight:800}
+.key{color:#fff}.key .l{border-top-color:#444}
+</style></head><body>
+
+<div class="ph" style="left:70px;top:14px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <div class="rt">328</div><div class="to">开往 火车东站</div>
+ <div class="min"><b>4</b><span>分钟</span><p>■ 车已过上一站</p></div>
+ <div class="nx"><span class="sh c"></span>下一班 17 分钟</div>
+ <div class="nx"><span class="sh t"></span>末班 22:40</div>
+ <div class="btn">▶ 念给我听</div>
+</div>
+<div class="ph b" style="left:440px;top:60px;height:640px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <h1>这一站还有</h1>
+ <div class="item"><span class="sh"></span><div>328 路<small>4 分钟 · 车已过上一站</small></div></div>
+ <div class="item"><span class="sh c"></span><div>61 路<small>9 分钟 · 还有两站</small></div></div>
+ <div class="item"><span class="sh c"></span><div>B12 快线<small>14 分钟 · 还有五站</small></div></div>
+ <div class="item"><span class="sh t"></span><div>夜 7 路<small>23:10 才发车</small></div></div>
+</div>
+<div class="key"><h2>可达性定形式</h2><p>先为看不清的人做，版式就定了：一屏只问一件事，路号 132px，黑黄两色。视力正常的人在站台的太阳底下，用的是同一屏。</p>
+ <div class="l">内容里最小的字 19px，只用黑、黄、白</div><div class="l">状态用形状说：方＝马上到，圆＝在路上，三角＝还没发车</div><div class="l">按钮 84px 高，整条都能点</div>
+ <div class="k">先问：最吃力的那位用户，需要这一屏长什么样。题材与数据为虚构</div></div>
+</body></html>

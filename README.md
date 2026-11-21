@@ -31,7 +31,9 @@ npx skills add alchaincyf/huashu-design
 
 > 📣 **已改为 MIT 协议。** 自 2026-05-14 起本 skill 完全开源（[MIT License](LICENSE)），个人和**商用都免费**，无需事先授权。原「个人使用免费、企业商用需授权」的条款已作废。([查看变更](#license))
 
-> 🆕 **3.1：新增小红书图文。** 一组 3:4 竖图的八种范式——标本志、贴纸本、索引、长卷、日报、集换卡、留白、信息图，每个样张同时是能直接改的模板；一条命令切成成图，顺手查字号、出界、长卷跨缝和压字。[看样张](#设计方向顾问)
+> 🆕 **3.4：App 原型换了一套想法，新增 App Store 宣传图。** 走查两届 App Store Awards 的 90 个入围作品，提炼出八条界面范式（各带样张）：先定「这个 App 管的事在现实里长什么样」，再画屏。新增商店宣传图模块（1320×2868，连幅、破框、搜索结果预览）。参考改成「看原图、量数字、借一层不借一身」，做完和参照并排对回去。界面里该是图的地方放真的图：自带生图的环境（Codex、豆包、WorkBuddy）直接生成，Claude Code、DeepSeek Harness 借本机 Codex 或你给的生图 API，不再用 emoji 和占位块顶替。
+
+> **3.1：新增小红书图文。** 一组 3:4 竖图的八种范式——标本志、贴纸本、索引、长卷、日报、集换卡、留白、信息图，每个样张同时是能直接改的模板；一条命令切成成图，顺手查字号、出界、长卷跨缝和压字。[看样张](#设计方向顾问)
 
 > **3.0：三个方向更敢，项目之间也不再长一个样。** 先出六张缩略图再挑三版做成真稿；风格库扩到 84 种（新增 App、中文与东亚两个分区），每种都有样张；参照作品先截图再动手；带一个只量事实的设计体检，和一本记住你做过什么样子的外观账本。[详见核心机制](#核心机制)
 
@@ -186,6 +188,7 @@ dsh plugin --profile desktop add github:alchaincyf/huashu-design
 | 设计变体 | 3+ 并排对比 · Tweaks 实时调参 · 跨维度探索 | 10 min |
 | 信息图 / 可视化 | 印刷级排版 · 可导 PDF/PNG/SVG | 10 min |
 | 小红书图文 / 封面 | 3:4 一组图（≤18 张）· 8 种范式模板 · 长卷连续滑动 · 一条命令切图并体检 | 10–15 min |
+| App Store 宣传图 | 1320×2868 上架图（≤10 张）· 先拉同类目真实商店截图当参考 · 连幅自动切张 · 搜索结果缩略预览与体检 | 10–15 min |
 | 设计方向顾问 | **三套逻辑各出两个候选**（最佳设计师 + 同媒介获奖作品 + 秒数轮盘）· 六张缩略图挑三版真实视觉，另三张作备选 | 10 min |
 | 6 维度专家评审 | 概念/立意一票否决 + 5 个执行维度 · 雷达图 + Keep/Fix/Quick Wins · 可操作修复清单 | 3 min |
 
@@ -399,7 +402,8 @@ huashu-design/
 │   ├── deck_index.html      # 多文件 deck 拼接器
 │   ├── design_canvas.jsx    # 并排变体展示
 │   ├── showcases/           # 24 个预制样例（8 场景 × 3 风格，索引见 INDEX.md）
-│   ├── style-specimens/     # 92 种风格的样张（html 源码 + jpg）与分区总览；xhs/ 的样张同时是模板
+│   ├── style-specimens/     # 92 种风格的样张（html 源码 + jpg）与分区总览；xhs/ 的样张同时是模板；paradigm/ 是 8 条 App 界面范式
+│   ├── appstore/            # App Store 宣传图模板
 │   └── bgm-*.mp3            # 6 首场景化背景音乐
 ├── references/              # 按任务深入读的子文档
 │   ├── animation-pitfalls.md
@@ -407,7 +411,8 @@ huashu-design/
 │   ├── polish-loop.md       # 打磨环：逐屏截图、看图、改一轮
 │   ├── steady-track.md      # 稳妥轨道：样张起步、逐屏稿、形式菜单
 │   ├── design-styles.md     # 92 种 HTML 原生风格库（网页 20 + PPT 20 + 信息图 20 + App 12 + 中文与东亚 12 + 小红书 8）
-│   ├── modules/             # 网页 / deck / 信息图 / 小红书 / 动画 五个模块手册
+│   ├── modules/             # 网页 / deck / 信息图 / 小红书 / App Store 宣传图 / 动画 六个模块手册
+│   ├── app-paradigms.md     # App 界面八条范式：两届 App Store Awards 入围作品的拆解与取图 id
 │   ├── slide-decks.md
 │   ├── editable-pptx.md
 │   ├── critique-guide.md
@@ -416,6 +421,10 @@ huashu-design/
 ├── scripts/                 # 导出工具链
 │   ├── render-video.js      # HTML → MP4
 │   ├── xhs_render.py        # 小红书图文 → 3:4 成图 + 体检
+│   ├── appstore_shots.py    # 拉真实 App 的商店截图拼成参考板
+│   ├── ref_card.py          # 量参考原图的色板与版面；做完和参照并排对回去（借一层，不借一身）
+│   ├── gen_image.py         # 不能生图的环境里借本机 Codex 生成素材图，只认真生成的
+│   ├── appstore_render.py   # App Store 宣传图 → 可上传成图 + 搜索结果预览 + 体检
 │   ├── convert-formats.sh   # MP4 → 60fps + GIF
 │   ├── add-music.sh         # MP4 + BGM
 │   ├── export_deck_pdf.mjs

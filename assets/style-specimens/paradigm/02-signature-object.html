@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>02 签名物件</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:750px;overflow:hidden}*{box-sizing:border-box}
+body{background:#E9E6E1;font-family:"Space Grotesk","Noto Sans SC",sans-serif;position:relative}
+.ph{position:absolute;width:340px;height:720px;border-radius:52px;overflow:hidden;background:#1B1C1F;color:#F3EFE8;box-shadow:0 0 0 9px #0a0a0b,0 0 0 11px #4a4a50,0 30px 70px rgba(0,0,0,.35)}
+.ph:before{content:"";position:absolute;top:11px;left:120px;width:100px;height:28px;border-radius:20px;background:#000;z-index:9}
+.sb{padding:15px 30px 0;display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.ttl{margin:26px 28px 0;font-size:15px;color:#9b978f;display:flex;justify-content:space-between}
+.time{margin:6px 28px 0;font-size:84px;font-weight:700;letter-spacing:-3px;line-height:1}
+.time small{font-size:26px;letter-spacing:0;color:#FF6A2B;margin-left:6px}
+/* 全 App 只有这一个控件做到 120%：一只能拧的旋钮。其余全部退后 */
+.dial{position:absolute;width:300px;height:300px;border-radius:50%;background:repeating-conic-gradient(from -1deg,#6b6a66 0 2deg,transparent 2deg 6deg);-webkit-mask:radial-gradient(circle,transparent 62%,#000 63% 69%,transparent 70%);mask:radial-gradient(circle,transparent 62%,#000 63% 69%,transparent 70%)}
+.arc{position:absolute;width:300px;height:300px;border-radius:50%;background:conic-gradient(#FF6A2B 0 222deg,transparent 0);-webkit-mask:radial-gradient(circle,transparent 62%,#000 63% 69%,transparent 70%);mask:radial-gradient(circle,transparent 62%,#000 63% 69%,transparent 70%)}
+.knob{position:absolute;width:176px;height:176px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#5b5c61,#2a2b2f 58%,#17181a);box-shadow:0 18px 30px rgba(0,0,0,.6),inset 0 2px 1px rgba(255,255,255,.25),inset 0 -8px 14px rgba(0,0,0,.5)}
+.knob:before{content:"";position:absolute;inset:14px;border-radius:50%;background:repeating-conic-gradient(#3a3b40 0 4deg,#26272b 4deg 8deg)}
+.knob:after{content:"";position:absolute;left:50%;top:22px;width:8px;height:38px;margin-left:-4px;border-radius:4px;background:#FF6A2B;transform-origin:50% 66px;transform:rotate(222deg);box-shadow:0 0 12px #FF6A2B}
+.steps{position:absolute;left:28px;right:28px;bottom:36px;display:flex;gap:8px}
+.steps div{flex:1;padding:12px 0 10px;border-top:3px solid #3a3b40;font:500 12px "JetBrains Mono";color:#8b8880}
+.steps div b{display:block;font:700 15px "Noto Sans SC";color:#F3EFE8;margin-bottom:3px}
+.steps .on{border-color:#FF6A2B}.steps .on b{color:#FF6A2B}
+.zoom{position:absolute;left:470px;top:70px;width:420px;height:420px;border-radius:40px;background:#1B1C1F;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.3)}
+.lbl{position:absolute;left:470px;top:508px;font:500 13px "JetBrains Mono";color:#77736b}
+.note{position:absolute;left:470px;top:560px;width:680px;color:#2a2926}
+.note h2{font:700 40px/1.1 "Noto Sans SC";margin:0 0 10px;display:inline-block;margin-right:20px}
+.note p{font:400 17px/1.6 "Noto Sans SC";margin:0 0 6px}
+.note .k{font-size:14px;opacity:.55}
+.side{position:absolute;left:920px;top:70px;width:240px;font:400 15px/1.6 "Noto Sans SC";color:#4b4944}
+.side b{display:block;font:700 13px "JetBrains Mono";color:#FF6A2B;margin:0 0 4px}
+.side div{padding:14px 0;border-top:1px solid #cfcac2}
+</style></head><body>
+<div class="ph" style="left:70px;top:16px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <div class="ttl"><span>牛腩 · 小火慢炖</span><span>第 2 段</span></div>
+ <div class="time">37:00<small>剩余</small></div>
+ <div class="dial" style="left:20px;top:232px"></div><div class="arc" style="left:20px;top:232px"></div>
+ <div class="knob" style="left:82px;top:294px"></div>
+ <div class="steps"><div><b>焯水</b>08:00 ✓</div><div class="on"><b>慢炖</b>60:00</div><div><b>收汁</b>12:00</div></div>
+</div>
+<div class="zoom"><div class="dial" style="left:-150px;top:-60px;transform:scale(2.3)"></div><div class="arc" style="left:-150px;top:-60px;transform:scale(2.3)"></div><div class="knob" style="left:-88px;top:2px;transform:scale(2.3)"></div></div>
+<div class="lbl">局部 ×2.3 · 滚花、高光、指针的光，都只为这一个物件画</div>
+<div class="side"><div><b>拧</b>转一格是一分钟，手上有刻度感</div><div><b>看</b>橙色弧就是剩余时间，不用读数字</div><div><b>其余</b>标题、步骤条全部压到最安静</div></div>
+<div class="note"><h2>签名物件</h2><p>一个控件做到 120%，其余做到 80%。别人截图传播的就是它。先问：这个 App 的核心动作，对应现实里哪一件拿在手上的东西？</p><div class="k">题材与数据为虚构，仅示范范式</div></div>
+</body></html>

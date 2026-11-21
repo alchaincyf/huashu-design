@@ -121,10 +121,12 @@ COLLECT_JS = r"""
       if (/mono/i.test(cs.fontFamily) && fs <= 14) out.monoSmall++;
     }
     // 卡片套件：同一圆角 + 同一阴影反复出现
-    if (cs.boxShadow !== 'none' && parseFloat(cs.borderRadius) > 0) {
+    const r = el.getBoundingClientRect();
+    // 手机机身不算：展示板上并排四台手机，是同一圆角同一阴影重复四次，但那是设备，不是卡片
+    const device = r.width >= 160 && r.height / r.width >= 1.7 && r.height / r.width <= 2.4 && parseFloat(cs.borderRadius) >= 24;
+    if (cs.boxShadow !== 'none' && parseFloat(cs.borderRadius) > 0 && !device) {
       const sig = cs.borderRadius + '|' + cs.boxShadow; cardSig[sig] = (cardSig[sig] || 0) + 1;
     }
-    const r = el.getBoundingClientRect();
     if (r.width > 200 && ['Top', 'Bottom', 'Left', 'Right'].some((s) => cs['border' + s + 'Style'] !== 'none' && parseFloat(cs['border' + s + 'Width']) > 0 && parseFloat(cs['border' + s + 'Width']) <= 1)) out.hairlines++;
     if (r.width > 120 && r.height > 60 && (cs.backgroundColor !== 'rgba(0, 0, 0, 0)' || cs.borderStyle !== 'none')) {
       out.radiusTotal++; if (parseFloat(cs.borderRadius) === 0) out.radiusZero++;
@@ -154,6 +156,19 @@ COLLECT_JS = r"""
     else if (src && !/^(data:|https?:|blob:)/.test(src)) out.relImgs.push(src.slice(0, 60));
   }
   out.bg = rgba(getComputedStyle(document.body).backgroundColor)[3] > 0.5 ? rgba(getComputedStyle(document.body).backgroundColor) : rgba(getComputedStyle(document.documentElement).backgroundColor);
+  // App Store 宣传图：页面的灰底只是预览用的边距，外观看的是那几张图。底色取第一张的，标题字体取第一张里最大的字
+  const panels = [...document.querySelectorAll('.as-panel,.as-strip')];
+  if (panels.length) {
+    out.panels = Math.min(panels.length, 3);
+    const pb = rgba(getComputedStyle(panels[0]).backgroundColor); if (pb[3] > 0.5) out.bg = pb;
+    let top = null, px = 0;
+    for (const el of panels[0].querySelectorAll('*')) {
+      if (el.closest('[data-ui]') || ![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+      const f = parseFloat(getComputedStyle(el).fontSize); if (f > px) { px = f; top = el; }
+    }
+    if (top) { const cs = getComputedStyle(top); const first = fam(cs.fontFamily); out.display = first;
+      out.headlineSerif = !/sans/i.test(first) && /(^serif$|garamond|newsreader|serif|caslon|playfair|fraunces|cormorant|tiempos|lora|baskerville|didot|bodoni|georgia|times|songti|宋|明朝|mincho)/i.test(first); }
+  }
   return out;
 }
 """
@@ -197,6 +212,8 @@ def bg_class(rgb):
         return '浅·暖纸' if 40 <= H <= 110 else '浅·有色'
     if L < 0.28:
         return '深·近黑' if C < 0.03 else '深·有色'
+    if L < 0.42 and C > 0.025:   # 墨绿、藏蓝、酒红这类深底：比近黑亮一点、彩度不高，但一眼是深色有色
+        return '深·有色'
     return '中明度·有色' if C > 0.04 else '中明度·灰'
 
 
@@ -243,6 +260,22 @@ def expand(paths):
     return out
 
 
+def panels_shot(page, n):
+    """App Store 宣传图：把前 n 张（搜索结果里那一眼）各截下来横排拼成一张，不带预览页的灰边。"""
+    from PIL import Image
+    ims = [Image.open(io.BytesIO(el.screenshot())).convert('RGB') for el in page.query_selector_all('.as-panel,.as-strip')[:n]]
+    h = min(im.height for im in ims)
+    ims = [im.resize((max(1, round(im.width * h / im.height)), h)) for im in ims]
+    out = Image.new('RGB', (sum(im.width for im in ims), h))
+    x = 0
+    for im in ims:
+        out.paste(im, (x, 0))
+        x += im.width
+    buf = io.BytesIO()
+    out.save(buf, 'PNG')
+    return buf.getvalue()
+
+
 def collect(paths, viewport=(1440, 900), min_body=14, min_label=12):
     try:
         from playwright.sync_api import sync_playwright
@@ -271,7 +304,7 @@ def collect(paths, viewport=(1440, 900), min_body=14, min_label=12):
                     pass
                 page.wait_for_timeout(800)
                 facts = page.evaluate(COLLECT_JS)
-                shot = page.screenshot()
+                shot = panels_shot(page, facts['panels']) if facts.get('panels') else page.screenshot()
                 facts['palette'] = palette(shot)
                 facts['layout'] = layout_vector(shot)
             except Exception as e:
@@ -398,7 +431,13 @@ def similar(a, b, brand=False, ignore_layout=False):
         hits.append(f'色板几乎相同（距离 {pd}）')
     if lc > 0.55 and not ignore_layout:
         hits.append(f'版式骨架高度相似（相关 {lc:.2f}）')
-    if not brand and a['bg_class'] == b['bg_class'] and a['serif'] == b['serif'] and (a['display'] or '').lower() == (b['display'] or '').lower():
+    def hue(fp):
+        h = fp.get('bg') or ''
+        return lch(tuple(int(h[i:i + 2], 16) for i in (1, 3, 5)))[2] if len(h) == 7 else None
+    ha, hb = hue(a), hue(b)
+    # 「有色」是个大类：红底和黄底都在里面。有色底要色相也接近（40° 内）才算同一种底
+    far_hue = '有色' in (a['bg_class'] or '') and ha is not None and hb is not None and min(abs(ha - hb), 360 - abs(ha - hb)) > 40
+    if not brand and not far_hue and a['bg_class'] == b['bg_class'] and a['serif'] == b['serif'] and (a['display'] or '').lower() == (b['display'] or '').lower():
         hits.append(f'同一底色类＋同一标题字体（{a["bg_class"]}、{a["display"]}）')
     return hits, pd, lc
 

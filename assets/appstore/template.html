@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>App Store 宣传图模板</title>
+<!--
+  App Store 宣传图模板。示范的是一个虚构的赶海 App「退潮」，题材、数据、文案都是编的：换成你的。
+  一张 = <section class="as-panel">；几张连成一幅 = <section class="as-strip" style="--n:2">。
+  画布按 440×956 写（iPhone 6.9 寸 1320×2868 的三分之一），出图时 appstore_render.py 放大三倍。
+  界面里的字放在带 data-ui 的容器里：它们不算标题，被机身或画面边裁掉也不报错。
+  这里没有奖项月桂、用户评价、媒体字标：那些只能放真的，模板不替你编。
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--w:440px;--h:956px;--ink:#0E3B43;--deep:#082A30;--sand:#D9C9A0;--paper:#F1E9D6;--sun:#F2C14E;--foam:#9FE0D8}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#8a8a86;display:flex;gap:10px;padding:24px;width:max-content;font-family:"Inter Tight","Noto Sans SC",sans-serif}
+.as-panel,.as-strip{position:relative;height:var(--h);overflow:hidden;flex:none;background:var(--ink);color:#fff}
+.as-panel{width:var(--w)}.as-strip{width:calc(var(--w) * var(--n))}
+/* 标题：两三行，每行不超过七个字；关键词换色。缩到搜索结果里（约四分之一大小）还要读得出 */
+.hl{position:absolute;left:34px;right:34px;top:76px;font:900 58px/1.14 "Noto Sans SC";letter-spacing:-1px;margin:0}
+.hl em{font-style:normal;color:var(--sun)}
+.sub{position:absolute;left:36px;right:36px;font:500 21px/1.5 "Noto Sans SC";opacity:.86;margin:0}
+/* 机身：只画一圈边，不画刘海和状态栏图标。可以从任何一条边出血 */
+.dev{position:absolute;width:340px;height:720px;border-radius:54px;background:var(--deep);box-shadow:0 0 0 9px #041a1e,0 0 0 11px #2c5a61,0 40px 80px rgba(0,0,0,.4);overflow:hidden}
+.ui{position:absolute;inset:0;padding:54px 24px 0;color:#fff}
+.ui .k{font:700 15px "Noto Sans SC";opacity:.7}
+.ui .big{font:900 40px/1.1 "Noto Sans SC";margin-top:4px}.ui .big b{color:var(--sun)}
+.ui svg{position:absolute;left:0;top:250px}
+.pop{position:absolute;border-radius:24px;background:var(--sun);color:#1c1608;padding:18px 20px;font:800 22px/1.3 "Noto Sans SC";box-shadow:0 22px 44px rgba(0,0,0,.35)}
+.pop small{display:block;font:500 15px "Noto Sans SC";opacity:.75;margin-top:4px}
+.row{display:flex;align-items:center;gap:14px;padding:13px 0;border-top:1px solid rgba(14,59,67,.18);font:800 22px "Noto Sans SC";color:var(--ink)}
+.row svg{flex:1;height:44px}.row span:last-child{font:800 20px "Inter Tight";width:70px;text-align:right}
+</style></head><body>
+
+<!-- 第 1–2 张：连幅。潮位曲线和手机跨过接缝，往右滑才接上；每张单看也各有一句完整的话 -->
+<section class="as-strip" style="--n:2">
+  <svg width="880" height="956" viewBox="0 0 880 956" style="position:absolute;inset:0"><rect y="690" width="880" height="266" fill="#B9A572"/>
+    <path d="M0 610 C110 430 220 430 330 690 S550 950 660 690 S800 440 880 520 L880 690 L0 690Z" fill="#1E6F78"/>
+    <path d="M330 690 C400 860 590 860 660 690" fill="var(--deep)" stroke="var(--sun)" stroke-width="6"/>
+    <path d="M0 610 C110 430 220 430 330 690M660 690 C730 520 800 440 880 520" fill="none" stroke="var(--foam)" stroke-width="5"/></svg>
+  <h1 class="hl">今天几点<br>能<em>下滩</em></h1>
+  <p class="sub" style="top:226px;right:480px">一天不是 24 行数字，<br>是一条潮位曲线。</p>
+  <h1 class="hl" style="left:474px">退到沙线<br>就<em>叫你</em></h1>
+  <p class="sub" style="top:226px;left:596px">不用自己<br>翻潮汐表。</p>
+  <div class="dev" style="left:216px;top:330px"><div class="ui" data-ui>
+    <div class="k">东山岛 · 马銮湾</div><div class="big"><b>2 小时<br>10 分</b><br>后下滩</div>
+    <svg width="340" height="380" viewBox="0 0 340 380"><rect y="230" width="340" height="150" fill="#B9A572"/><path d="M0 230 C40 90 90 90 130 230Z M270 230 C300 150 320 120 340 150 L340 230Z" fill="#1E6F78"/><path d="M130 230 C165 330 235 330 270 230" fill="#082A30" stroke="#F2C14E" stroke-width="4"/></svg>
+  </div></div>
+</section>
+
+<!-- 第 3 张：微距特写。不放机身，把一个组件放大到占满画面 -->
+<section class="as-panel" style="background:var(--deep)">
+  <h1 class="hl">露滩的那<br>一段，<em>涂黄</em></h1>
+  <svg width="440" height="560" viewBox="0 0 440 560" style="position:absolute;left:0;bottom:0"><rect y="250" width="440" height="310" fill="#B9A572"/>
+    <path d="M-40 250 C40 60 100 60 150 250Z M400 250 C420 190 432 165 440 150 L440 250Z" fill="#1E6F78"/><path d="M150 250 C210 520 340 520 400 250" fill="#082A30" stroke="#F2C14E" stroke-width="10"/>
+    <g data-ui><text x="206" y="320" font-size="30" font-weight="900" fill="#F2C14E">3h25</text><text x="24" y="290" font-size="17" font-weight="700" fill="#082A30">沙线 0.8 米</text></g></svg>
+</section>
+
+<!-- 第 4 张：反色。整组深色里插一张浅的，节奏才不平 -->
+<section class="as-panel" style="background:var(--paper);color:var(--ink)">
+  <h1 class="hl" style="color:var(--ink)">这一周<br>哪天<em style="color:#B8321F">最长</em></h1>
+  <div data-ui style="position:absolute;left:36px;right:36px;top:290px">
+    <div class="row"><span>今天</span><svg viewBox="0 0 200 44"><path d="M0 12 C40 -6 60 40 100 40 S160 -6 200 12" fill="none" stroke="#0E3B43" stroke-width="3"/><path d="M64 30 C80 44 120 44 136 30Z" fill="#F2C14E"/></svg><span>3h25</span></div>
+    <div class="row"><span>周四</span><svg viewBox="0 0 200 44"><path d="M0 12 C40 -6 60 40 100 40 S160 -6 200 12" fill="none" stroke="#0E3B43" stroke-width="3"/><path d="M68 32 C82 44 118 44 132 32Z" fill="#F2C14E"/></svg><span>3h02</span></div>
+    <div class="row"><span>周五</span><svg viewBox="0 0 200 44"><path d="M0 14 C40 0 60 36 100 36 S160 0 200 14" fill="none" stroke="#0E3B43" stroke-width="3"/><path d="M80 32 C90 38 110 38 120 32Z" fill="#F2C14E"/></svg><span>2h10</span></div>
+    <div class="row"><span>周六</span><svg viewBox="0 0 200 44"><path d="M0 16 C40 6 60 30 100 30 S160 6 200 16" fill="none" stroke="#0E3B43" stroke-width="3"/></svg><span style="opacity:.45">0h50</span></div>
+    <div class="row" style="opacity:.45"><span>周日</span><svg viewBox="0 0 200 44"><path d="M0 18 C40 12 60 26 100 26 S160 12 200 18" fill="none" stroke="#0E3B43" stroke-width="3"/></svg><span>不露</span></div>
+  </div>
+</section>
+
+<!-- 第 5 张：破框。一个界面碎片放大、压过机身的边 -->
+<section class="as-panel">
+  <h1 class="hl">不用<br>一直<em>盯着</em></h1>
+  <div class="dev" style="left:120px;top:400px"><div class="ui" data-ui><div class="k">今天能赶海</div><div class="big"><b>3 小时 25 分</b></div>
+    <svg width="340" height="380" viewBox="0 0 340 380"><rect y="230" width="340" height="150" fill="#B9A572"/><path d="M0 230 C40 90 90 90 130 230Z M270 230 C300 150 320 120 340 150 L340 230Z" fill="#1E6F78"/><path d="M130 230 C165 330 235 330 270 230" fill="#082A30" stroke="#F2C14E" stroke-width="4"/></svg></div></div>
+  <div class="pop" data-ui style="left:30px;top:560px;width:330px">11:51 提醒我<small>退到沙线时叫你出门</small></div>
+</section>
+
+<!-- 第 6 张：收尾。不放界面，一句这个产品才会说的话 -->
+<section class="as-panel" style="background:var(--sun);color:var(--deep)">
+  <h1 class="hl" style="top:330px;font-size:76px;color:var(--deep)">赶海<br>不看表<br>看潮</h1>
+  <p class="sub" style="top:650px;opacity:1;font-weight:700">退潮 · 给赶海的人</p>
+</section>
+
+</body></html>

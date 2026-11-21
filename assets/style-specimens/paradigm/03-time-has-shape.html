@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>03 时间有形状</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:750px;overflow:hidden}*{box-sizing:border-box}
+body{background:#E8DFCC;font-family:"Bricolage Grotesque","Noto Sans SC",sans-serif;position:relative;color:#0E3B43}
+.ph{position:absolute;width:340px;height:720px;border-radius:52px;overflow:hidden;background:#0E3B43;color:#EAF4F1;box-shadow:0 0 0 9px #06181c,0 0 0 11px #35565c,0 30px 70px rgba(14,59,67,.4)}
+.ph:before{content:"";position:absolute;top:11px;left:120px;width:100px;height:28px;border-radius:20px;background:#000;z-index:9}
+.sb{padding:15px 30px 0;display:flex;justify-content:space-between;font-weight:700;font-size:14px;position:relative;z-index:5}
+.place{margin:24px 26px 0;font-size:15px;opacity:.7}
+.big{margin:2px 26px 0;font-size:44px;font-weight:800;letter-spacing:-1.5px;line-height:1.08;white-space:nowrap}
+.big em{font-style:normal;color:#F2C14E}
+.sub{margin:8px 26px 0;font-size:15px;opacity:.8}
+/* 一天不是 24 行列表，是一条潮位曲线；能下滩的时段是曲线沉到沙线以下的那一段 */
+svg{position:absolute;left:0}
+.now{position:absolute;top:300px;width:2px;height:270px;background:#F2C14E}
+.now:before{content:"现在 9:41";position:absolute;top:-26px;left:-34px;width:70px;text-align:center;font-size:12px;font-weight:700;color:#0E3B43;background:#F2C14E;border-radius:20px;padding:3px 0}
+.hrs{position:absolute;left:0;right:0;top:582px;display:flex;justify-content:space-around;font-size:12px;opacity:.6}
+.win{position:absolute;left:26px;right:26px;bottom:30px;background:#F2C14E;color:#0E3B43;border-radius:22px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:19px}
+.win small{display:block;font-weight:500;font-size:13px;opacity:.75}
+.wk{position:absolute;left:0;right:0;top:120px;bottom:0;padding:0 22px}
+.day{display:flex;align-items:center;height:74px;border-top:1px solid rgba(234,244,241,.14);gap:12px}
+.day b{width:44px;font-size:15px}.day b small{display:block;font-weight:500;font-size:12px;opacity:.6}
+.day svg{position:static;flex:1}
+.day i{font-style:normal;font-size:13px;font-weight:700;color:#F2C14E;width:58px;text-align:right}
+.note{position:absolute;left:810px;top:230px;width:330px}
+.note h2{font:900 40px/1.1 "Noto Sans SC";margin:0 0 14px}
+.note p{font:400 17px/1.6 "Noto Sans SC";margin:0 0 12px}
+.note .k{font-size:14px;opacity:.55}
+</style></head><body>
+<div class="ph" style="left:70px;top:14px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <div class="place">东山岛 · 马銮湾</div>
+ <div class="big"><em>2 小时 10 分</em><br>后可以下滩</div>
+ <div class="sub">今天能赶海 3 小时 25 分</div>
+ <svg width="340" height="300" style="top:290px" viewBox="0 0 340 300">
+  <path d="M0 150 C40 40 80 40 120 150 S200 260 240 150 S310 50 340 110 L340 300 L0 300Z" fill="#1F6F78"/>
+  <path d="M0 150 C40 40 80 40 120 150 S200 260 240 150 S310 50 340 110" fill="none" stroke="#9FE0D6" stroke-width="3"/>
+  <rect x="0" y="178" width="340" height="122" fill="#C9A66B" opacity=".9"/>
+  <path d="M135 178 C160 250 200 250 226 178Z" fill="#0E3B43"/>
+  <path d="M135 178 C160 250 200 250 226 178" fill="none" stroke="#F2C14E" stroke-width="4"/>
+  <line x1="0" y1="178" x2="340" y2="178" stroke="#EAF4F1" stroke-dasharray="3 6" opacity=".6"/>
+  <text x="12" y="198" font-size="12" fill="#0E3B43" font-weight="700">沙线 0.8 米</text>
+  <text x="181" y="268" font-size="14" fill="#0E3B43" font-weight="800" text-anchor="middle">11:51–15:16 露滩</text>
+ </svg>
+ <div class="now" style="left:96px"></div>
+ <div class="hrs"><span>6</span><span>9</span><span>12</span><span>15</span><span>18</span><span>21</span></div>
+ <div class="win"><div>11:51 提醒我<small>退到沙线时叫你出门</small></div><span>→</span></div>
+</div>
+<div class="ph" style="left:440px;top:60px;height:640px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <div class="place">这一周 · 哪天窗口最长</div>
+ <div class="wk">
+  <div class="day"><b>今天<small>初三</small></b><svg height="54" viewBox="0 0 200 54" preserveAspectRatio="none"><path d="M0 27 C25 0 45 0 70 27 S115 54 140 27 S180 6 200 20" fill="none" stroke="#9FE0D6" stroke-width="2"/><path d="M80 34 C95 54 118 54 132 34Z" fill="#F2C14E"/></svg><i>3h25</i></div>
+  <div class="day"><b>周四<small>初四</small></b><svg height="54" viewBox="0 0 200 54" preserveAspectRatio="none"><path d="M0 34 C25 4 50 4 78 30 S125 54 150 28 S185 8 200 16" fill="none" stroke="#9FE0D6" stroke-width="2"/><path d="M90 36 C104 54 126 54 140 36Z" fill="#F2C14E"/></svg><i>3h02</i></div>
+  <div class="day"><b>周五<small>初五</small></b><svg height="54" viewBox="0 0 200 54" preserveAspectRatio="none"><path d="M0 40 C28 8 55 8 86 32 S130 52 158 30 S190 12 200 14" fill="none" stroke="#9FE0D6" stroke-width="2"/><path d="M104 40 C114 52 132 52 144 40Z" fill="#F2C14E"/></svg><i>2h10</i></div>
+  <div class="day"><b>周六<small>初六</small></b><svg height="54" viewBox="0 0 200 54" preserveAspectRatio="none"><path d="M0 44 C30 14 60 14 94 34 S138 48 166 32 S192 18 200 16" fill="none" stroke="#9FE0D6" stroke-width="2"/><path d="M116 42 C124 49 138 49 148 42Z" fill="#F2C14E" opacity=".6"/></svg><i style="opacity:.6">0h50</i></div>
+  <div class="day"><b>周日<small>初七</small></b><svg height="54" viewBox="0 0 200 54" preserveAspectRatio="none"><path d="M0 44 C34 20 66 20 100 34 S146 44 172 32 S194 22 200 20" fill="none" stroke="#9FE0D6" stroke-width="2" opacity=".5"/></svg><i style="opacity:.4">不露滩</i></div>
+  <div class="day"><b>周一<small>初八</small></b><svg height="54" viewBox="0 0 200 54" preserveAspectRatio="none"><path d="M0 40 C34 22 66 22 100 32 S146 40 172 30 S194 22 200 22" fill="none" stroke="#9FE0D6" stroke-width="2" opacity=".5"/></svg><i style="opacity:.4">不露滩</i></div>
+ </div>
+</div>
+<div class="note"><h2>时间有形状</h2><p>一天不是 24 行列表，是一条潮位曲线。能下滩的那一段，就是曲线沉到沙线以下的那一块。</p><p>先问：这份数据在现实里是什么形状？胶囊、环、轨道、曲线、一周一条——让形状自己说话。</p><div class="k">题材与数据为虚构，仅示范范式</div></div>
+</body></html>

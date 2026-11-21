@@ -62,6 +62,17 @@ class LintFacts(unittest.TestCase):
         self.assertEqual(dl.bg_class((0xFA, 0xF8, 0xF4)), '浅·暖纸')
         self.assertEqual(dl.bg_class((0xFA, 0xFA, 0xFA)), '浅·中性白')
         self.assertNotEqual(dl.bg_class((0xDF, 0xEB, 0xE5)), '浅·暖纸')   # 冷青瓷灰不是暖奶油
+        self.assertEqual(dl.bg_class((0x26, 0x38, 0x2F)), '深·有色')       # 墨绿是深色有色底，不是中明度灰
+
+    def test_same_class_needs_close_hue_when_coloured(self):
+        # 实测误报：红底和黄底的两套宣传图同属「中明度·有色」、同一标题字体，被判成撞了
+        pal = [{'rgb': (226, 67, 42), 'share': 1.0, 'hex': '#E2432A'}]
+        pal2 = [{'rgb': (244, 194, 31), 'share': 1.0, 'hex': '#F4C21F'}]
+        a = {'palette': pal, 'layout': [1, 0, 0, 1], 'bg': '#E2432A', 'bg_class': '中明度·有色', 'serif': False, 'display': 'Noto Sans SC'}
+        b = {'palette': pal2, 'layout': [0, 1, 1, 0], 'bg': '#F4C21F', 'bg_class': '中明度·有色', 'serif': False, 'display': 'Noto Sans SC'}
+        self.assertEqual(dl.similar(a, b)[0], [])
+        c = dict(b, bg='#E8552F', palette=[{'rgb': (120, 200, 90), 'share': 1.0, 'hex': '#78C85A'}])
+        self.assertTrue(any('同一底色类' in h for h in dl.similar(a, c)[0]))
 
 
 class LintEdgeCases(unittest.TestCase):

@@ -29,7 +29,9 @@ npx skills add alchaincyf/huashu-design
 
 > 📣 **Now MIT-licensed.** As of 2026-05-14 this skill is fully open-source under the [MIT License](LICENSE) — free for personal **and** commercial use, no authorization required. ([what changed](#license))
 
-> 🆕 **3.1: Xiaohongshu (RED) carousels.** Eight layout paradigms for 3:4 image sets — specimen journal, product notebook, index, panorama strip, daily paper, trading cards, vertical blank, area infographic — and every specimen doubles as an editable template. One command slices the pages and checks type size, overflow, text across panorama seams and overlapping text. [See the specimens](#design-direction-advisor)
+> 🆕 **3.4: a new way to think about app prototypes, plus App Store screenshots.** We walked through all 90 finalists of the last two App Store Awards and distilled eight interface paradigms (each with a specimen): decide what the thing your app manages looks like in the real world, then draw screens. New App Store screenshot module (1320×2868, panoramas, break-the-frame, search-result preview). References are now measured, not paraphrased — borrow one layer (the mechanism), never the whole look — and your result is put side by side with the reference afterwards. Wherever a UI needs an image it gets a real one: runtimes with native image generation (Codex, Doubao, WorkBuddy) generate directly; Claude Code and DeepSeek Harness borrow a local Codex or an image API key you provide. No more emoji or grey placeholders.
+
+> **3.1: Xiaohongshu (RED) carousels.** Eight layout paradigms for 3:4 image sets — specimen journal, product notebook, index, panorama strip, daily paper, trading cards, vertical blank, area infographic — and every specimen doubles as an editable template. One command slices the pages and checks type size, overflow, text across panorama seams and overlapping text. [See the specimens](#design-direction-advisor)
 
 > **3.0: bolder directions, and projects that stop looking alike.** Six thumbnails first, then the three strongest become real designs; the style library grows to 84 (new App and Chinese & East Asian sections), each with a specimen; reference works are screenshotted before they are borrowed from; plus a facts-only design check and a "look ledger" that remembers what you've already shipped. [How it works](#core-mechanics)
 
@@ -180,6 +182,7 @@ No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Cod
 | Design variations | 3+ side-by-side · Tweaks live params · cross-dimension exploration | 10 min |
 | Infographic / data viz | Print-quality typography · exports to PDF/PNG/SVG | 10 min |
 | Xiaohongshu carousel / cover | 3:4 image sets (≤18) · 8 paradigm templates · continuous panorama strips · one-command slicing with checks | 10–15 min |
+| App Store screenshots | 1320×2868 store images (≤10) · real same-category store screenshots as references · panoramas sliced automatically · search-result preview and checks | 10–15 min |
 | Design direction advisor | Three logics × two candidates each · six thumbnails → three real designs, the other three kept as alternates | 10 min |
 | 6-dimension expert critique | Concept/intent veto + 5 execution dims · radar chart + Keep/Fix/Quick Wins · actionable punch list | 3 min |
 
@@ -415,7 +418,8 @@ huashu-design/
 │   ├── polish-loop.md       # Polish loop: per-screen screenshots, look, revise once
 │   ├── steady-track.md      # Steady track: specimen start, screen outline, form menu
 │   ├── design-styles.md     # 92 HTML-native styles (web 20 + deck 20 + infographic 20 + app 12 + Chinese & East Asian 12 + Xiaohongshu 8)
-│   ├── modules/             # Web / deck / infographic / Xiaohongshu / motion module manuals
+│   ├── modules/             # Web / deck / infographic / Xiaohongshu / App Store screenshots / motion module manuals
+│   ├── app-paradigms.md     # Eight app interface paradigms drawn from two years of App Store Awards finalists
 │   ├── slide-decks.md
 │   ├── editable-pptx.md
 │   ├── critique-guide.md
@@ -424,6 +428,10 @@ huashu-design/
 ├── scripts/                 # Export toolchain
 │   ├── render-video.js      # HTML → MP4
 │   ├── xhs_render.py        # Xiaohongshu pages → 3:4 images + checks
+│   ├── appstore_shots.py    # Real apps' store screenshots → reference board
+│   ├── ref_card.py          # Measure a reference's palette and layout; put your result beside it afterwards
+│   ├── gen_image.py         # Borrow a local Codex CLI to generate imagery when the runtime cannot; accepts only genuinely generated files
+│   ├── appstore_render.py   # App Store screenshots → upload-ready images + search preview + checks
 │   ├── convert-formats.sh   # MP4 → 60fps + GIF
 │   ├── add-music.sh         # MP4 + BGM
 │   ├── export_deck_pdf.mjs

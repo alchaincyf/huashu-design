@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>04 一套语义色</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:750px;overflow:hidden}*{box-sizing:border-box}
+body{background:#17181A;font-family:"Inter Tight","Noto Sans SC",sans-serif;position:relative;color:#111}
+:root{--go:#1FA971;--care:#F0A202;--stop:#E5484D}
+.ph{position:absolute;width:340px;height:720px;border-radius:52px;overflow:hidden;background:#F6F5F1;box-shadow:0 0 0 9px #000,0 0 0 11px #48494d,0 30px 70px rgba(0,0,0,.5)}
+.ph:before{content:"";position:absolute;top:11px;left:120px;width:100px;height:28px;border-radius:20px;background:#000;z-index:9}
+.sb{padding:15px 30px 0;display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+h1{margin:22px 24px 2px;font-size:34px;font-weight:800;letter-spacing:-.8px}
+.s{margin:0 24px 14px;font-size:14px;color:#6b6b66}
+/* 全 App 的颜色只回答一个问题：今天这条路能不能走。圆点、分数、地图线、按钮，同一套三色 */
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;flex:none}
+.go{background:var(--go)}.care{background:var(--care)}.stop{background:var(--stop)}
+.row{display:flex;align-items:center;gap:14px;padding:15px 24px;border-top:1px solid #E4E2DB}
+.row b{font-size:17px;font-weight:700;display:block}.row small{font-size:13px;color:#77756f}
+.row .n{margin-left:auto;font-size:26px;font-weight:800;letter-spacing:-.5px}
+.row .n small{font-size:12px;font-weight:500;margin-left:2px}
+.hero{margin:18px 24px 6px;border-radius:26px;padding:20px;color:#fff;background:var(--care)}
+.hero .n{font-size:76px;font-weight:800;letter-spacing:-3px;line-height:1}
+.hero .n small{font-size:20px;letter-spacing:0}
+.hero p{margin:6px 0 0;font-size:16px;font-weight:700}
+.why{margin:0 24px;font-size:13px;color:#77756f;font-weight:700;padding:12px 0 4px}
+.cta{position:absolute;left:24px;right:24px;bottom:30px;border-radius:20px;padding:16px;text-align:center;font-weight:800;font-size:17px;color:#fff;background:#111}
+.map{position:absolute;left:24px;right:24px;top:118px;height:210px;border-radius:24px;background:#DDE5D8;overflow:hidden}
+.key{position:absolute;left:800px;top:120px;width:340px;color:#F6F5F1}
+.key h2{font:900 40px/1.1 "Noto Sans SC";margin:0 0 14px}
+.key p{font:400 17px/1.6 "Noto Sans SC";margin:0 0 12px;opacity:.86}
+.key .l{display:flex;gap:12px;align-items:center;font:700 16px "Noto Sans SC";padding:11px 0;border-top:1px solid #333}
+.key .l small{margin-left:auto;font-weight:400;opacity:.6}
+.key .k{font-size:14px;opacity:.5;margin-top:14px}
+</style></head><body>
+<div class="ph" style="left:70px;top:14px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <h1>今天的山</h1><div class="s">周六 · 午后有阵雨 · 5 条常走的线</div>
+ <div class="row"><span class="dot go"></span><div><b>小梅沙环线</b><small>6.2 公里 · 路面干</small></div><div class="n" style="color:var(--go)">92<small>分</small></div></div>
+ <div class="row"><span class="dot go"></span><div><b>茶溪谷栈道</b><small>4.0 公里 · 人少</small></div><div class="n" style="color:var(--go)">88<small>分</small></div></div>
+ <div class="row"><span class="dot care"></span><div><b>大雁顶南坡</b><small>9.5 公里 · 14 点后有雨</small></div><div class="n" style="color:var(--care)">61<small>分</small></div></div>
+ <div class="row"><span class="dot care"></span><div><b>三水线前段</b><small>11 公里 · 溪水偏高</small></div><div class="n" style="color:var(--care)">54<small>分</small></div></div>
+ <div class="row"><span class="dot stop"></span><div><b>鹅公髻穿越</b><small>17 公里 · 塌方封路</small></div><div class="n" style="color:var(--stop)">8<small>分</small></div></div>
+ <div class="cta">只看绿色的</div>
+</div>
+<div class="ph" style="left:440px;top:60px;height:640px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <h1 style="font-size:26px;margin-top:18px">大雁顶南坡</h1>
+ <div class="map"><svg width="292" height="210" viewBox="0 0 292 210"><path d="M-10 60 Q60 20 120 70 T300 50M-10 110 Q70 70 140 120 T300 100M-10 160 Q80 120 150 170 T300 150" fill="none" stroke="#C3CFBC" stroke-width="2"/><path d="M24 180 C60 150 70 120 110 112" fill="none" stroke="#1FA971" stroke-width="6" stroke-linecap="round"/><path d="M110 112 C150 104 160 70 200 62" fill="none" stroke="#F0A202" stroke-width="6" stroke-linecap="round"/><path d="M200 62 C230 56 244 40 268 28" fill="none" stroke="#E5484D" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 10"/><circle cx="24" cy="180" r="7" fill="#111"/></svg></div>
+ <div class="hero" style="margin-top:236px"><div class="n">61<small> 分</small></div><p>能走，14 点前下到垭口</p></div>
+ <div class="why">为什么是黄色</div>
+ <div class="row" style="padding:11px 24px"><span class="dot go"></span><div><b style="font-size:15px">前 3 公里 路面干</b></div></div>
+ <div class="row" style="padding:11px 24px"><span class="dot care"></span><div><b style="font-size:15px">中段 14:00 起阵雨</b></div></div>
+ <div class="row" style="padding:11px 24px"><span class="dot stop"></span><div><b style="font-size:15px">山脊段 雷暴预警</b></div></div>
+</div>
+<div class="key"><h2>一套语义色</h2><p>全 App 的颜色只回答一个问题：今天这条路能不能走。列表圆点、分数、地图线、大卡，用的是同一套三色。</p>
+ <div class="l"><span class="dot go"></span>去<small>#1FA971</small></div><div class="l"><span class="dot care"></span>留心<small>#F0A202</small></div><div class="l"><span class="dot stop"></span>别去<small>#E5484D</small></div>
+ <div class="k">除此之外没有第四种彩色。题材与数据为虚构</div></div>
+</body></html>

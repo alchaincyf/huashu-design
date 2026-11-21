@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>06 AI 落在物上</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:750px;overflow:hidden}*{box-sizing:border-box}
+body{background:#2B2622;font-family:"Inter Tight","Noto Sans SC",sans-serif;position:relative;color:#111}
+.ph{position:absolute;width:340px;height:720px;border-radius:52px;overflow:hidden;box-shadow:0 0 0 9px #000,0 0 0 11px #48494d,0 30px 70px rgba(0,0,0,.45)}
+.ph:before{content:"";position:absolute;top:11px;left:120px;width:100px;height:28px;border-radius:20px;background:#000;z-index:9}
+.sb{padding:15px 30px 0;display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.key{position:absolute;left:800px;top:120px;width:340px}
+.key h2{font:900 40px/1.1 "Noto Sans SC";margin:0 0 14px}
+.key p{font:400 17px/1.6 "Noto Sans SC";margin:0 0 12px;opacity:.86}
+.key .l{font:700 16px/1.4 "Noto Sans SC";padding:11px 0;border-top:1px solid rgba(128,128,128,.4)}
+.key .k{font-size:14px;opacity:.55;margin-top:14px}
+
+.ph{background:#EFE7DA}
+.shot{margin:14px 16px 0;height:300px;border-radius:26px;background:#C9B79C;position:relative;overflow:hidden}
+.tag{position:absolute;font-size:12px;font-weight:700;padding:4px 9px;border-radius:20px;background:#fff;white-space:nowrap}
+.tag{box-shadow:0 2px 8px rgba(0,0,0,.25)}.tag.q{background:rgba(0,0,0,.35);border:1.5px dashed #fff;color:#fff}
+.label{margin:14px 16px 0;background:#FBF8F2;border-radius:6px;padding:16px 18px;border-left:10px solid #D9482B;box-shadow:0 2px 0 #d8cdb9}
+.label h1{margin:0;font-size:40px;font-weight:800;letter-spacing:-1px}.label h1 small{font-size:14px;font-weight:500;color:#8a7f70;margin-left:8px;letter-spacing:0}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{font-size:14px;font-weight:700;padding:7px 11px;border-radius:9px;background:#EFE7DA;white-space:nowrap}
+.chip.q{background:transparent;border:1.5px dashed #B7A98F;color:#7d7262}
+.hint{margin:10px 18px 0;font-size:12.5px;color:#8a7f70}
+.ask{margin:60px 16px 0;background:#FBF8F2;border-radius:18px;padding:14px 16px;font-size:17px;font-weight:700}
+.stack{margin:18px 16px 0;display:grid;gap:8px}
+.bx{border-radius:6px;padding:13px 16px;background:#E2D7C4;color:#8a7f70;font-weight:700;font-size:15px;border-left:10px solid #B7A98F;display:flex;justify-content:space-between}
+.bx.on{background:#FBF8F2;color:#111;border-left-color:#D9482B;padding:18px 16px;font-size:22px;box-shadow:0 0 0 3px #D9482B}
+.bx.on small{display:block;font-size:13px;font-weight:500;color:#8a7f70;margin-top:4px}
+.key{color:#EFE7DA}
+</style></head><body>
+
+<div class="ph" style="left:70px;top:14px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <div class="shot"><img src="img/box.jpg" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
+  <span class="tag" style="left:44px;top:92px">保温壶</span><span class="tag" style="left:186px;top:118px">汤碗 ×4</span><span class="tag q" style="left:196px;top:232px">开瓶器？</span><span class="tag" style="left:150px;top:52px">擀面杖</span></div>
+ <div class="label"><h1>厨房 03<small>第 3 箱，共 7 箱</small></h1>
+  <div class="chips"><span class="chip">保温壶</span><span class="chip">汤碗 ×4</span><span class="chip">擀面杖</span><span class="chip q">开瓶器？</span><span class="chip q">＋ 手动加</span></div></div>
+ <div class="hint">拍一张，箱签自己填好。虚线是拿不准的，点一下改。</div>
+</div>
+<div class="ph" style="left:440px;top:60px;height:640px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <div class="ask">开瓶器在哪一箱？</div>
+ <div class="stack"><div class="bx">厨房 01<span>12 件</span></div><div class="bx">厨房 02<span>9 件</span></div>
+  <div class="bx on"><div>厨房 03<small>靠右侧，红色那个。上周六装的</small></div><span>→</span></div>
+  <div class="bx">书房 01<span>31 件</span></div><div class="bx">卧室 01<span>8 件</span></div><div class="bx">卧室 02<span>14 件</span></div></div>
+</div>
+<div class="key"><h2>AI 落在物上</h2><p>没有对话框，也没有星星按钮。认出来的东西直接写在箱签上；问一句，回答是那只箱子自己亮起来。</p>
+ <div class="l">结果出现在用户本来就要看的地方</div><div class="l">拿不准的用虚线，一点就改</div><div class="l">回答是一个位置，不是一段话</div>
+ <div class="k">先问：智能的结果该长在哪个已有的东西上。题材与数据为虚构；箱子照片是生成图</div></div>
+</body></html>

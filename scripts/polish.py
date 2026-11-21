@@ -58,7 +58,9 @@ TILE_JS = r"""
   for (const e of document.querySelectorAll('body *')) {
     const r = vis(e); if (!r) continue;
     const cs = getComputedStyle(e);
-    if (cs.backgroundImage && cs.backgroundImage !== 'none' && r.width * r.height >= 200 * 120) graphics++;
+    // 背景里放的是真图（url）时和 <img> 同一个门槛；渐变之类的要够大才算图形
+    if (cs.backgroundImage && cs.backgroundImage !== 'none'
+        && r.width * r.height >= (cs.backgroundImage.includes('url(') ? 48 * 48 : 200 * 120)) graphics++;
     for (const n of e.childNodes) if (n.nodeType === 3) {
       const t = n.textContent.trim(); if (!t) continue;
       chars += t.length;

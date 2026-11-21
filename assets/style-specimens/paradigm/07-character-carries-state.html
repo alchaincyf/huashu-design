@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>07 角色承载状态</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:750px;overflow:hidden}*{box-sizing:border-box}
+body{background:#F3D9B8;font-family:"Inter Tight","Noto Sans SC",sans-serif;position:relative;color:#111}
+.ph{position:absolute;width:340px;height:720px;border-radius:52px;overflow:hidden;box-shadow:0 0 0 9px #000,0 0 0 11px #48494d,0 30px 70px rgba(0,0,0,.45)}
+.ph:before{content:"";position:absolute;top:11px;left:120px;width:100px;height:28px;border-radius:20px;background:#000;z-index:9}
+.sb{padding:15px 30px 0;display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.key{position:absolute;left:800px;top:120px;width:340px}
+.key h2{font:900 40px/1.1 "Noto Sans SC";margin:0 0 14px}
+.key p{font:400 17px/1.6 "Noto Sans SC";margin:0 0 12px;opacity:.86}
+.key .l{font:700 16px/1.4 "Noto Sans SC";padding:11px 0;border-top:1px solid rgba(128,128,128,.4)}
+.key .k{font-size:14px;opacity:.55;margin-top:14px}
+
+.ph{background:#FFF6E8}
+h1{margin:20px 24px 0;font-size:30px;font-weight:800;letter-spacing:-.5px}
+.s{margin:2px 24px 0;font-size:14px;color:#8b7a63}
+.jar{display:block;margin:6px auto 0}
+.say{margin:0 24px;text-align:center;font-size:24px;font-weight:800}
+.say small{display:block;font-size:14px;font-weight:500;color:#8b7a63;margin-top:4px}
+.cta{position:absolute;left:24px;right:24px;bottom:30px;border-radius:22px;padding:17px;text-align:center;font-weight:800;font-size:18px;color:#FFF6E8;background:#3B2A1A}
+.facts{display:flex;gap:8px;margin:16px 24px 0}.facts div{flex:1;background:#F6E7CF;border-radius:14px;padding:10px 12px;font-size:12px;color:#8b7a63}.facts b{display:block;font-size:18px;color:#3B2A1A}
+.st{display:flex;align-items:center;gap:14px;padding:12px 22px;border-top:1px solid #EDDCC2}
+.st b{font-size:18px;display:block}.st small{font-size:13px;color:#8b7a63}
+.key{color:#3B2A1A}
+</style></head><body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+ <g id="jar"><rect x="20" y="10" width="160" height="230" rx="34" fill="#fff" stroke="#3B2A1A" stroke-width="6"/><rect x="34" y="-6" width="132" height="26" rx="10" fill="#D9482B" stroke="#3B2A1A" stroke-width="6"/></g></defs></svg>
+<div class="ph" style="left:70px;top:14px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <h1>阿酵</h1><div class="s">鲁邦种 · 养到第 12 天</div>
+ <svg class="jar" width="230" height="290" viewBox="-15 -20 230 290"><use href="#jar"/>
+  <path d="M23 190 Q60 178 100 190 T177 190 L177 206 Q177 237 146 237 L54 237 Q23 237 23 206Z" fill="#E9CFA0"/>
+  <path d="M26 96 H174" stroke="#3B2A1A" stroke-width="3" stroke-dasharray="3 9"/><text x="170" y="88" text-anchor="end" font-size="13" font-weight="700" fill="#8b7a63">吃饱时到这</text>
+  <path d="M70 146 q10 8 20 0M112 146 q10 8 20 0" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linecap="round"/><path d="M86 170 q14 -10 28 0" fill="none" stroke="#3B2A1A" stroke-width="5" stroke-linecap="round"/><circle cx="58" cy="164" r="8" fill="#F2A39A"/><circle cx="142" cy="164" r="8" fill="#F2A39A"/></svg>
+ <div class="say">饿瘪了<small>塌回去一大截，该喂了</small></div>
+ <div class="facts"><div><b>26 小时</b>没吃东西</div><div><b>24 °C</b>厨房台面</div></div>
+ <div class="cta">喂 50 克面粉</div>
+</div>
+<div class="ph" style="left:440px;top:60px;height:640px">
+ <div class="sb"><span>9:41</span><span>●●●</span></div>
+ <h1 style="font-size:24px">它会有的四种样子</h1>
+ <div class="st" style="margin-top:14px"><svg width="62" height="78" viewBox="-15 -20 230 290"><use href="#jar"/><path d="M23 60 Q100 30 177 60 L177 206 Q177 237 146 237 L54 237 Q23 237 23 206Z" fill="#E9CFA0"/><circle cx="60" cy="110" r="9" fill="#fff"/><circle cx="130" cy="90" r="12" fill="#fff"/><path d="M70 150 q10 -10 20 0M112 150 q10 -10 20 0M84 172 q16 16 32 0" fill="none" stroke="#3B2A1A" stroke-width="7" stroke-linecap="round"/></svg><div><b>顶到盖了</b><small>现在揉面最好，别等</small></div></div>
+ <div class="st"><svg width="62" height="78" viewBox="-15 -20 230 290"><use href="#jar"/><path d="M23 120 Q100 104 177 120 L177 206 Q177 237 146 237 L54 237 Q23 237 23 206Z" fill="#E9CFA0"/><circle cx="80" cy="152" r="7" fill="#3B2A1A"/><circle cx="122" cy="152" r="7" fill="#3B2A1A"/><path d="M88 178 q12 8 24 0" fill="none" stroke="#3B2A1A" stroke-width="7" stroke-linecap="round"/></svg><div><b>正在长</b><small>喂完 3 小时，不用管</small></div></div>
+ <div class="st"><svg width="62" height="78" viewBox="-15 -20 230 290"><use href="#jar"/><path d="M23 190 Q100 178 177 190 L177 206 Q177 237 146 237 L54 237 Q23 237 23 206Z" fill="#E9CFA0"/><path d="M70 206 q10 8 20 0M112 206 q10 8 20 0" fill="none" stroke="#3B2A1A" stroke-width="7" stroke-linecap="round"/></svg><div><b>饿瘪了</b><small>超过一天没喂</small></div></div>
+ <div class="st"><svg width="62" height="78" viewBox="-15 -20 230 290"><use href="#jar"/><rect x="23" y="160" width="154" height="77" rx="30" fill="#CFE0EA"/><path d="M70 200 h20M112 200 h20" stroke="#3B2A1A" stroke-width="7" stroke-linecap="round"/><text x="150" y="130" font-size="34" font-weight="800" fill="#3B2A1A">z</text></svg><div><b>冰箱里睡着</b><small>出门一周也没事</small></div></div>
+</div>
+<div class="key"><h2>角色承载状态</h2><p>不画仪表盘。罐子里的面种涨多高、脸上什么表情，就是全部的状态。数字退到下面两格小卡里。</p>
+ <div class="l">一个状态一种样子，四种够用</div><div class="l">每种样子配一句该做什么</div><div class="l">角色是数据的脸，不是贴在角落的吉祥物</div>
+ <div class="k">先问：这个状态如果是一张脸，它现在什么表情。题材与数据为虚构</div></div>
+</body></html>

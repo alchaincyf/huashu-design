@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><title>01 界面即世界</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1200px;height:750px;overflow:hidden}*{box-sizing:border-box}
+body{background:#22362B;font-family:"Noto Sans SC",sans-serif;color:#1c2a22;position:relative}
+.ph{position:absolute;width:340px;height:720px;border-radius:52px;overflow:hidden;box-shadow:0 0 0 9px #0d1410,0 0 0 11px #3d4a42,0 30px 70px rgba(0,0,0,.45)}
+.ph:before{content:"";position:absolute;top:11px;left:120px;width:100px;height:28px;border-radius:20px;background:#000;z-index:9}
+.sb{position:absolute;top:0;left:0;right:0;padding:15px 30px 0;display:flex;justify-content:space-between;font-weight:700;font-size:14px;z-index:8}
+/* 主屏不是列表，是一面阳台花架：每盆花就是一条数据 */
+.wall{position:absolute;inset:0;background:linear-gradient(#CFE3EA 0 46%,#E9DFCB 46%)}
+.sun{position:absolute;right:-40px;top:60px;width:190px;height:190px;border-radius:50%;background:radial-gradient(#FFF6C9,#FFE27A 55%,rgba(255,226,122,0) 70%)}
+.hd{position:absolute;left:26px;top:64px;font-family:Fraunces,serif;font-weight:700;font-size:34px;line-height:1.05;color:#fff}
+.hd small{display:block;font:500 14px "Noto Sans SC";color:#E3EFE6;margin-top:8px}
+.scene{position:absolute;left:50%;top:0;height:100%;transform:translateX(-50%)}
+.ph:nth-of-type(2) .scene{transform:none}
+.shade{position:absolute;left:0;right:0;top:0;height:190px;background:linear-gradient(rgba(20,36,28,.72),rgba(20,36,28,0))}
+/* 每盆花旁边一根小水位：还能撑几天，直接长在花盆上 */
+.lv{position:absolute;width:10px;height:44px;border-radius:6px;background:rgba(255,255,255,.75);overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.lv i{position:absolute;left:0;right:0;bottom:0;background:#3E7FA6}
+.shelf{position:absolute;left:0;right:0;height:12px;background:#8A5A3B;box-shadow:0 6px 0 #6E452B,0 16px 18px rgba(60,40,20,.25)}
+.pot{position:absolute;width:74px;height:62px;background:#C8623E;clip-path:polygon(0 0,100% 0,86% 100%,14% 100%);}
+.pot i{position:absolute;left:0;right:0;bottom:0;background:#3E7FA6;opacity:.85}/* 盆里的水位就是「还能撑几天」 */
+.lf{position:absolute;border-radius:60% 0 60% 0;background:#2F7D4F;transform-origin:0 100%}
+.lf.dry{background:#B9A24A}
+.tag{position:absolute;font-size:12px;font-weight:700;background:#fff;border-radius:20px;padding:4px 9px;box-shadow:0 2px 6px rgba(0,0,0,.15);white-space:nowrap}
+.tag.warn{background:#1F3A2C;color:#FFE27A}
+.can{position:absolute;left:50%;bottom:34px;transform:translateX(-50%);background:#1F3A2C;color:#fff;font-weight:700;font-size:16px;padding:16px 26px;border-radius:40px;white-space:nowrap}
+.sheet{position:absolute;left:0;right:0;bottom:0;height:330px;background:#FBF8F0;border-radius:34px 34px 0 0;padding:26px;box-shadow:0 -20px 40px rgba(0,0,0,.2)}
+.sheet h3{font-family:Fraunces,serif;font-size:28px;margin:0 0 4px;color:#1F3A2C}
+.sheet p{margin:0 0 16px;color:#5d6b62;font-size:14px}
+.bar{height:44px;border-radius:14px;background:#E4EDF1;position:relative;overflow:hidden;margin-bottom:10px}
+.bar b{position:absolute;left:0;top:0;bottom:0;background:#3E7FA6;border-radius:14px}
+.bar span{position:absolute;left:14px;top:12px;font-size:14px;font-weight:700;color:#fff}
+.bar em{position:absolute;right:14px;top:12px;font-style:normal;font-size:14px;color:#3d4a42}
+.note{position:absolute;left:800px;top:250px;width:340px;color:#DCE9DF}
+.note h2{font:700 40px/1.1 "Noto Sans SC";margin:0 0 14px;color:#fff}
+.note p{font-size:17px;line-height:1.6;margin:0 0 12px;opacity:.88}
+.note .k{font-size:14px;opacity:.6}
+</style></head><body>
+<div class="ph" style="left:70px;top:14px">
+ <div class="sb" style="color:#fff"><span>9:41</span><span>●●●</span></div>
+ <img class="scene" src="img/balcony.jpg" alt="">
+ <div class="shade"></div>
+ <div class="hd">南阳台<small>6 盆 · 2 盆今天要喝水</small></div>
+ <div class="lv" style="left:48px;top:140px"><i style="height:70%"></i></div>
+ <div class="lv" style="left:302px;top:140px"><i style="height:82%"></i></div>
+ <div class="lv" style="left:42px;top:318px"><i style="height:10%;background:#E5A93B"></i></div>
+ <div class="tag warn" style="left:96px;top:300px">薄荷 · 渴了</div>
+ <div class="lv" style="left:300px;top:330px"><i style="height:55%"></i></div>
+ <div class="lv" style="left:38px;top:500px"><i style="height:44%"></i></div>
+ <div class="lv" style="left:296px;top:490px"><i style="height:8%;background:#E5A93B"></i></div>
+ <div class="tag warn" style="left:214px;top:470px">绿萝 · 渴了</div>
+ <div class="can">给 2 盆浇水</div>
+</div>
+<div class="ph" style="left:440px;top:60px;height:640px">
+ <div class="sb" style="color:#fff"><span>9:41</span><span>●●●</span></div>
+ <img class="scene" src="img/balcony.jpg" alt="" style="width:900px;height:auto;left:-140px;top:-470px">
+ <div class="sheet"><h3>薄荷</h3><p>上次浇水 4 天前 · 朝南 · 喜湿</p>
+  <div class="bar"><b style="width:12%"></b><em>盆土湿度 12%</em></div>
+  <div class="bar"><b style="width:74%;background:#E0A93B"></b><span>光照 充足</span></div>
+  <div class="can" style="position:static;transform:none;text-align:center;margin-top:16px">浇 300 毫升</div></div>
+</div>
+<div class="note"><h2>界面即世界</h2><p>主屏是一面花架，不是一张列表。每盆花是一条数据，花盆旁边那根小水位就是「还能撑几天」。</p><p>先问：这个 App 管的东西，在现实里放在哪、长什么样？</p><div class="k">题材与数据为虚构，仅示范范式；阳台照片是生成图</div></div>
+</body></html>
