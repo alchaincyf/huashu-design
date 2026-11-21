@@ -19,7 +19,7 @@
 
 3 to 30 minutes — you ship a **product launch animation**, a clickable App prototype, an editable PPT deck, a print-grade infographic.
 
-Not "decent for AI" quality — it looks like a real design team made it. Give the skill your brand assets (logo, colors, UI screenshots) and it reads your brand's voice; give it nothing and **three real directions picked from six thumbnails, backed by a 92-style library with a visual specimen for every style**, still keep you out of AI slop territory.
+Not "decent for AI" quality — it looks like a real design team made it. Give the skill your brand assets (logo, colors, UI screenshots) and it reads your brand's voice; give it nothing and **three real directions picked from six candidates, backed by a 92-style library with a visual specimen for every style**, still keep you out of AI slop territory.
 
 **Every design in this README was made by huashu-design itself.** No Figma, no After Effects — just a sentence + skill run. Next product launch needs a promo video? You can make it too.
 
@@ -183,7 +183,7 @@ No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Cod
 | Infographic / data viz | Print-quality typography · exports to PDF/PNG/SVG | 10 min |
 | Xiaohongshu carousel / cover | 3:4 image sets (≤18) · 8 paradigm templates · continuous panorama strips · one-command slicing with checks | 10–15 min |
 | App Store screenshots | 1320×2868 store images (≤10) · real same-category store screenshots as references · panoramas sliced automatically · search-result preview and checks | 10–15 min |
-| Design direction advisor | Three logics × two candidates each · six thumbnails → three real designs, the other three kept as alternates | 10 min |
+| Design direction advisor | Three logics × two candidates each · six candidates → three real designs, the other three kept as alternates | 10 min |
 | 6-dimension expert critique | Concept/intent veto + 5 execution dims · radar chart + Keep/Fix/Quick Wins · actionable punch list | 3 min |
 
 ---
@@ -194,7 +194,7 @@ No buttons, no panels, no Figma plugin. Agent-agnostic — drops into Claude Cod
 
 ### Design Direction Advisor
 
-The fallback for vague briefs: **three complementary logics, two candidates each** — best designer, an award-winning work in the same medium (screenshotted first), and a seconds roulette over the style library. Six thumbnails, then the three strongest and most distinct become **real designs** to choose from, with the other three as alternates. Backed by a **92-style HTML-native library** (web 20 + deck 20 + infographic 20 + app 12 + Chinese & East Asian 12 + Xiaohongshu 8, pure CSS, no image generation), each with a specimen.
+The fallback for vague briefs: **three complementary logics, two candidates each** — best designer, an award-winning work in the same medium (screenshotted first), and a seconds roulette over the style library. The three strongest and most distinct of the six become **real designs** to choose from, with the other three described as alternates. Backed by a **92-style HTML-native library** (web 20 + deck 20 + infographic 20 + app 12 + Chinese & East Asian 12 + Xiaohongshu 8, pure CSS, no image generation), each with a specimen.
 
 <p align="center"><img src="https://github.com/alchaincyf/huashu-design/releases/download/v2.0/w3-fallback-advisor-en.gif" width="100%"></p>
 <p align="center"><sub>The animation shows the 2.0 flow (one design per logic)</sub></p>
@@ -321,7 +321,7 @@ Triggered when the brief is too vague to execute (rebuilt in 3.0):
 - One round of questions, asking for references up front (name / logo / brand colors / sites you like)
 - Fetch the real images the content needs (public domain / royalty-free) before designing
 - **Three logics, two candidates each — six in total**: ① Best designer (two designers of different temperament, thinking from scratch the way they would) ② Real-world reference (two award-winning works **in the same medium** — apps for an app, publications for a deck; `scripts/ref_board.py` screenshots them so the agent actually looks before extracting grid, type ratios and color proportions) ③ Seconds roulette (`date +%S` picks one style from the matching section and one from the Chinese & East Asian section; the agent opens its specimen first)
-- **Six thumbnails → three full designs**: strong on its own, different from each other, not a repeat of your recent projects. The other three thumbnails come along as alternates
+- **Six candidates → three full designs**: strong on its own, different from each other, not a repeat of your recent projects. The other three come along as described alternates
 - **You never pick a style from words alone** — it stops once the designs are on the table
 - Backed by a **92-style HTML-native library**, each with a specimen image and source (`assets/style-specimens/`) — ammunition, not dogma
 
@@ -331,7 +331,7 @@ Why: we ran three rounds of blind before/after tests on fixed briefs (internal).
 
 - **Experience**: `scripts/learn.py` recalls your verbatim taste notes ("too plain", "A's layout with C's colors") and past lessons before work starts, and records what's worth keeping afterwards — it tells you when it records, and you can decline
 - **Look ledger**: every delivery logs what it looked like (background, palette, fonts, layout skeleton, plus the project name and path), so the next project steers away — the "each one fine, together all the same" kind of monotony
-- **Polish loop**: `scripts/polish.py` screenshots the page screen by screen at full size, so the model revises once against its own screenshots before handing over; it reports facts such as "several screens in a row with only text and boxes" or "thumbnail is still a placeholder block", and warns when the polish log is left empty. Lighter models, or any run where the script raises warnings, take the steady track (`references/steady-track.md`): start from a specimen, write a screen-by-screen outline first, pick each screen's form from a menu
+- **Polish loop**: `scripts/polish.py` screenshots the page screen by screen at full size, so the model revises once against its own screenshots before handing over; it reports facts such as "several screens in a row with only text and boxes", and warns when the polish log is left empty. Lighter models, or any run where the script raises warnings, take the steady track (`references/steady-track.md`): start from a specimen, write a screen-by-screen outline first, pick each screen's form from a menu
 - **Design check**: `scripts/design_lint.py` only measures checkable facts — broken images, unreadably small text, low contrast, console errors are red; habitual template chrome (uppercase eyebrows, "A · B · C" chains) is yellow; `compare` and `ledger check` catch reskins and repeats. Whether it looks good is your call; it gives no score
 - All of this lives only on your machine in `~/.huashu-design/`, never ships with the skill; delete the folder to forget everything
 
@@ -414,7 +414,7 @@ huashu-design/
 │   └── bgm-*.mp3            # 6 scene-specific background tracks
 ├── references/              # Drill-down docs by task (Chinese)
 │   ├── animation-pitfalls.md
-│   ├── directions.md        # Three directions: six candidates → thumbnails → pick three
+│   ├── directions.md        # Three directions: six candidates → pick three
 │   ├── polish-loop.md       # Polish loop: per-screen screenshots, look, revise once
 │   ├── steady-track.md      # Steady track: specimen start, screen outline, form menu
 │   ├── design-styles.md     # 92 HTML-native styles (web 20 + deck 20 + infographic 20 + app 12 + Chinese & East Asian 12 + Xiaohongshu 8)
@@ -438,7 +438,7 @@ huashu-design/
 │   ├── export_deck_pptx.mjs
 │   ├── html2pptx.js
 │   ├── design_lint.py       # Design check, reskin/repeat detection, look ledger
-│   ├── polish.py            # Polish loop: per-screen shots, thumbnail check, polish log
+│   ├── polish.py            # Polish loop: per-screen shots, polish log
 │   ├── learn.py             # Taste experience read/write
 │   ├── ref_board.py         # Screenshot reference works into a board
 │   ├── capabilities.py      # Detect local capabilities (image gen, sibling skills, Node, ffmpeg)

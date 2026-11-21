@@ -10,8 +10,6 @@ polish.py — 看图打磨用的眼睛：把页面切成一屏一屏的原尺寸
   python3 scripts/polish.py shot page.html [--viewport 1440x900] [--mobile] [--max 12]
       逐屏截图，存到 <page 同目录>/polish/<文件名>/round-N/，N 自动递增；
       --mobile 加截 390x844；打印每一屏的事实，并在 polish-log.md 里追加这一轮的空白记录
-  python3 scripts/polish.py thumbs design-demos/thumbs.html
-      检查缩略图页里每一格（带 data-thumb 属性的容器）是不是真的画了东西，而不是占位色块
   python3 scripts/polish.py log <目录>
       查这个目录的 polish-log.md：每个页面打磨了几轮、有没有截了图却没写下看到什么的轮次
 
@@ -33,10 +31,6 @@ for _s in (sys.stdout, sys.stderr):
 
 # 一屏里底色占到这个比例以上，而且没有图形，才提示「接近空屏」：安静留白的设计常有 80% 以上的底色，不该被误报
 BLANK_RATIO = 0.93
-# 缩略图一格的最低内容：少于这些，多半是占位色块而不是这个候选的关键一屏
-THUMB_MIN_CHARS = 6
-THUMB_MIN_NODES = 6
-THUMB_BLANK = 0.90
 
 TILE_JS = r"""
 ([top, h]) => {
@@ -70,15 +64,6 @@ TILE_JS = r"""
   return { graphics, chars, big };
 }
 """
-
-THUMB_JS = r"""
-() => [...document.querySelectorAll('[data-thumb]')].map((e) => {
-  const r = e.getBoundingClientRect();
-  return { id: e.getAttribute('data-thumb') || '', x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height,
-           chars: (e.innerText || '').replace(/\s+/g, '').length, nodes: e.querySelectorAll('*').length };
-})
-"""
-
 
 def need_playwright():
     try:
@@ -226,57 +211,6 @@ def cmd_shot(a):
     return 0
 
 
-def cmd_thumbs(a):
-    if not need_playwright():
-        return 0
-    from playwright.sync_api import sync_playwright
-    from PIL import Image
-
-    page_path = Path(a.file).resolve()
-    if not page_path.exists():
-        print(f"找不到文件：{page_path}")
-        return 2
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        pg = browser.new_page(viewport={"width": 1600, "height": 1000})
-        pg.goto(page_path.as_uri(), wait_until="domcontentloaded")
-        try:
-            pg.wait_for_load_state("networkidle", timeout=8000)
-        except Exception:
-            pass
-        pg.wait_for_timeout(800)
-        cells = pg.evaluate(THUMB_JS)
-        full = Image.open(io.BytesIO(pg.screenshot(full_page=True)))
-        browser.close()
-
-    if not cells:
-        print("没找到带 data-thumb 属性的格子。给每一格的容器加上 data-thumb=\"1\"…\"6\"，再跑一遍。")
-        return 1
-    bad = 0
-    for c in cells:
-        crop = full.crop((int(c["x"]), int(c["y"]), int(c["x"] + c["w"]), int(c["y"] + c["h"])))
-        br = blank_ratio(crop) if crop.width > 4 and crop.height > 4 else 1.0
-        why = []
-        if c["chars"] < THUMB_MIN_CHARS:
-            why.append(f"只有 {c['chars']} 个字")
-        if c["nodes"] < THUMB_MIN_NODES:
-            why.append(f"只有 {c['nodes']} 个元素")
-        if br >= THUMB_BLANK:
-            why.append(f"{br:.0%} 是同一个颜色")
-        empty = len(why) >= 2
-        bad += empty
-        print(f"  {'✗' if empty else '✓'} 第 {c['id'] or '?'} 格  {c['w']:.0f}x{c['h']:.0f}  {c['chars']} 字 / {c['nodes']} 个元素 / 底色 {br:.0%}"
-              + ("  ← 还是占位：" + "、".join(why) if empty else ""))
-    if len(cells) < 6:
-        print(f"只有 {len(cells)} 格。三套逻辑各两个候选，应有 6 格。")
-    if bad:
-        print(f"\n{bad} 格还是占位，不算候选。每一格要画出这个候选最关键的一屏：真标题、真配色、真骨架，主角素材要看得见。"
-              "\n画不出来时，从 assets/style-specimens/ 里对应风格的样张 .html 源码改起（换题材、换色、换字），见 references/steady-track.md。")
-        return 1
-    print("\n六格都画了东西。接下来自己打开截图看：哪三张单看最强、彼此最不一样。")
-    return 0
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -286,12 +220,10 @@ def main(argv=None):
     s.add_argument("--mobile", action="store_true", help="加截 390x844")
     s.add_argument("--max", type=int, default=12, help="每个视口最多截几屏")
     s.add_argument("--wait", type=int, default=1200, help="载入后等多少毫秒再截（等字体和入场动画）")
-    t = sub.add_parser("thumbs")
-    t.add_argument("file")
     g = sub.add_parser("log")
     g.add_argument("dir", help="polish-log.md 所在的目录")
     a = ap.parse_args(argv)
-    return {"shot": cmd_shot, "thumbs": cmd_thumbs, "log": cmd_log}[a.cmd](a)
+    return {"shot": cmd_shot, "log": cmd_log}[a.cmd](a)
 
 
 if __name__ == "__main__":
