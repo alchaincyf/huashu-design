@@ -16,7 +16,7 @@ polish.py — 看图打磨用的眼睛：把页面切成一屏一屏的原尺寸
 依赖：pip install playwright pillow && playwright install chromium（缺了会说明并退出，不算失败）
 """
 
-from _ready import wait_ready, NOT_READY
+from _ready import wait_ready, NOT_READY, use_vendor
 import argparse
 import io
 import re
@@ -151,6 +151,7 @@ def cmd_shot(a):
         browser = p.chromium.launch()
         for label, (w, h) in views:
             pg = browser.new_page(viewport={"width": w, "height": h})
+            use_vendor(pg)
             pg.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
             pg.on("pageerror", lambda e: errors.append(str(e)))
             pg.goto(page_path.as_uri(), wait_until="domcontentloaded")

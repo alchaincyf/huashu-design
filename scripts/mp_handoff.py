@@ -39,7 +39,7 @@ import json
 import re
 import shutil
 import sys
-from _ready import wait_ready, NOT_READY
+from _ready import wait_ready, NOT_READY, use_vendor
 from collections import Counter
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -347,6 +347,7 @@ def main(argv=None):
             print(f'Chromium 启动失败：{str(e).splitlines()[0]}\n装一下：python3 -m playwright install chromium')
             return 2
         page = browser.new_page(device_scale_factor=2, viewport={'width': 1600, 'height': 1000})
+        use_vendor(page)
         try:
             page.goto(src.as_uri(), wait_until='networkidle', timeout=30000)
         except Exception:

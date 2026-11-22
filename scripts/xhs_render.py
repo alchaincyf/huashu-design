@@ -23,7 +23,7 @@ HTML 约定（照 assets/style-specimens/xhs/ 里的模板写）：
 import argparse
 import os
 import sys
-from _ready import wait_ready, NOT_READY
+from _ready import wait_ready, NOT_READY, use_vendor
 import tempfile
 from pathlib import Path
 
@@ -142,6 +142,7 @@ def main():
         except Exception as e:
             sys.exit(f'Chromium 启动失败：{str(e).splitlines()[0]}\n装一下：python3 -m playwright install chromium')
         page = browser.new_page(viewport={'width': W, 'height': H})
+        use_vendor(page)
         for f in a.files:
             src = Path(f).resolve()
             try:

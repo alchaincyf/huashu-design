@@ -17,6 +17,8 @@
  *   home           这一屏是小程序打开的第一页（app.json pages 的第一项）；不标就按 tabBar 顺序排
  *   展示板上可以把手机缩小摆放（transform: scale），导出交付包时会按 375 原尺寸截
  *   tabBar={{ list: [{ text, icon? }...], color, selectedColor, backgroundColor }}  原生 tabBar（2–5 个）
+ *   footer={<结算条 />}  固定在底部、不跟内容滚的东西（结算条、报名按钮、购物车）。在 tabBar 上方；没有 tabBar 时贴底并让出 34px 安全区
+ *                  不要把这类东西写成 children 里的 position: fixed / absolute——会跟着内容滚走或盖住内容
  *   自己画 tabBar 时不传 tabBar，把你的组件放进 children 底部，并给它加 data-mp-tabbar="custom"
  *
  * 外壳会在屏幕节点上写 data-mp-* 属性，scripts/mp_handoff.py 靠它们导出给 WorkBuddy／开发者的交付包。
@@ -95,6 +97,13 @@ function WechatTabBar({ list, active, onChange, color = '#7A7E83', selectedColor
   );
 }
 
+function wechatIsDark(css) {   // 'rgb(43, 74, 58)' → 是否深色
+  const m = (css || '').match(/\d+(\.\d+)?/g);
+  if (!m) return false;
+  const [r, g, b] = m.map(Number);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 140;
+}
+
 function WechatFrame({
   children,
   page = 'pages/index/index',
@@ -108,6 +117,7 @@ function WechatFrame({
   tab,
   tabBar,
   onTabChange,
+  footer,
   background = '#ffffff',
   width = 375,
   height = 812,
@@ -117,6 +127,15 @@ function WechatFrame({
   const hasNativeTab = tabBar && tabBar.list && tabBar.list.length;
   const top = 84;
   const bottom = hasNativeTab ? 83 : 0;
+  const footRef = React.useRef(null);
+  const [footH, setFootH] = React.useState(0);
+  const [footBg, setFootBg] = React.useState(null);
+  React.useLayoutEffect(() => {   // 让出 footer 的高度；底部安全区沿用 footer 自己的底色
+    const el = footRef.current;
+    setFootH(el ? el.offsetHeight : 0);
+    const c = el && el.firstElementChild ? getComputedStyle(el.firstElementChild).backgroundColor : null;
+    setFootBg(c && c !== 'rgba(0, 0, 0, 0)' && c !== 'transparent' ? c : null);
+  });
   return (
     <div style={wechatFrameStyles.wrapper}>
       <div
@@ -155,12 +174,18 @@ function WechatFrame({
 
         <WechatCapsule dark={navText !== 'white'} />
 
-        <div data-mp-scroll="" style={{ position: 'absolute', top: nav === 'default' ? top : 0, left: 0, right: 0, bottom, overflow: 'auto' }}>
+        <div data-mp-scroll="" style={{ position: 'absolute', top: nav === 'default' ? top : 0, left: 0, right: 0, bottom: bottom + footH, overflow: 'auto' }}>
           {children}
         </div>
 
+        {footer && (
+          <div ref={footRef} data-mp-footer="" style={{ position: 'absolute', left: 0, right: 0, bottom, zIndex: 40, paddingBottom: hasNativeTab ? 0 : 34, background: footBg || background }}>
+            {footer}
+          </div>
+        )}
+
         {hasNativeTab && <WechatTabBar {...tabBar} active={tab} onChange={onTabChange} />}
-        <div style={{ ...wechatFrameStyles.homeIndicator, background: navText === 'white' && !hasNativeTab ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.85)' }} />
+        <div style={{ ...wechatFrameStyles.homeIndicator, background: (!hasNativeTab && (footBg ? wechatIsDark(footBg) : navText === 'white')) ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.85)' }} />
       </div>
     </div>
   );

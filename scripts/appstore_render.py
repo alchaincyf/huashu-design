@@ -25,7 +25,7 @@ HTML 约定（照 assets/appstore/template.html 写）：
 import argparse
 import os
 import sys
-from _ready import wait_ready, NOT_READY
+from _ready import wait_ready, NOT_READY, use_vendor
 import tempfile
 from pathlib import Path
 
@@ -99,6 +99,7 @@ def main(argv=None):
             print(f'Chromium 启动失败：{str(e).splitlines()[0]}\n装一下：python3 -m playwright install chromium')
             return 2
         probe = browser.new_page()
+        use_vendor(probe)
         probe.goto(src.as_uri(), wait_until='load')
         first = probe.locator('.as-panel, .as-strip').first
         if first.count() == 0:
@@ -109,6 +110,7 @@ def main(argv=None):
         scale = W / (box['width'] / n0)
         probe.close()
         page = browser.new_page(device_scale_factor=scale)
+        use_vendor(page)
         try:
             page.goto(src.as_uri(), wait_until='networkidle', timeout=30000)
         except Exception:

@@ -11,6 +11,9 @@
   python3 scripts/build_specimens.py assets/style-specimens/web/03-x.html   # 只渲染这几张，不拼总览
 """
 
+import os, sys  # noqa: E401
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _pyenv  # noqa: F401,E402  WorkBuddy 里换到带 playwright 的 Python
 import html
 import sys
 from pathlib import Path

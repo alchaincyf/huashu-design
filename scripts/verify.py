@@ -16,7 +16,7 @@ Usage:
 
 import argparse
 import sys
-from _ready import wait_ready, NOT_READY
+from _ready import wait_ready, NOT_READY, use_vendor
 import os
 import time
 from pathlib import Path
@@ -60,6 +60,7 @@ def verify_html(html_path, viewports=None, slides=0, output_dir=None, show=False
         for viewport in viewports:
             context = browser.new_context(viewport=viewport, device_scale_factor=2)
             page = context.new_page()
+            use_vendor(page)
 
             page.on("console", lambda msg: console_errors.append(f"[{msg.type}] {msg.text}") if msg.type in ("error", "warning") else None)
             page.on("pageerror", lambda err: page_errors.append(str(err)))

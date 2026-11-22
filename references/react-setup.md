@@ -16,6 +16,17 @@
 
 **不要**省略`integrity`——CDN一旦被劫持或篡改，这是防线。
 
+## 交出去之前：转成断网可开的单文件
+
+CDN 和 Google Fonts 在不少网络下时通时断，连不上就是白屏或回落系统字；现场用 Babel 编译还会让打开慢一两秒。**不要自己内联 React、Babel 或字体**，写完、打磨完之后跑一次：
+
+```bash
+python3 "$HD/scripts/offline.py" 设计稿.html            # → 设计稿.offline.html
+python3 "$HD/scripts/offline.py" 设计稿.html --inline-local   # 连本地图片也嵌进去，只交一个文件
+```
+
+它把 JSX 预编译成普通 JS（去掉 3MB 的 Babel）、React 换成 skill 自带的生产版、Google Fonts 只嵌这一页用到的字，然后断网重开一次和原页比截图。源文件照旧留着改；给人看、发出去、放进交付包的是 `.offline.html`。
+
 ## 文件结构
 
 ```

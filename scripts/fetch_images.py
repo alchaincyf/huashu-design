@@ -30,6 +30,9 @@ def _api_get(params):
         return json.load(r)
 
 
+CTYPE_EXT = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/gif": ".gif", "image/svg+xml": ".svg"}
+
+
 def _safe(name):
     return re.sub(r"[^\w\-.]", "_", name)[:60]
 
@@ -55,14 +58,18 @@ def fetch(query, out, count, width):
         meta = ii.get("extmetadata", {}) or {}
         lic = (meta.get("LicenseShortName", {}) or {}).get("value", "?")
         artist = re.sub("<[^>]+>", "", (meta.get("Artist", {}) or {}).get("value", "?")).strip()
-        ext = os.path.splitext(thumb)[1].split("?")[0] or ".jpg"
+        # 扩展名只从 URL 的路径取（缩略图 URL 带 ?utm_source=commons.wikimedia.org…，整串 splitext 会取到 .org&…）
+        ext = os.path.splitext(urllib.parse.urlparse(thumb).path)[1].lower()
         fn = _safe(query) + "_" + _safe(p.get("title", "img").replace("File:", ""))
-        fn = os.path.splitext(fn)[0][:55] + ext
-        path = os.path.join(out, fn)
+        fn = os.path.splitext(fn)[0][:55]
         try:
             req = urllib.request.Request(thumb, headers={"User-Agent": UA})
-            with urllib.request.urlopen(req, timeout=60) as r, open(path, "wb") as f:
-                f.write(r.read())
+            with urllib.request.urlopen(req, timeout=60) as r:
+                body, ctype = r.read(), (r.headers.get("Content-Type") or "").split(";")[0]
+            ext = CTYPE_EXT.get(ctype) or (ext if ext in (".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg") else ".jpg")
+            path = os.path.join(out, fn + ext)
+            with open(path, "wb") as f:
+                f.write(body)
             got.append(path)
             print(f"[OK] {path}  | {lic} | {artist} | {ii.get('descriptionurl','')}")
         except Exception as e:

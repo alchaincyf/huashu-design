@@ -8,6 +8,9 @@ capabilities.py — 看用户手里实际有什么，决定素材走哪一档（
 用法：python3 scripts/capabilities.py [--json]
 """
 
+import os, sys  # noqa: E401
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _pyenv  # noqa: F401,E402  WorkBuddy 里换到带 playwright 的 Python
 import json
 import os
 import shutil
@@ -113,6 +116,10 @@ def from_env(env=None):
         found.append('buddy')
     if env.get('CLAUDECODE') or env.get('CLAUDE_CODE_ENTRYPOINT'):
         found.append('claude')
+    # WorkBuddy 给它跑的每条命令都把自己的沙盒 shim 放在 PATH 最前面：排第一的是它，最里面那层就是它
+    first = (env.get('PATH') or '').split(os.pathsep)[0].lower()
+    if 'buddy' in found and len(found) > 1 and ('workbuddy.app' in first or 'codebuddy' in first or '.workbuddy' in first):
+        return ['buddy']
     return found
 
 
@@ -190,7 +197,12 @@ def main():
     print('所在环境：' + (f'{r["runtime"]}（依据：{r["runtime_basis"]}）' if r['runtime'] else '没认出来')
           + '。有没有自带的生图工具，以你自己的工具清单为准；用户说有也算')
     if (r['runtime'] or '').startswith('WorkBuddy'):
-        print('在 WorkBuddy 里：做微信小程序时，定稿后可以在当前会话直接做成真的小程序（references/modules/miniprogram.md「交给 WorkBuddy」）')
+        print('在 WorkBuddy 里：')
+        print('  - 本 skill 的截图、体检脚本照常用 python3 跑，会自己换到 WorkBuddy 自带的那个装了 playwright 的 Python 和浏览器；'
+              '别改用 npx playwright（会停在安装确认上）')
+        print('  - 自带的 ImageGen 要先用 ToolSearch 加载；它出的图右下角有关不掉的「AI生成 / WORKBUDDY」标识（按规定不能裁掉），'
+              '界面里的照片先走下面列表里的其他来源')
+        print('  - 做微信小程序时，定稿后可以在当前会话直接做成真的小程序（references/modules/miniprogram.md「交给 WorkBuddy」）')
     print('界面里要用图时，按这个顺序找来源（前一个不行再用后一个）：')
     for k, line in enumerate(r['image_route'], 1):
         print(f'  {k}. {line}')

@@ -16,6 +16,9 @@
 主色占比、图文关系），而不是「参考了它的风格」。
 """
 
+import os, sys  # noqa: E401
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import _pyenv  # noqa: F401,E402  WorkBuddy 里换到带 playwright 的 Python
 import argparse
 import html
 import sys

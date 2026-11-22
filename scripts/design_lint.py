@@ -20,7 +20,7 @@ design_lint.py — 只量事实的设计体检，外加「外观指纹」：三�
 依赖：pip install playwright pillow && playwright install chromium
 """
 
-from _ready import wait_ready, NOT_READY
+from _ready import wait_ready, NOT_READY, use_vendor
 import argparse
 import glob
 import io
@@ -298,6 +298,7 @@ def collect(paths, viewport=(1440, 900), min_body=14, min_label=12):
         browser = pw.chromium.launch()
         for path in expand(paths):
             page = browser.new_page(viewport={'width': viewport[0], 'height': viewport[1]})
+            use_vendor(page)
             errors = []
             page.on('pageerror', lambda e: errors.append(str(e)[:160]))
             page.on('console', lambda m: errors.append(m.text[:160]) if m.type == 'error' else None)
