@@ -94,6 +94,16 @@ class Render(unittest.TestCase):
         for p in (out / 'screens').iterdir():
             self.assertEqual(Image.open(p).size[0], 750, p.name)
 
+    def test_grid_board_screens_are_isolated(self):
+        # 3.5 WorkBuddy 实测：网格展示板上每台手机各自缩小，还原尺寸截图时隔壁手机和标签压了进来
+        rc, log, out = self.run_on('mp_grid.html')
+        self.assertEqual(rc, 0, log)
+        im = Image.open(out / 'screens' / '01-a.png').convert('RGB')
+        self.assertEqual(im.size[0], 750)
+        for x, y in [(740, 400), (700, 1200), (10, 10), (745, 1620)]:
+            r, g, b = im.getpixel((x, y))
+            self.assertTrue(r > 230 and g > 230 and b > 220, f'({x},{y}) 是 {(r, g, b)}，混进了别的东西')
+
     def test_statusbar_overlap(self):
         # 3.5 WorkBuddy 实测：自定义导航栏的页面把昵称、头像放进了顶部 44px，系统时间会压在上面
         scr = {'page': 'pages/confirm/confirm', 'title': '', 'nav': 'custom', 'tab': '', 'tabbar': None, 'customTab': False,

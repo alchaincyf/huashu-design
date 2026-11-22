@@ -244,12 +244,20 @@ def order(screens):
 
 
 UNSCALE = '''n => { const saved = []; let p = n.parentElement;
+  const keep = (el, props) => saved.push([el, props.map(k => [k, el.style[k]])]);
   while (p && p !== document.documentElement) { const cs = getComputedStyle(p);
     if (cs.transform !== 'none' || (cs.zoom && cs.zoom !== '1') || (cs.scale && cs.scale !== 'none')) {
-      saved.push([p, p.style.transform, p.style.zoom, p.style.scale]); p.style.transform = 'none'; p.style.zoom = '1'; p.style.scale = 'none'; }
+      keep(p, ['transform', 'zoom', 'scale']); p.style.transform = 'none'; p.style.zoom = '1'; p.style.scale = 'none'; }
+    // 还原尺寸后会压到邻居、被展示板裁掉：外层不裁、圆角去掉，同层的其他东西（别的手机、标签）先藏起来
+    if (cs.overflow !== 'visible' || cs.borderRadius !== '0px') { keep(p, ['overflow', 'borderRadius']); p.style.overflow = 'visible'; p.style.borderRadius = '0'; }
     p = p.parentElement; }
+  let a = n;
+  while (a && a.parentElement && a !== document.body) {
+    for (const sib of a.parentElement.children) if (sib !== a && sib.nodeName !== 'SCRIPT' && sib.nodeName !== 'STYLE') { keep(sib, ['visibility']); sib.style.visibility = 'hidden'; }
+    a = a.parentElement; }
+  keep(n, ['borderRadius']); n.style.borderRadius = '0';
   window.__mpSaved = saved; return saved.length; }'''
-RESCALE = '''() => { (window.__mpSaved || []).forEach(([p, t, z, s]) => { p.style.transform = t; p.style.zoom = z; p.style.scale = s; }); window.__mpSaved = []; }'''
+RESCALE = '''() => { (window.__mpSaved || []).reverse().forEach(([el, props]) => props.forEach(([k, v]) => { el.style[k] = v; })); window.__mpSaved = []; }'''
 
 
 def app_json(report):
