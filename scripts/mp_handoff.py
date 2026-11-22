@@ -67,7 +67,7 @@ PROBE = r'''() => {
         if (r.width < 1 || r.height < 1) continue;
         const b = rel(r);
         if (b.y1 < 0 || b.y0 > sr.height || b.x1 < 0 || b.x0 > sr.width) continue;
-        texts.push({t: t.slice(0, 16), size: parseFloat(cs.fontSize), over: hit(b, cap, 2)});
+        texts.push({t: t.slice(0, 16), size: parseFloat(cs.fontSize), over: hit(b, cap, 2), bar: b.y0 < 42 && b.y1 > 6});
       }
     }
     [el, ...el.querySelectorAll('*')].forEach(n => {
@@ -85,6 +85,9 @@ PROBE = r'''() => {
                    tag: n.tagName.toLowerCase()});
       if (cs.cursor === 'pointer' && !n.closest('[data-mp-tabbar]') && b.y0 < 120 && hit(b, cap, 4) && b.x1 - b.x0 < sr.width * 0.9)
         issues.push({kind: 'tap-capsule', t: (n.textContent || n.tagName).trim().slice(0, 16)});
+      // 状态栏（顶部 44px）里的小图：时间和信号会压在头像、缩略图上；满宽的照片铺到状态栏下面是允许的
+      if (n.tagName === 'IMG' && b.y0 < 40 && b.y1 > 8 && b.x1 - b.x0 < sr.width * 0.9 && !n.closest('[data-mp-share]'))
+        issues.push({kind: 'img-statusbar', t: n.alt || 'img'});
       if (n.tagName === 'IMG' && n.currentSrc) images.push({src: n.currentSrc, w: n.naturalWidth, h: n.naturalHeight});
       const m = cs.backgroundImage.match(/url\("?([^")]+)"?\)/);
       if (m) images.push({src: m[1], w: 0, h: 0, bg: true});
@@ -147,9 +150,15 @@ def analyze(report):
         taps = sorted({i['t'] for i in s['issues'] if i['kind'] == 'tap-capsule'})
         if taps:
             found.append(('✗', name, '可点的东西压在胶囊上：' + '、'.join(f'「{t}」' for t in taps[:4])))
+        bar = sorted({t['t'] for t in s['texts'] if t.get('bar')})
+        if bar:
+            found.append(('✗', name, '字压在状态栏上（顶部 44px 是系统的时间和信号）：' + '、'.join(f'「{t}」' for t in bar[:4])))
+        bimg = [i for i in s['issues'] if i['kind'] == 'img-statusbar']
+        if bimg:
+            found.append(('!', name, f'{len(bimg)} 张小图伸进了状态栏（顶部 44px），时间和信号会压在上面：往下挪，或做成满宽的背景图'))
         small = sorted({(t['size'], t['t']) for t in s['texts'] if t['size'] < 12})
         if small:
-            found.append(('!', name, f'字小于 12px（24rpx）：最小 {small[0][0]:.0f}px「{small[0][1]}」等 {len(small)} 处'))
+            found.append(('!', name, f'字小于 12px（24rpx）：最小 {small[0][0]:.3g}px「{small[0][1]}」等 {len(small)} 处'))
         bgimg = [st for st in s['styles'] if st['bgimg']]
         if bgimg:
             found.append(('!', name, f'{len(bgimg)} 处用 background-image 引用图片：原生小程序本地图要换成 <image>（或改用网络图）'))

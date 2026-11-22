@@ -94,6 +94,17 @@ class Render(unittest.TestCase):
         for p in (out / 'screens').iterdir():
             self.assertEqual(Image.open(p).size[0], 750, p.name)
 
+    def test_statusbar_overlap(self):
+        # 3.5 WorkBuddy 实测：自定义导航栏的页面把昵称、头像放进了顶部 44px，系统时间会压在上面
+        scr = {'page': 'pages/confirm/confirm', 'title': '', 'nav': 'custom', 'tab': '', 'tabbar': None, 'customTab': False,
+               'w': 375, 'h': 812, 'extra': 0, 'styles': [], 'images': [],
+               'texts': [{'t': '豆豆', 'size': 15, 'over': False, 'bar': True}, {'t': '15:00', 'size': 30, 'over': False, 'bar': False}],
+               'issues': [{'kind': 'img-statusbar', 't': '豆豆'}]}
+        found, _ = mp_handoff.analyze({'screens': [scr], 'shares': []})
+        text = '\n'.join(f'{a} {c}' for a, _, c in found)
+        self.assertIn('✗ 字压在状态栏上', text)
+        self.assertIn('小图伸进了状态栏', text)
+
     def test_ok_fixture(self):
         rc, log, out = self.run_on('mp_ok.html')
         self.assertEqual(rc, 0, log)
