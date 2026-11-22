@@ -20,6 +20,7 @@ design_lint.py — 只量事实的设计体检，外加「外观指纹」：三�
 依赖：pip install playwright pillow && playwright install chromium
 """
 
+from _ready import wait_ready, NOT_READY
 import argparse
 import glob
 import io
@@ -303,9 +304,14 @@ def collect(paths, viewport=(1440, 900), min_body=14, min_label=12):
                 except Exception:
                     pass
                 page.wait_for_timeout(800)
+                if not wait_ready(page):
+                    errors.append(NOT_READY.format(s=15) + '；下面的色板和骨架可能是空白页量出来的')
                 facts = page.evaluate(COLLECT_JS)
                 shot = panels_shot(page, facts['panels']) if facts.get('panels') else page.screenshot()
                 facts['palette'] = palette(shot)
+                if facts['palette'] and facts['palette'][0]['share'] > 0.97:
+                    errors.append('截图几乎只有一种颜色：页面可能还没渲染出来，色板比较不作数，先打开页面确认')
+                    facts['blank'] = True
                 facts['layout'] = layout_vector(shot)
             except Exception as e:
                 facts = {'fatal': str(e).split('\n')[0][:200]}
@@ -422,12 +428,26 @@ def ledger_summary(rows):
     return '\n'.join(lines)
 
 
+def accents_differ(p, q):
+    """整体色板接近，常常只是因为两版都被大面积浅底（或 App 展示板＋黑机身）占满。
+    这时再看有彩度的那几块：一边有成片彩色、另一边没有，或两边的彩色本身差得远，就不是同一套色。"""
+    def acc(x):
+        return [c for c in x if lch(c['rgb'])[1] > 0.04 and c['share'] >= 0.02]
+    ap, aq = acc(p), acc(q)
+    sp, sq = sum(c['share'] for c in ap), sum(c['share'] for c in aq)
+    if bool(ap) != bool(aq):
+        return max(sp, sq) >= 0.08
+    return bool(ap) and palette_distance(ap, aq) >= 0.08
+
+
 def similar(a, b, brand=False, ignore_layout=False):
     """返回两版撞在哪里（空表示没撞）。brand=颜色字体受品牌约束，只比骨架；ignore_layout=App 多机并排这类骨架天然相同的形态。"""
     hits = []
+    if a.get('blank') or b.get('blank'):
+        return ['有一版截图是空白，没法比（先确认页面能渲染出来）'], 1.0, 0.0
     pd = palette_distance(a['palette'], b['palette'])
     lc = corr(a['layout'], b['layout'])
-    if pd < 0.06 and not brand:
+    if pd < 0.06 and not brand and not accents_differ(a['palette'], b['palette']):
         hits.append(f'色板几乎相同（距离 {pd}）')
     if lc > 0.55 and not ignore_layout:
         hits.append(f'版式骨架高度相似（相关 {lc:.2f}）')

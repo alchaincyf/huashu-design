@@ -39,6 +39,7 @@ import json
 import re
 import shutil
 import sys
+from _ready import wait_ready, NOT_READY
 from collections import Counter
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -327,6 +328,8 @@ def main(argv=None):
             print('  ! 30 秒内网络资源没加载完（多半是字体或 CDN），按已加载的内容继续')
         page.evaluate('document.fonts.ready')
         page.wait_for_timeout(600)
+        if not wait_ready(page):
+            print('  ! ' + NOT_READY.format(s=15))
         report = page.evaluate(PROBE)
         if not report['screens']:
             print(f'✗ {src.name}：没找到 [data-mp-page]。每一屏要包在 assets/wechat_frame.jsx 的 <WechatFrame page="pages/x/x"> 里')

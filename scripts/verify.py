@@ -16,6 +16,7 @@ Usage:
 
 import argparse
 import sys
+from _ready import wait_ready, NOT_READY
 import os
 import time
 from pathlib import Path
@@ -66,6 +67,8 @@ def verify_html(html_path, viewports=None, slides=0, output_dir=None, show=False
             print(f"\n→ 打开 {file_url} @ {viewport['width']}x{viewport['height']}")
             page.goto(file_url, wait_until='networkidle')
             page.wait_for_timeout(wait)
+            if not wait_ready(page):
+                print('  ⚠️ ' + NOT_READY.format(s=15))
 
             if slides > 0:
                 for i in range(slides):

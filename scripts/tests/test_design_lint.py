@@ -75,6 +75,25 @@ class LintFacts(unittest.TestCase):
         self.assertTrue(any('同一底色类' in h for h in dl.similar(a, c)[0]))
 
 
+    def test_neutral_board_does_not_hide_different_accents(self):
+        # 3.5 实测误报：记账 App 两个方向（浅绿灰账页 vs 米色底上的绿色手机）首屏都被浅色展示板占满，
+        # 整体色板距离 0.054 被判「色板几乎相同」；一边有成片彩色、另一边没有，不是同一套色
+        P = lambda *cs: [{'rgb': rgb, 'share': sh, 'hex': '#000000'} for rgb, sh in cs]
+        ledger = P(((226, 233, 219), 0.32), ((215, 221, 209), 0.26), ((224, 231, 218), 0.18), ((136, 138, 133), 0.12), ((229, 236, 223), 0.12))
+        coins = P(((239, 230, 214), 0.25), ((68, 134, 105), 0.21), ((226, 220, 203), 0.17), ((191, 176, 153), 0.14), ((80, 71, 73), 0.14), ((251, 244, 228), 0.09))
+        base = {'layout': [1, 0, 0, 1], 'bg': '#E2E9DB', 'bg_class': '浅·中性白', 'serif': True, 'display': 'A'}
+        a, b = dict(base, palette=ledger), dict(base, palette=coins, serif=False, display='B')
+        self.assertLess(dl.palette_distance(ledger, coins), 0.06)
+        self.assertEqual([h for h in dl.similar(a, b)[0] if '色板' in h], [])
+        # 两版都只有中性色：照样报
+        c = dict(base, palette=P(((227, 234, 220), 0.6), ((214, 220, 208), 0.4)), serif=False, display='B')
+        self.assertTrue(any('色板' in h for h in dl.similar(a, c)[0]))
+
+    def test_blank_shot_is_not_compared(self):
+        a = {'blank': True, 'palette': [], 'layout': []}
+        self.assertIn('空白', dl.similar(a, a)[0][0])
+
+
 class LintEdgeCases(unittest.TestCase):
     """独立审查报出的误报与漏报，逐条钉成回归测试。"""
 

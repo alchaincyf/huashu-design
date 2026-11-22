@@ -25,6 +25,7 @@ HTML 约定（照 assets/appstore/template.html 写）：
 import argparse
 import os
 import sys
+from _ready import wait_ready, NOT_READY
 import tempfile
 from pathlib import Path
 
@@ -114,6 +115,8 @@ def main(argv=None):
             print(f'  ! {src.name}：30 秒内网络资源没加载完（多半是字体外链），按系统字体兜底继续出图')
         page.evaluate('document.fonts.ready')
         page.wait_for_timeout(400)
+        if not wait_ready(page):
+            print(f'  ! {src.name}：' + NOT_READY.format(s=15))
         report = page.evaluate(PROBE)
         secs = page.locator('.as-panel, .as-strip')
         for si in range(secs.count()):

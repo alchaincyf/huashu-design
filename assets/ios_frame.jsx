@@ -13,6 +13,10 @@
  *   <IosFrame width={390} height={844} darkMode showKeyboard>
  *     ...
  *   </IosFrame>
+ *
+ * 满版彩色屏（整屏一个颜色、或顶上是照片）：传 screenBg，让状态栏那一条跟着屏幕底色走，
+ * 不然内容从 54px 往下才开始，顶上会留一条白（或黑）：
+ *   <IosFrame screenBg="#2E7D5B" darkMode>…</IosFrame>
  */
 
 const iosFrameStyles = {
@@ -130,6 +134,7 @@ function IosFrame({
   showStatusBar = true,
   showDynamicIsland = true,
   showHomeIndicator = true,
+  screenBg,
 }) {
   const textColor = darkMode ? '#fff' : '#000';
 
@@ -139,7 +144,7 @@ function IosFrame({
         ...iosFrameStyles.screen,
         width,
         height,
-        background: darkMode ? '#000' : '#fff',
+        background: screenBg || (darkMode ? '#000' : '#fff'),
       }}>
         {showStatusBar && (
           <div style={{ ...iosFrameStyles.statusBar, color: textColor }}>

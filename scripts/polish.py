@@ -16,6 +16,7 @@ polish.py — 看图打磨用的眼睛：把页面切成一屏一屏的原尺寸
 依赖：pip install playwright pillow && playwright install chromium（缺了会说明并退出，不算失败）
 """
 
+from _ready import wait_ready, NOT_READY
 import argparse
 import io
 import re
@@ -64,6 +65,7 @@ TILE_JS = r"""
   return { graphics, chars, big };
 }
 """
+
 
 def need_playwright():
     try:
@@ -157,6 +159,8 @@ def cmd_shot(a):
             except Exception:
                 pass
             pg.wait_for_timeout(a.wait)
+            if not wait_ready(pg):
+                errors.append(f"{label}：" + NOT_READY.format(s=15))
             total = pg.evaluate("Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)")
             n = max(1, min(a.max, -(-total // h)))
             full = Image.open(io.BytesIO(pg.screenshot(full_page=True)))
