@@ -166,6 +166,8 @@ def analyze(report):
             found.append(('!', name, '用了 backdrop-filter：部分安卓机不稳，去掉它设计也要成立'))
         if s['tabbar']:
             tab_lists.append(tuple(s['tabbar']['list']))
+            if not s['tab'] and not s['customTab']:
+                found.append(('!', name, '这一屏画了原生 tabBar，但它不是 tab 页：二级页（详情、凭证、门店）在真小程序里没有 tabBar，设计稿去掉它，下面的留白一起想'))
         for st in s['styles']:
             for c in (st['color'], st['bg'], st['border']):
                 h = hexcolor(c)

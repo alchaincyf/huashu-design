@@ -104,6 +104,17 @@ class Render(unittest.TestCase):
             r, g, b = im.getpixel((x, y))
             self.assertTrue(r > 230 and g > 230 and b > 220, f'({x},{y}) 是 {(r, g, b)}，混进了别的东西')
 
+    def test_tabbar_on_secondary_page(self):
+        # 3.5 WorkBuddy 实测：预约凭证、门店这类二级页也画了 tabBar，真小程序里没有
+        cfg = {'list': ['价目', '预约', '我的'], 'color': '#999999', 'selectedColor': '#C8402C', 'backgroundColor': '#ffffff'}
+        base = {'title': '', 'nav': 'default', 'customTab': False, 'w': 375, 'h': 812, 'extra': 0,
+                'styles': [], 'images': [], 'texts': [], 'issues': []}
+        scr = [dict(base, page='pages/price/price', tab='价目', tabbar=cfg),
+               dict(base, page='pages/ticket/ticket', tab='', tabbar=cfg)]
+        found, _ = mp_handoff.analyze({'screens': scr, 'shares': []})
+        hits = [w for _, w, c in found if '不是 tab 页' in c]
+        self.assertEqual(hits, ['pages/ticket/ticket'])
+
     def test_statusbar_overlap(self):
         # 3.5 WorkBuddy 实测：自定义导航栏的页面把昵称、头像放进了顶部 44px，系统时间会压在上面
         scr = {'page': 'pages/confirm/confirm', 'title': '', 'nav': 'custom', 'tab': '', 'tabbar': None, 'customTab': False,
