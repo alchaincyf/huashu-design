@@ -52,7 +52,7 @@ PROBE = r'''() => {
     const rel = r => ({x0: r.left - sr.left, x1: r.right - sr.left, y0: r.top - sr.top, y1: r.bottom - sr.top});
     const capEl = el.querySelector('[data-mp-capsule]');
     const cap = capEl ? rel(capEl.getBoundingClientRect()) : {x0: sr.width - 94, x1: sr.width - 7, y0: 48, y1: 80};
-    const inChrome = n => n.closest('[data-mp-capsule], [data-mp-chrome]');
+    const inChrome = n => n.closest('[data-mp-capsule], [data-mp-chrome], [data-mp-tabbar="native"]');   // 原生 tabBar 由微信画，字号颜色走 app.json
     const texts = [], styles = [], images = [], issues = [];
     const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     let node;
@@ -330,7 +330,10 @@ def write_readme(out, name, report, shots, shares, imgs, found, tokens, aj):
 
 
 def write_prompt(out, name, report):
-    pages = '、'.join(f'{s["title"] or slug(s["page"])}' for s in report['screens'])
+    cnt, names = Counter(s['page'] for s in report['screens']), {}
+    for s in report['screens']:
+        names.setdefault(s['page'], s['title'] or slug(s['page']))
+    pages = '、'.join(n + (f'（{cnt[pg]} 个状态）' if cnt[pg] > 1 else '') for pg, n in names.items())
     txt = f'''做一个微信小程序「{name}」，长相和交互照这个文件夹里的设计稿实现：先读 _design/README.md，再逐张看 _design/screens/ 里的截图（750 宽，1 个像素就是 1rpx），_design/设计稿.html 是可以点的原稿。
 
 页面：{pages}。数据存放方式：（这里写一句：本地存储就行 / 要登录、云端保存 / 要用 AI 做什么）。
