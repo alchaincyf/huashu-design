@@ -92,10 +92,10 @@ PROBE = r'''() => {
     const sc = el.querySelector('[data-mp-scroll]');
     let cfg = null;
     try { cfg = el.dataset.mpTabbarConfig ? JSON.parse(el.dataset.mpTabbarConfig) : null; } catch (e) {}
-    screens.push({page: el.dataset.mpPage, title: el.dataset.mpTitle || '', nav: el.dataset.mpNav || 'default',
+    screens.push({page: el.dataset.mpPage, title: el.dataset.mpTitle || '', home: !!el.dataset.mpHome, nav: el.dataset.mpNav || 'default',
                   navColor: el.dataset.mpNavColor || '', navText: el.dataset.mpNavText || '',
                   tab: el.dataset.mpTab || '', tabbar: cfg, customTab: !!el.querySelector('[data-mp-tabbar="custom"]'),
-                  w: sr.width, h: sr.height, extra: sc ? Math.max(0, sc.scrollHeight - sc.clientHeight) : 0,
+                  w: el.offsetWidth, h: el.offsetHeight, extra: sc ? Math.max(0, sc.scrollHeight - sc.clientHeight) : 0,
                   texts, styles, images, issues});
   });
   const shares = [...document.querySelectorAll('[data-mp-share]')].map(n => {
@@ -221,6 +221,28 @@ def export_image(src, base, out_dir, seen):
     return seen[h]
 
 
+def order(screens):
+    """交付包里的屏按小程序的顺序排，不按展示板上的摆法：标了 home 的第一，其次按 tabBar 顺序，其余照原样。"""
+    tabs = next((s['tabbar']['list'] for s in screens if s.get('tabbar')), [])
+    def key(i):
+        s = screens[i]
+        if s.get('home'):
+            return (0, 0, i)
+        if s['tab'] and s['tab'] in tabs:
+            return (1, tabs.index(s['tab']), i)
+        return (2, 0, i)
+    return sorted(range(len(screens)), key=key)
+
+
+UNSCALE = '''n => { const saved = []; let p = n.parentElement;
+  while (p && p !== document.documentElement) { const cs = getComputedStyle(p);
+    if (cs.transform !== 'none' || (cs.zoom && cs.zoom !== '1') || (cs.scale && cs.scale !== 'none')) {
+      saved.push([p, p.style.transform, p.style.zoom, p.style.scale]); p.style.transform = 'none'; p.style.zoom = '1'; p.style.scale = 'none'; }
+    p = p.parentElement; }
+  window.__mpSaved = saved; return saved.length; }'''
+RESCALE = '''() => { (window.__mpSaved || []).forEach(([p, t, z, s]) => { p.style.transform = t; p.style.zoom = z; p.style.scale = s; }); window.__mpSaved = []; }'''
+
+
 def app_json(report):
     pages = []
     for s in report['screens']:
@@ -252,6 +274,9 @@ def write_readme(out, name, report, shots, shares, imgs, found, tokens, aj):
     for k, (s, sh) in enumerate(zip(report['screens'], shots), 1):
         L.append(f'| {k} | `{s["page"]}` | {s["title"]} | {"自定义（navigationStyle: custom）" if s["nav"] == "custom" else "默认"} | {s["tab"] or "—"} | {" · ".join(f"`{p}`" for p in sh)} |')
     L += ['', '## app.json 骨架（照这个起，按实际补全）', '', '```json', json.dumps(aj, ensure_ascii=False, indent=2), '```', '']
+    custom = sorted({s['page'] for s in report['screens'] if s['nav'] == 'custom'})
+    if custom and aj['window'].get('navigationStyle') != 'custom':
+        L += ['这几页用自定义导航栏，在各自的页面配置（`<页面>.json`）里写 `{"navigationStyle": "custom"}`：' + '、'.join(f'`{c}`' for c in custom), '']
     L += ['## 设计参数', '', '颜色（按出现次数）：' + '、'.join(f'`{c["hex"]}`' for c in tokens['colors']), '',
           '字号：' + '、'.join(f'{f["px"]:g}px＝{f["rpx"]}rpx' for f in tokens['fontSizes']), '',
           '圆角：' + ('、'.join(f'{r["px"]:g}px＝{r["rpx"]}rpx' for r in tokens['radii']) or '无'), '',
@@ -331,24 +356,38 @@ def main(argv=None):
         if not wait_ready(page):
             print('  ! ' + NOT_READY.format(s=15))
         report = page.evaluate(PROBE)
+        if not report['screens']:   # 慢网下 Babel 还没编译完：再等一会儿
+            page.wait_for_timeout(3000)
+            report = page.evaluate(PROBE)
         if not report['screens']:
             print(f'✗ {src.name}：没找到 [data-mp-page]。每一屏要包在 assets/wechat_frame.jsx 的 <WechatFrame page="pages/x/x"> 里')
             browser.close()
             return 1
         title = a.name or page.title() or src.stem
         els = page.locator('[data-mp-page]')
-        shots = []
-        for k in range(els.count()):
-            s, el = report['screens'][k], els.nth(k)
+        idx = order(report['screens'])
+        report['screens'] = [report['screens'][i] for i in idx]
+        shots, wrong = [], []
+        for k, i in enumerate(idx):
+            s, el = report['screens'][k], els.nth(i)
             base = f'screens/{k + 1:02d}-{slug(s["page"])}'
+            el.evaluate(UNSCALE)   # 展示板上缩小摆放的手机：按 375 原尺寸截
             el.scroll_into_view_if_needed()
             el.screenshot(path=str(out / f'{base}.png'))
+            try:
+                from PIL import Image
+                w = Image.open(out / f'{base}.png').size[0]
+                if abs(w - 750) > 2:
+                    wrong.append(f'{s["page"]} 截出来 {w} 宽（应为 750）')
+            except ImportError:
+                pass
             mine = [f'{base}.png']
             if s['extra'] > 4:
                 el.evaluate('(n, d) => { n.dataset.mpH = n.style.height; n.style.height = (n.getBoundingClientRect().height + d) + "px"; }', s['extra'])
                 el.screenshot(path=str(out / f'{base}-长图.png'))
                 el.evaluate('n => { n.style.height = n.dataset.mpH; }')
                 mine.append(f'{base}-长图.png')
+            page.evaluate(RESCALE)
             shots.append(mine)
         shares = []
         sh = page.locator('[data-mp-share]')
@@ -366,6 +405,8 @@ def main(argv=None):
             if r and r not in imgs:
                 imgs.append(r)
     found, tokens = analyze(report)
+    for msg in wrong:
+        found.insert(0, ('✗', None, msg + '：屏幕宽度要是 375（WechatFrame 默认），截图才是 1px＝1rpx'))
     total = sum(i.get('kb') or 0 for i in imgs)
     if total > 1536:
         found.append(('!', None, f'设计稿里的图合计约 {total}KB：主包上限 2MB，大图压缩或放云存储'))

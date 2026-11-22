@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><title>缩放样例</title>
+<style>body{margin:0;font-family:-apple-system,"PingFang SC",sans-serif;display:flex;gap:30px;padding:20px}
+.s{position:relative;width:375px;height:812px;background:#fafaf7;overflow:hidden}
+.cap{position:absolute;top:48px;right:7px;width:87px;height:32px}
+.sc{position:absolute;top:84px;left:0;right:0;bottom:83px;overflow:auto}
+</style></head><body><div style="transform:scale(0.72);transform-origin:0 0;display:flex;gap:30px">
+<div class="s" data-mp-page="pages/orders/orders" data-mp-title="订单" data-mp-nav="default" data-mp-tab="订单"
+ data-mp-tabbar-config='{"list":["点单","订单","我的"],"color":"#999999","selectedColor":"#2B4A3A","backgroundColor":"#ffffff"}'>
+ <div class="cap" data-mp-capsule></div>
+ <div class="sc" data-mp-scroll><p style="font-size:15px;margin:16px">还没有订单</p></div>
+</div>
+<div class="s" data-mp-page="pages/menu/menu" data-mp-title="点单" data-mp-nav="default" data-mp-nav-color="rgb(250, 250, 247)" data-mp-nav-text="black" data-mp-tab="点单"
+ data-mp-tabbar-config='{"list":["点单","订单","我的"],"color":"#999999","selectedColor":"#2B4A3A","backgroundColor":"#ffffff"}'>
+ <div class="cap" data-mp-capsule></div>
+ <div class="sc" data-mp-scroll><h1 style="font-size:22px;margin:16px">今天喝什么</h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAIAAABLbSncAAAAEUlEQVR4nGO40OCAFTEMLQkANxFkARBK9PsAAAAASUVORK5CYII=" width="120" height="120" style="margin:16px;border-radius:12px"><p style="font-size:15px;margin:16px;color:#2B4A3A">燕麦拿铁</p></div>
+</div>
+<div style="width:220px;height:176px;background:#2B4A3A" data-mp-share></div>
+</div></body></html>

@@ -94,6 +94,16 @@ class LintFacts(unittest.TestCase):
         self.assertIn('空白', dl.similar(a, a)[0][0])
 
 
+class SvgScale(unittest.TestCase):
+    def test_css_scaled_phone_is_not_small_text(self):
+        # 3.5 实测误报：展示板上缩到 0.8 倍的手机里，13px 的 SVG 坐标字被量成 10px 报红；
+        # HTML 的字不算外层 CSS 缩放，SVG 也不该算。被 viewBox 真缩小的字照样要报
+        f = dl.collect([str(FX / 'lint_svg_scaled.html')])[0]
+        small = [x['text'] for x in f.get('bodySmall', [])]
+        self.assertFalse(any('刚复习' in t for t in small), small)
+        self.assertTrue(any('缩小的坐标轴' in t for t in small), small)
+
+
 class LintEdgeCases(unittest.TestCase):
     """独立审查报出的误报与漏报，逐条钉成回归测试。"""
 

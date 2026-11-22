@@ -14,6 +14,8 @@
  *   nav="default"  微信默认导航栏：标题居中，背景色 navColor，文字 navText（只能 black / white）
  *   nav="custom"   自定义导航栏（app.json navigationStyle: custom）：只剩胶囊，顶部 84px 由你自己画
  *   back           次级页面左上角返回箭头（默认导航栏下）
+ *   home           这一屏是小程序打开的第一页（app.json pages 的第一项）；不标就按 tabBar 顺序排
+ *   展示板上可以把手机缩小摆放（transform: scale），导出交付包时会按 375 原尺寸截
  *   tabBar={{ list: [{ text, icon? }...], color, selectedColor, backgroundColor }}  原生 tabBar（2–5 个）
  *   自己画 tabBar 时不传 tabBar，把你的组件放进 children 底部，并给它加 data-mp-tabbar="custom"
  *
@@ -65,7 +67,7 @@ function WechatCapsule({ dark }) {
   const bg = dark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.15)';
   const bd = dark ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.25)';
   return (
-    <div data-mp-capsule="" style={{ ...wechatFrameStyles.capsule, background: bg, border: `0.5px solid ${bd}` }}>
+    <div data-mp-capsule="" data-lint-skip="" style={{ ...wechatFrameStyles.capsule, background: bg, border: `0.5px solid ${bd}` }}>
       <div style={wechatFrameStyles.capsuleHalf}>
         <svg width="20" height="6" viewBox="0 0 20 6"><circle cx="3" cy="3" r="2" fill={fg} /><circle cx="10" cy="3" r="2.6" fill={fg} /><circle cx="17" cy="3" r="2" fill={fg} /></svg>
       </div>
@@ -79,7 +81,7 @@ function WechatCapsule({ dark }) {
 
 function WechatTabBar({ list, active, onChange, color = '#7A7E83', selectedColor = '#111111', backgroundColor = '#ffffff' }) {
   return (
-    <div data-mp-tabbar="native" style={{ ...wechatFrameStyles.tabBar, background: backgroundColor, borderTop: '0.5px solid rgba(0,0,0,0.12)' }}>
+    <div data-mp-tabbar="native" data-lint-skip="" style={{ ...wechatFrameStyles.tabBar, background: backgroundColor, borderTop: '0.5px solid rgba(0,0,0,0.12)' }}>
       {list.map(it => {
         const on = it.text === active;
         return (
@@ -97,6 +99,7 @@ function WechatFrame({
   children,
   page = 'pages/index/index',
   title = '',
+  home = false,
   nav = 'default',
   navColor = '#ffffff',
   navText = 'black',
@@ -120,13 +123,14 @@ function WechatFrame({
         style={{ ...wechatFrameStyles.screen, width, height, background }}
         data-mp-page={page}
         data-mp-title={title}
+        data-mp-home={home ? '1' : ''}
         data-mp-nav={nav}
         data-mp-nav-color={navColor}
         data-mp-nav-text={navText}
         data-mp-tab={tab || ''}
         data-mp-tabbar-config={hasNativeTab ? JSON.stringify({ list: tabBar.list.map(t => t.text), color: tabBar.color || '#7A7E83', selectedColor: tabBar.selectedColor || '#111111', backgroundColor: tabBar.backgroundColor || '#ffffff' }) : ''}
       >
-        <div data-mp-chrome="" style={{ ...wechatFrameStyles.statusBar, color: statusColor }}>
+        <div data-mp-chrome="" data-lint-skip="" style={{ ...wechatFrameStyles.statusBar, color: statusColor }}>
           <span>{time}</span>
           <svg width="66" height="12" viewBox="0 0 66 12" fill={statusColor}>
             <rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="6" width="3" height="6" rx="1" /><rect x="10" y="3" width="3" height="9" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" />
@@ -172,13 +176,13 @@ function WechatShareCard({ appName, title, icon, children, width = 236 }) {
   const imgW = width - 16;
   return (
     <div style={{ width, background: '#fff', borderRadius: 6, padding: '10px 8px 0', boxSizing: 'border-box', fontFamily: '-apple-system, "PingFang SC", sans-serif', boxShadow: '0 1px 2px rgba(0,0,0,0.08)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#888', marginBottom: 6 }}>
+      <div data-lint-skip="" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#888', marginBottom: 6 }}>
         <div style={{ width: 16, height: 16, borderRadius: 999, overflow: 'hidden', background: '#eee', flexShrink: 0 }}>{icon}</div>
         <span>{appName}</span>
       </div>
       <div style={{ fontSize: 14, color: '#111', lineHeight: 1.4, marginBottom: 8, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{title}</div>
       <div data-mp-share="" style={{ width: imgW, height: imgW * 4 / 5, overflow: 'hidden', background: '#f2f2f2', position: 'relative' }}>{children}</div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#999', borderTop: '0.5px solid #eee', marginTop: 8, padding: '6px 0' }}>
+      <div data-lint-skip="" style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#999', borderTop: '0.5px solid #eee', marginTop: 8, padding: '6px 0' }}>
         <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" fill="none" stroke="#7d7df0" strokeWidth="1.4" /><circle cx="6" cy="6" r="1.8" fill="#7d7df0" /></svg>
         <span>小程序</span>
       </div>

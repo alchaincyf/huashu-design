@@ -77,7 +77,15 @@ COLLECT_JS = r"""
   };
   const opacityOf = (el) => { let o = 1; for (let e = el; e && e.nodeType === 1; e = e.parentElement) o *= parseFloat(getComputedStyle(e).opacity); return o; };
   // SVG 里的字按渲染后的大小算（viewBox 会放大缩小）
-  const scaleOf = (el) => { if (!(el instanceof SVGElement) || !el.getScreenCTM) return 1; const m = el.getScreenCTM(); return m ? Math.hypot(m.a, m.b) || 1 : 1; };
+  // SVG 里的字要乘上 viewBox 的缩放才是它画出来的大小；但外层 CSS transform（比如展示板上缩到 0.8 倍的手机）要扣掉，
+  // HTML 的字也不算这层，两边口径一致
+  const scaleOf = (el) => {
+    if (!(el instanceof SVGElement) || !el.getScreenCTM) return 1;
+    const m = el.getScreenCTM(); if (!m) return 1;
+    const root = el.ownerSVGElement ? (function r(n) { return n.ownerSVGElement ? r(n.ownerSVGElement) : n; })(el) : el;
+    const css = root.clientWidth ? root.getBoundingClientRect().width / root.clientWidth : 1;
+    return (Math.hypot(m.a, m.b) || 1) / (css || 1);
+  };
   const CAPTION = 'figcaption, footer, small, caption, aside, sup, sub, [class*=caption], [class*=credit], [class*=footnote], [class*=meta]';
   const visible = (el) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el);
     return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none' && parseFloat(cs.opacity) > 0.05; };
@@ -94,6 +102,7 @@ COLLECT_JS = r"""
   let displayEl = null, maxFs = 0;   // 标题字体 = 页面上字号最大的那段文字用的字体
   for (const el of all) {
     if (!visible(el)) continue;
+    if (el.closest('[data-lint-skip]')) continue;   // 设备外壳、微信胶囊和原生 tabBar 这类不归设计稿管的东西
     const cs = getComputedStyle(el);
     const t = ownText(el);
     const fs = parseFloat(cs.fontSize) * scaleOf(el);

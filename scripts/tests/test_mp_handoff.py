@@ -85,6 +85,15 @@ class Render(unittest.TestCase):
             self.assertIn(want, log)
         self.assertTrue((out / 'screens' / '01-home-长图.png').exists())
 
+    def test_scaled_board_exports_true_size_in_app_order(self):
+        # 3.5 实测：展示板上把手机缩到 0.72 倍摆放，详情屏排在首页前面——截图要 750 宽，顺序按 tabBar
+        rc, log, out = self.run_on('mp_scaled.html')
+        self.assertEqual(rc, 0, log)
+        shots = sorted(p.name for p in (out / 'screens').iterdir())
+        self.assertEqual(shots[0], '01-menu.png')
+        for p in (out / 'screens').iterdir():
+            self.assertEqual(Image.open(p).size[0], 750, p.name)
+
     def test_ok_fixture(self):
         rc, log, out = self.run_on('mp_ok.html')
         self.assertEqual(rc, 0, log)

@@ -189,7 +189,7 @@ python3 "$HD/scripts/capabilities.py"            # 手里有什么：决定素�
 ## 收工四件事
 
 ```bash
-python3 "$HD/scripts/polish.py" shot <交付文件> --mobile                    # 最后一轮打磨：逐屏看原图，找不出值得改的三处才算完
+python3 "$HD/scripts/polish.py" shot <交付文件> --mobile                    # 最后一轮打磨：逐屏看原图，找不出值得改的三处才算完（App／小程序展示板不加 --mobile，手机已经在板上）
 python3 "$HD/scripts/design_lint.py" check <交付文件>                       # 红灯必修；黄灯（模板装饰）删掉
 python3 "$HD/scripts/design_lint.py" ledger add <最终文件> --project <名字>   # 记外观账，下个项目才知道要避开什么
 python3 "$HD/scripts/learn.py" harvest <项目目录>                            # 这次有什么值得记

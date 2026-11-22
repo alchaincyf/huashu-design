@@ -147,7 +147,7 @@ function IosFrame({
         background: screenBg || (darkMode ? '#000' : '#fff'),
       }}>
         {showStatusBar && (
-          <div style={{ ...iosFrameStyles.statusBar, color: textColor }}>
+          <div data-lint-skip="" style={{ ...iosFrameStyles.statusBar, color: textColor }}>
             <span>{time}</span>
             <div style={iosFrameStyles.statusIcons}>
               <div style={iosFrameStyles.signalIcon}>
