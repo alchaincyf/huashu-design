@@ -67,7 +67,7 @@ PROBE = r'''() => {
         if (r.width < 1 || r.height < 1) continue;
         const b = rel(r);
         if (b.y1 < 0 || b.y0 > sr.height || b.x1 < 0 || b.x0 > sr.width) continue;
-        texts.push({t: t.slice(0, 16), size: parseFloat(cs.fontSize), over: hit(b, cap, 2), bar: b.y0 < 42 && b.y1 > 6});
+        texts.push({t: t.slice(0, 16), size: parseFloat(cs.fontSize), font: cs.fontFamily, over: hit(b, cap, 2), bar: b.y0 < 42 && b.y1 > 6});
       }
     }
     [el, ...el.querySelectorAll('*')].forEach(n => {
@@ -140,7 +140,7 @@ def slug(page):
 
 def analyze(report):
     """纯函数：把 PROBE 的结果变成 (findings, tokens)。findings = [(级别, 哪一屏或 None, 说明)]。"""
-    found, colors, sizes, radii, fonts = [], Counter(), Counter(), Counter(), Counter()
+    found, colors, sizes, radii, fonts, samples = [], Counter(), Counter(), Counter(), Counter(), {}
     tab_lists = []
     for s in report['screens']:
         name = s['page']
@@ -178,6 +178,10 @@ def analyze(report):
             if st['radius'] not in ('0px', ''):
                 radii[st['radius']] += 1
             fonts[first_font(st['font'])] += 1
+        for t in s['texts']:
+            f = first_font(t.get('font', ''))
+            if f and not is_system(f) and t['t'] not in samples.setdefault(f, []) and len(samples[f]) < 60:
+                samples[f].append(t['t'])
     drawn = {s['tab'] for s in report['screens'] if s['tab']}
     for lst in set(tab_lists):
         missing = [t for t in lst if t not in drawn]
@@ -203,7 +207,7 @@ def analyze(report):
         'colors': [{'hex': h, 'count': n} for h, n in colors.most_common(14)],
         'fontSizes': [{'px': px(v), 'rpx': round(px(v) * 2), 'count': n} for v, n in sizes.most_common(10) if px(v)],
         'radii': [{'px': px(v), 'rpx': round(px(v) * 2), 'count': n} for v, n in radii.most_common(6) if px(v) is not None],
-        'fonts': [{'family': f, 'system': is_system(f), 'count': n} for f, n in fonts.most_common(6) if f],
+        'fonts': [{'family': f, 'system': is_system(f), 'count': n, 'used': sorted(samples.get(f, []), key=len, reverse=True)[:6]} for f, n in fonts.most_common(6) if f],
     }
     return found, tokens
 
@@ -300,6 +304,8 @@ def write_readme(out, name, report, shots, shares, imgs, found, tokens, aj):
           '字号：' + '、'.join(f'{f["px"]:g}px＝{f["rpx"]}rpx' for f in tokens['fontSizes']), '',
           '圆角：' + ('、'.join(f'{r["px"]:g}px＝{r["rpx"]}rpx' for r in tokens['radii']) or '无'), '',
           '字体：' + '、'.join(f'{f["family"]}{"" if f["system"] else "（非系统字体，要 wx.loadFontFace＋裁子集）"}' for f in tokens['fonts']), '',
+          *[f'{f["family"]} 用在：' + '、'.join(f'「{u}」' for u in f['used']) + ' 等。它通常比系统字体窄，加载失败回退时这些地方会变宽：给它们 white-space: nowrap，宽度按回退字体留够，别折行。'
+            for f in tokens['fonts'] if not f['system'] and f.get('used')], '',
           '完整数据在 `tokens.json`。', '']
     L += ['## 图片', '']
     if imgs:
