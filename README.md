@@ -35,6 +35,8 @@ npx skills add alchaincyf/huashu-design
 
 > 📣 **已改为 MIT 协议。** 自 2026-05-14 起本 skill 完全开源（[MIT License](LICENSE)），个人和**商用都免费**，无需事先授权。原「个人使用免费、企业商用需授权」的条款已作废。([查看变更](#license))
 
+> 🆕 **3.5：微信小程序来了，设计完能交给 WorkBuddy 做成真小程序。** 新增小程序模块，按 2026 年 11 月的微信规格设计（胶囊、导航栏、tabBar、5:4 转发卡片、主包 2MB），每个方向先想清楚它从哪被打开：群聊卡片、扫码，还是「最近使用」。定稿后一条命令导出交付包：750 宽逐屏截图、app.json 骨架、设计参数和体检。在 WorkBuddy 里可以接着把它做成原生小程序，实测 Hy4 flash 照交付包做出 6 页，主流程能点通。另外新增展示板组件（三种构图）、断网可开的离线打包，截图和体检脚本在 WorkBuddy 里也能直接跑。
+
 > 🆕 **3.4：App 原型换了一套想法，新增 App Store 宣传图。** 走查两届 App Store Awards 的 90 个入围作品，提炼出八条界面范式（各带样张）：先定「这个 App 管的事在现实里长什么样」，再画屏。新增商店宣传图模块（1320×2868，连幅、破框、搜索结果预览）。参考改成「看原图、量数字、借一层不借一身」，做完和参照并排对回去。界面里该是图的地方放真的图：自带生图的环境（Codex、豆包、WorkBuddy）直接生成，Claude Code、DeepSeek Harness 借本机 Codex 或你给的生图 API，不再用 emoji 和占位块顶替。
 
 > **3.1：新增小红书图文。** 一组 3:4 竖图的八种范式——标本志、贴纸本、索引、长卷、日报、集换卡、留白、信息图，每个样张同时是能直接改的模板；一条命令切成成图，顺手查字号、出界、长卷跨缝和压字。[看样张](#设计方向顾问)
@@ -148,6 +150,16 @@ npx skills add alchaincyf/huashu-design
 > ```bash
 > git clone https://github.com/alchaincyf/huashu-design.git ~/.claude/skills/huashu-design
 > ```
+
+### 在 WorkBuddy 等 agent 里装
+
+直接在对话里说：
+
+```
+帮我去GitHub：https://github.com/alchaincyf/huashu-design 安装这个skill的最新版本
+```
+
+更新也一样，把「安装」换成「更新」。手动装也行：把仓库下载解压，整个文件夹放进 `~/.workbuddy/skills/`，它会出现在「专家·技能·连接器 → 技能 → 已安装」里。
 
 ### DeepSeek Harness 插件
 
