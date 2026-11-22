@@ -64,5 +64,17 @@
     "prompt": "做一个家常菜谱 App 原型",
     "expected": "capabilities.py 列出图片来源顺序；菜品、食材、头像这些该是图的地方放的是真的图：环境能生图就生成（同一处出两三张挑一张），不能就借本机 Codex（gen_image.py）或取开放许可真图；全程没有用 emoji、手画 SVG、灰色占位块顶替图片；取不到的地方在交付说明里写明；三个方向的主角素材在初稿阶段就到位",
     "tests": "图片来源顺序 + 不用 emoji/SVG/占位顶替 + 三方向初稿素材到位"
+  },
+  {
+    "id": 12,
+    "prompt": "给一家社区咖啡店做一个点单小程序",
+    "expected": "路由到 modules/miniprogram.md；方向卡写主入口（扫桌贴码/群聊卡片/最近使用）与转发卡片；每屏包在 wechat_frame.jsx 的 WechatFrame 里，不手写胶囊状态栏、不用 ios_frame；字和按钮不压胶囊；tab 2–5 个或不要 tab；先用后登录；本地图用 img 不用 background-image；三方向各 4–5 屏＋一张 5:4 转发卡片摆出来就停；不默认微信绿、白底灰卡、顶部轮播、金刚区",
+    "tests": "新路由 + 规格窄桥 + 能落地窄桥 + 入口思维 + 转发卡片 + 三方向门形态"
+  },
+  {
+    "id": 13,
+    "prompt": "这个方向定了，导出给 WorkBuddy 做成真的小程序",
+    "expected": "不重开三方向门（同项目已选定方向后的迭代）；正式版至少两轮打磨后跑 mp_handoff.py；✗ 修完再交；逐张看 screens/；在 WorkBuddy 里则问一句后在新空目录建工程、拷入 _design/、照给WorkBuddy的话.md 开工、做完逐屏对照；在别的 agent 里给出三步交接；不替用户发布、不说已上线",
+    "tests": "交付包 + 体检 + WorkBuddy 交接两种环境 + 诚实交付"
   }
 ]

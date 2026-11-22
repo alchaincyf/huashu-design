@@ -1,11 +1,11 @@
 ---
 name: huashu-design
-description: 花叔Design——用HTML做高保真原型、幻灯片、动画、可视化与专家评审。任何新设计100%先出三个方向初稿给用户选（指定风格/品牌也不豁免），选定后才执行。触发词：做原型、App原型、App Store宣传图/商店截图、PPT、幻灯片、动画、设计风格、评审、做个HTML页面、UI mockup、导出MP4/GIF、做个好看的。生产级Web App/需后端的系统不适用。
+description: 花叔Design——用HTML做高保真原型、幻灯片、动画、可视化与专家评审。任何新设计100%先出三个方向初稿给用户选（指定风格/品牌也不豁免），选定后才执行。触发词：做原型、App原型、微信小程序、App Store宣传图/商店截图、PPT、幻灯片、动画、设计风格、评审、做个HTML页面、UI mockup、导出MP4/GIF、做个好看的。生产级Web App/需后端的系统不适用。
 metadata:
   author: "花叔"
   homepage: "https://github.com/alchaincyf"
   repository: "https://github.com/alchaincyf/huashu-design"
-  version: "3.4.2"
+  version: "3.5.0"
 ---
 
 # 花叔Design · Huashu-Design
@@ -81,6 +81,7 @@ python3 "$HD/scripts/capabilities.py"            # 手里有什么：决定素�
 | 信息图、数据可视化、长图 | `references/modules/infographic.md` |
 | 小红书图文、封面、轮播 | `references/modules/xiaohongshu.md` |
 | 手机 App / iOS 原型 | `references/app-prototype.md`（构思时翻 `references/app-paradigms.md`） |
+| 微信小程序（原型、改版、交给 WorkBuddy 做成真小程序） | `references/modules/miniprogram.md`（同时用 App 手册的形态先行与展示板） |
 | App Store 宣传图、商店截图、上架图 | `references/modules/appstore.md` |
 | 动画、视频、宣传片、产品演示、带解说的视频、导出 MP4/GIF | `references/modules/motion.md`（模块内还有一层路由） |
 | 评审、打分、「好不好看」 | `references/critique-guide.md` |
@@ -210,6 +211,8 @@ python3 "$HD/scripts/learn.py" harvest <项目目录>                           
 5. 检查点问答改成产出里的 assumption 清单，gate 文件照写
 
 降级牺牲流程，不牺牲真实资产协议、可读性底线，也不跳过三方向门。降级之后怎么保住质量下限：`references/steady-track.md`。
+
+**在 WorkBuddy 里**（`capabilities.py` 报「WorkBuddy / CodeBuddy」）：自带生图（ImageGen，图右下角带水印，换下一个来源）；做的是微信小程序时，定稿后可以在同一个会话里直接做成真的小程序，见 `references/modules/miniprogram.md`「交给 WorkBuddy」。
 
 **在 DeepSeek Harness 桌面端里**（工具清单里有 `load_workspace_dependencies`）：
 - 先调用它。下文的 `python3` 换成它返回的 Python（自带 python-pptx、Pillow），`node` 换成它返回的 Node；不要 `pip install`，也不要去找系统 Python

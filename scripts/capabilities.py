@@ -189,6 +189,8 @@ def main():
     print(f'素材档位：{r["tier"]}（T0 人人都有；T1 能生图；T2 装了兄弟 skill。见 references/materials.md）')
     print('所在环境：' + (f'{r["runtime"]}（依据：{r["runtime_basis"]}）' if r['runtime'] else '没认出来')
           + '。有没有自带的生图工具，以你自己的工具清单为准；用户说有也算')
+    if (r['runtime'] or '').startswith('WorkBuddy'):
+        print('在 WorkBuddy 里：做微信小程序时，定稿后可以在当前会话直接做成真的小程序（references/modules/miniprogram.md「交给 WorkBuddy」）')
     print('界面里要用图时，按这个顺序找来源（前一个不行再用后一个）：')
     for k, line in enumerate(r['image_route'], 1):
         print(f'  {k}. {line}')

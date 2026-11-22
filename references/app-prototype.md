@@ -4,6 +4,8 @@
 > 单文件 inline React 的三条技术红线（样式对象必须唯一命名，如 `const terminalStyles = {}`；多个 babel script 之间用 `Object.assign(window, …)` 共享组件；不用 `scrollIntoView`）和 pinned 版本见 `references/react-setup.md`，写之前先读。三方向门照走（`references/directions.md`），三版手机并排时 compare 加 `--ignore-layout`。
 
 
+做的是**微信小程序**时，先读 `references/modules/miniprogram.md`（胶囊、tabBar、转发卡片、交给 WorkBuddy），外壳用 `assets/wechat_frame.jsx`，下面的形态先行、真图、展示板照用。
+
 做 iOS/Android/移动 app 原型时（触发：「app 原型」「iOS mockup」「移动应用」「做个 app」），下面四条**覆盖**通用 placeholder 原则——app 原型是 demo 现场，静态摆拍和米白占位卡没有说服力。
 
 ### 先定形态，再画屏
