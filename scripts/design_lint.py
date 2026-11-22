@@ -95,7 +95,7 @@ COLLECT_JS = r"""
   const out = { small: [], lowContrast: [], eyebrows: [], dots: 0, emDashLabels: 0, arrows: 0, numbered: [],
                 accentWord: [], cardKit: 0, hairlines: 0, radiusZero: 0, radiusTotal: 0, monoSmall: 0,
                 broken: [], fonts: {}, display: null, body: null, headlineSerif: false, textColors: {}, bg: null,
-                bodySmall: [], relImgs: [], textTotal: 0 };
+                bodySmall: [], relImgs: [], textTotal: 0, devices: [] };
 
   const all = Array.from(document.body ? document.body.querySelectorAll('*') : []);
   const cardSig = {};
@@ -134,6 +134,7 @@ COLLECT_JS = r"""
     const r = el.getBoundingClientRect();
     // 手机机身不算：展示板上并排四台手机，是同一圆角同一阴影重复四次，但那是设备，不是卡片
     const device = r.width >= 160 && r.height / r.width >= 1.7 && r.height / r.width <= 2.4 && parseFloat(cs.borderRadius) >= 24;
+    if (device && !out.devices.some((d) => d.el.contains(el))) out.devices.push({ el, x: r.left + scrollX, y: r.top + scrollY, w: r.width, h: r.height });
     if (cs.boxShadow !== 'none' && parseFloat(cs.borderRadius) > 0 && !device) {
       const sig = cs.borderRadius + '|' + cs.boxShadow; cardSig[sig] = (cardSig[sig] || 0) + 1;
     }
@@ -143,6 +144,7 @@ COLLECT_JS = r"""
     }
   }
   out.cardKit = Math.max(0, ...Object.values(cardSig));
+  out.devices = out.devices.map(({ x, y, w, h }) => ({ x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h) }));
 
   // 标题里只给一个词换色/斜体
   for (const h of document.querySelectorAll('h1, h2')) {
@@ -381,9 +383,28 @@ def judge(f):
         yellow.append(f'标题里只给一个词换色/斜体 {len(f["accentWord"])} 处（{f["accentWord"][:2]}）')
     if len(f['numbered']) >= 3:
         yellow.append(f'01/02/03 编号 {len(f["numbered"])} 个——内容真是序列吗？')
+    row = device_row(f.get('devices') or [])
+    if row:
+        yellow.append(f'展示板：{row} 台一样大的手机排成一排——像一张表格，不像海报。换主次（主屏放大、其余错落）、'
+                      '流程串联或局部特写，见 references/app-prototype.md「展示板」，起步可用 assets/showboard.jsx；三个方向的构图也要各不一样')
     if f['display'] and f['display'].lower() in ('inter', 'roboto', 'arial', 'helvetica', 'system-ui', '-apple-system'):
         yellow.append(f'标题字体是 {f["display"]}（UI 小字体当 display）')
     return red, yellow
+
+
+def device_row(devs):
+    """四台以上一样大、顶边齐平的手机：返回台数，否则 0。"""
+    if len(devs) < 4:
+        return 0
+    ws = sorted(d['w'] for d in devs)
+    med = ws[len(ws) // 2]
+    same = [d for d in devs if abs(d['w'] - med) <= med * 0.04]
+    rows = {}
+    for d in same:
+        k = next((y for y in rows if abs(y - d['y']) <= 24), d['y'])
+        rows.setdefault(k, []).append(d)
+    best = max((len(v) for v in rows.values()), default=0)
+    return best if best >= 4 and best >= len(devs) * 0.6 else 0
 
 
 def families(f):

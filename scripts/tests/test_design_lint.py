@@ -94,6 +94,16 @@ class LintFacts(unittest.TestCase):
         self.assertIn('空白', dl.similar(a, a)[0][0])
 
 
+class DeviceRow(unittest.TestCase):
+    def test_row_of_equal_phones_is_flagged(self):
+        # 3.5 WorkBuddy 实测：Hy4 三个方向都是「标题＋一排四台等大手机」
+        row = [{'x': 40 + i * 382, 'y': 377, 'w': 324, 'h': 682} for i in range(4)]
+        self.assertEqual(dl.device_row(row), 4)
+        hero = [{'x': 56, 'y': 250, 'w': 375, 'h': 790}] + [{'x': 487 + (i % 2) * 336, 'y': 210 + (i % 2) * 140 + (i // 2) * 720, 'w': 300, 'h': 632} for i in range(4)]
+        self.assertEqual(dl.device_row(hero), 0)
+        self.assertEqual(dl.device_row(row[:3]), 0)
+
+
 class SvgScale(unittest.TestCase):
     def test_css_scaled_phone_is_not_small_text(self):
         # 3.5 实测误报：展示板上缩到 0.8 倍的手机里，13px 的 SVG 坐标字被量成 10px 报红；
