@@ -2,6 +2,7 @@
 
 Stdlib-only: python3 -m unittest discover -s scripts/tests -p test_capabilities.py -v
 """
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -66,10 +67,11 @@ class Runtime(unittest.TestCase):
     def test_workbuddy_shim_first_in_path_wins(self):
         # 实测（2026-11-22）：从 Claude Code 的终端启动的 WorkBuddy 继承了 CLAUDECODE，父进程链在它的沙盒里走不通；
         # 但它给每条命令把沙盒 shim 放在 PATH 第一位
-        env = {'CLAUDECODE': '1', 'WORKBUDDY_APP_NAME': 'WorkBuddy',
-               'PATH': '/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/brokered-bin:/usr/bin'}
+        # PATH 用 os.pathsep 拼，Windows 上是 ;（#65）
+        shim = '/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/cli/vendor/sandbox-center-runtime-kit/shim/brokered-bin'
+        env = {'CLAUDECODE': '1', 'WORKBUDDY_APP_NAME': 'WorkBuddy', 'PATH': os.pathsep.join([shim, '/usr/bin'])}
         self.assertEqual(cap.runtime_hint(ps=no_ps, env=env)[:2], ('WorkBuddy / CodeBuddy', True))
-        env['PATH'] = '/usr/bin:/Applications/WorkBuddy.app/x'   # 不在第一位：照旧分不出
+        env['PATH'] = os.pathsep.join(['/usr/bin', '/Applications/WorkBuddy.app/x'])   # 不在第一位：照旧分不出
         self.assertIn('分不出', cap.runtime_hint(ps=no_ps, env=env)[0])
 
     def test_ambiguous_env_is_reported_not_guessed(self):
